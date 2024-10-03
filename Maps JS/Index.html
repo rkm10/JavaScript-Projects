@@ -4,10 +4,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Maps using JavaScript and Seacrh implemenation</title>
+    <title>USA Map Search with Mapbox</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+            padding: 20px;
+        }
+
+        #map {
+            top: 0;
+            bottom: 0;
+            width: 50%;
+            height: 100%;
+            /* Set to 100% for full visibility */
+        }
+    </style>
 </head>
 
 <body>
+    <div class="container">
+        <!-- Map -->
+        <div id="map"></div>
+        <div class="rightSide">
+            <h1>USA Map Search with Mapbox</h1>
+        </div>
+    </div>
+
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.13.0/mapbox-gl.js"></script>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.13.0/mapbox-gl.css" rel="stylesheet" />
+    <script
+        src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.min.js"></script>
+    <link rel="stylesheet"
+        href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.css" />
+
+    <script>
+        mapboxgl.accessToken = 'pk.eyJ1Ijoid2Vid2l0aHJhaiIsImEiOiJjbTBhbGZmMHgxZXFuMm1vcWt4YmNwZGZhIn0.IpNziQwncy2U-Xms017ojA';
+
+        // Initialize the map
+        var map = new mapboxgl.Map({
+            container: 'map', // Container ID
+            style: 'mapbox://styles/webwithraj/cm1t54zzu012i01pigqnx42lm', // Custom Map style
+            center: [-95.7129, 37.0902], // Starting position [lng, lat] (USA coordinates)
+            zoom: 4 // Starting zoom level
+        });
+
+        // Initialize the geocoder
+        var geocoder = new MapboxGeocoder({
+            accessToken: mapboxgl.accessToken,
+            mapboxgl: mapboxgl,
+            marker: false,
+            placeholder: 'Search for places in the USA',
+            proximity: {
+                longitude: -95.7129,
+                latitude: 37.0902
+            }
+        });
+
+        // Add the geocoder to the map
+        map.addControl(geocoder);
+
+        // Add a marker
+        var marker = new mapboxgl.Marker()
+            .setLngLat([-95.7129, 37.0902]) // Marker coordinates
+            .addTo(map); // Add the marker to the map
+
+        // After the map style has loaded
+        map.on('load', function () {
+            // Add a GeoJSON source for the marker
+            map.addSource('single-point', {
+                'type': 'geojson',
+                'data': {
+                    'type': 'FeatureCollection',
+                    'features': []
+                }
+            });
+
+            // Add a layer to visualize the marker
+            map.addLayer({
+                'id': 'point',
+                'source': 'single-point',
+                'type': 'circle',
+                'paint': {
+                    'circle-radius': 10,
+                    'circle-color': '#448ee4'
+                }
+            });
+
+            // When a search result is found, move the marker to that location
+            geocoder.on('result', function (e) {
+                map.getSource('single-point').setData(e.result.geometry);
+                marker.setLngLat(e.result.geometry.coordinates); // Move marker to search result
+            });
+        });
+    </script>
 
 </body>
 
