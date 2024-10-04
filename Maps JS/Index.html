@@ -5,6 +5,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>USA Map Search with Mapbox</title>
+
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.9.1/mapbox-gl.css' rel='stylesheet' />
+
+    <script
+        src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.min.js"></script>
+    <link rel="stylesheet"
+        href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.css" />
+
     <style>
         body {
             margin: 0;
@@ -18,11 +27,8 @@
         }
 
         #map {
-            top: 0;
-            bottom: 0;
             width: 50%;
-            height: 100%;
-            /* Set to 100% for full visibility */
+            height: 80vh;
         }
     </style>
 </head>
@@ -36,70 +42,90 @@
         </div>
     </div>
 
-    <script src="https://api.mapbox.com/mapbox-gl-js/v2.13.0/mapbox-gl.js"></script>
-    <link href="https://api.mapbox.com/mapbox-gl-js/v2.13.0/mapbox-gl.css" rel="stylesheet" />
-    <script
-        src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.min.js"></script>
-    <link rel="stylesheet"
-        href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.css" />
-
     <script>
-        mapboxgl.accessToken = 'pk.eyJ1Ijoid2Vid2l0aHJhaiIsImEiOiJjbTBhbGZmMHgxZXFuMm1vcWt4YmNwZGZhIn0.IpNziQwncy2U-Xms017ojA';
 
-        // Initialize the map
-        var map = new mapboxgl.Map({
-            container: 'map', // Container ID
-            style: 'mapbox://styles/webwithraj/cm1t54zzu012i01pigqnx42lm', // Custom Map style
-            center: [-95.7129, 37.0902], // Starting position [lng, lat] (USA coordinates)
-            zoom: 4 // Starting zoom level
+        mapboxgl.accessToken = 'pk.eyJ1Ijoid2Vid2l0aHJhaiIsImEiOiJjbTBhbGZmMHgxZXFuMm1vcWt4YmNwZGZhIn0.IpNziQwncy2U-Xms017ojA';
+        // Map initialization
+        const map = new mapboxgl.Map({
+            accessToken: mapboxgl.accessToken,
+            container: 'map',
+            style: 'mapbox://styles/webwithraj/cm1ueo77a012f01qvevdiacid', // Your custom style
+            zoom: 4, // Appropriate zoom for USA
+            center: [-95.7129, 37.0902], // Center of the USA
         });
 
-        // Initialize the geocoder
+        // Define the polygon data
+        const polygon = {
+            'type': 'FeatureCollection',
+            'features': [{
+                'type': 'Feature',
+                'geometry': {
+                    'type': 'Polygon',
+                    'coordinates': [
+                        [
+                            [-100.0, 40.0],
+                            [-105.0, 40.0],
+                            [-105.0, 45.0],
+                            [-100.0, 45.0],
+                            [-100.0, 40.0]
+                        ]
+                    ]
+                }
+            }]
+        };
+
+        // Load polygon and marker layers
+        map.on('style.load', () => {
+            map.addLayer({
+                id: 'polygon-fill',
+                type: 'fill',
+                source: { type: 'geojson', data: polygon },
+                paint: { 'fill-opacity': 0.2, 'fill-color': '#4264fb' },
+            });
+
+            map.addLayer({
+                id: 'polygon-line',
+                type: 'line',
+                source: { type: 'geojson', data: polygon },
+                paint: { 'line-width': 2, 'line-color': '#4264fb' },
+            });
+        });
+
+        // Add a marker for the center of the USA
+        var marker = new mapboxgl.Marker()
+            .setLngLat([-95.7129, 37.0902])
+            .addTo(map);
+
+        // Set up the geocoder
         var geocoder = new MapboxGeocoder({
             accessToken: mapboxgl.accessToken,
             mapboxgl: mapboxgl,
             marker: false,
             placeholder: 'Search for places in the USA',
-            proximity: {
-                longitude: -95.7129,
-                latitude: 37.0902
-            }
+            bbox: [-125.00165, 24.396308, -66.93457, 49.384358], // Limit search to the USA
+            proximity: { longitude: -95.7129, latitude: 37.0902 } // Centered around USA
         });
 
         // Add the geocoder to the map
         map.addControl(geocoder);
 
-        // Add a marker
-        var marker = new mapboxgl.Marker()
-            .setLngLat([-95.7129, 37.0902]) // Marker coordinates
-            .addTo(map); // Add the marker to the map
-
-        // After the map style has loaded
+        // Update the map with the search results
         map.on('load', function () {
-            // Add a GeoJSON source for the marker
             map.addSource('single-point', {
                 'type': 'geojson',
-                'data': {
-                    'type': 'FeatureCollection',
-                    'features': []
-                }
+                'data': { 'type': 'FeatureCollection', 'features': [] }
             });
 
-            // Add a layer to visualize the marker
             map.addLayer({
                 'id': 'point',
                 'source': 'single-point',
                 'type': 'circle',
-                'paint': {
-                    'circle-radius': 10,
-                    'circle-color': '#448ee4'
-                }
+                'paint': { 'circle-radius': 10, 'circle-color': '#448ee4' }
             });
 
-            // When a search result is found, move the marker to that location
+            // Move marker on search result
             geocoder.on('result', function (e) {
                 map.getSource('single-point').setData(e.result.geometry);
-                marker.setLngLat(e.result.geometry.coordinates); // Move marker to search result
             });
         });
     </script>
