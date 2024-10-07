@@ -75,6 +75,38 @@
             padding: 10px;
             z-index: 1;
         }
+
+        .map-control {
+            background: none padding-box rgb(255, 255, 255);
+            margin-top: 50px;
+            margin-left: 10px;
+            z-index: 99;
+            position: absolute;
+            cursor: pointer;
+            overflow: hidden;
+            text-align: center;
+            vertical-align: middle;
+            color: rgb(0, 0, 0);
+            font-family: Roboto, Arial, sans-serif;
+            font-size: 18px;
+            min-width: 36px;
+            font-weight: 500;
+            /* Hide the control initially, to prevent it from appearing
+           before the map loads. */
+            /* display: none; */
+        }
+
+        /* Display the control once it is inside the map. */
+        #map .map-control {
+            display: block;
+        }
+
+        .selector-control {
+            font-size: 14px;
+            line-height: 30px;
+            padding-left: 5px;
+            padding-right: 5px;
+        }
     </style>
 </head>
 
@@ -163,230 +195,7 @@
                 },
                 image: "https://via.placeholder.com/300x200.png?text=Property+5"
             },
-            {
-                address: "175 Maple Ave, San Carlos, CA",
-                description: "Spacious family home with a large backyard",
-                price: "$2,200,000",
-                type: "home",
-                bed: 4,
-                bath: 3,
-                size: 350,
-                position: {
-                    lat: 37.502451,
-                    lng: -122.253115,
-                },
-                image: "https://via.placeholder.com/300x200.png?text=Property+6"
-            },
-            {
-                address: "123 Birch St, Mountain View, CA",
-                description: "Modern apartment with stunning city views",
-                price: "$3,300,000",
-                type: "apartment",
-                bed: 3,
-                bath: 2,
-                size: 180,
-                position: {
-                    lat: 37.409559,
-                    lng: -122.083851,
-                },
-                image: "https://via.placeholder.com/300x200.png?text=Property+7"
-            },
-            {
-                address: "78 Cedar Ct, Los Altos, CA",
-                description: "Elegant estate with beautiful landscaping",
-                price: "$4,500,000",
-                type: "home",
-                bed: 6,
-                bath: 5,
-                size: 400,
-                position: {
-                    lat: 37.371167,
-                    lng: -122.109200,
-                },
-                image: "https://via.placeholder.com/300x200.png?text=Property+8"
-            },
-            {
-                address: "45 Elm St, San Mateo, CA",
-                description: "Contemporary loft in a vibrant neighborhood",
-                price: "$2,000,000",
-                type: "loft",
-                bed: 2,
-                bath: 2,
-                size: 160,
-                position: {
-                    lat: 37.563393,
-                    lng: -122.328963,
-                },
-                image: "https://via.placeholder.com/300x200.png?text=Property+9"
-            },
-            {
-                address: "90 Cherry St, Foster City, CA",
-                description: "Beautiful waterfront property with modern amenities",
-                price: "$3,800,000",
-                type: "home",
-                bed: 5,
-                bath: 4,
-                size: 350,
-                position: {
-                    lat: 37.553832,
-                    lng: -122.271121,
-                },
-                image: "https://via.placeholder.com/300x200.png?text=Property+10"
-            },
-            {
-                address: "22 Spruce St, Burlingame, CA",
-                description: "Charming Victorian home close to downtown",
-                price: "$2,900,000",
-                type: "home",
-                bed: 4,
-                bath: 3,
-                size: 280,
-                position: {
-                    lat: 37.582427,
-                    lng: -122.346548,
-                },
-                image: "https://via.placeholder.com/300x200.png?text=Property+11"
-            },
-            {
-                address: "16 Willow St, Atherton, CA",
-                description: "Stunning estate with pool and tennis court",
-                price: "$8,500,000",
-                type: "mansion",
-                bed: 7,
-                bath: 6,
-                size: 600,
-                position: {
-                    lat: 37.444138,
-                    lng: -122.192377,
-                },
-                image: "https://via.placeholder.com/300x200.png?text=Property+12"
-            },
-            {
-                address: "120 Cypress Ave, San Francisco, CA",
-                description: "Luxurious penthouse with panoramic views",
-                price: "$5,500,000",
-                type: "penthouse",
-                bed: 4,
-                bath: 4,
-                size: 300,
-                position: {
-                    lat: 37.774929,
-                    lng: -122.419418,
-                },
-                image: "https://via.placeholder.com/300x200.png?text=Property+13"
-            },
-            {
-                address: "85 Palm Dr, Sunnyvale, CA",
-                description: "Renovated home with smart technology",
-                price: "$1,950,000",
-                type: "home",
-                bed: 3,
-                bath: 2,
-                size: 220,
-                position: {
-                    lat: 37.368830,
-                    lng: -122.036349,
-                },
-                image: "https://via.placeholder.com/300x200.png?text=Property+14"
-            },
-            {
-                address: "30 Ash St, Campbell, CA",
-                description: "Spacious home with open floor plan",
-                price: "$2,150,000",
-                type: "home",
-                bed: 4,
-                bath: 3,
-                size: 310,
-                position: {
-                    lat: 37.287180,
-                    lng: -121.949956,
-                },
-                image: "https://via.placeholder.com/300x200.png?text=Property+15"
-            },
-            {
-                address: "44 Lark St, Saratoga, CA",
-                description: "Charming property with large backyard and patio",
-                price: "$3,300,000",
-                type: "home",
-                bed: 5,
-                bath: 4,
-                size: 360,
-                position: {
-                    lat: 37.249456,
-                    lng: -122.014239,
-                },
-                image: "https://via.placeholder.com/300x200.png?text=Property+16"
-            },
-            {
-                address: "12 Acorn St, Fremont, CA",
-                description: "Stylish home with upgraded kitchen",
-                price: "$1,700,000",
-                type: "home",
-                bed: 3,
-                bath: 2,
-                size: 190,
-                position: {
-                    lat: 37.548271,
-                    lng: -121.988571,
-                },
-                image: "https://via.placeholder.com/300x200.png?text=Property+17"
-            },
-            {
-                address: "200 Oakridge Ave, Hayward, CA",
-                description: "Lovely house in a quiet neighborhood",
-                price: "$2,600,000",
-                type: "home",
-                bed: 4,
-                bath: 3,
-                size: 280,
-                position: {
-                    lat: 37.669825,
-                    lng: -122.080797,
-                },
-                image: "https://via.placeholder.com/300x200.png?text=Property+18"
-            },
-            {
-                address: "70 Hillcrest St, Santa Clara, CA",
-                description: "Updated home with modern finishes",
-                price: "$2,900,000",
-                type: "home",
-                bed: 4,
-                bath: 3,
-                size: 320,
-                position: {
-                    lat: 37.354107,
-                    lng: -121.955236,
-                },
-                image: "https://via.placeholder.com/300x200.png?text=Property+19"
-            },
-            {
-                address: "5 River Rd, San Jose, CA",
-                description: "Beautiful home with river views",
-                price: "$3,600,000",
-                type: "home",
-                bed: 5,
-                bath: 4,
-                size: 380,
-                position: {
-                    lat: 37.338208,
-                    lng: -121.886329,
-                },
-                image: "https://via.placeholder.com/300x200.png?text=Property+20"
-            },
-            {
-                address: "2000 Park Ave, Palo Alto, CA",
-                description: "Amazing luxury villa with a large pool",
-                price: "$10,000,000",
-                type: "villa",
-                bed: 6,
-                bath: 7,
-                size: 800,
-                position: {
-                    lat: 37.441883,
-                    lng: -122.143019,
-                },
-                image: "https://via.placeholder.com/300x200.png?text=Property+21"
-            },
+
         ];
 
 
@@ -401,6 +210,7 @@
             map = new Map(document.getElementById("map"), {
                 zoom: 11,
                 center,
+                mapTypeControl: false,
                 mapId: "bfc8481f891778a4", // Replace with your Map ID
             });
 
@@ -423,7 +233,6 @@
                     map,
                     content: buildContent(property),
                     position: property.position,
-                    title: property.description,
                 });
 
                 // Show property card on hover
@@ -457,32 +266,10 @@
 
         function buildContent(property) {
             const content = document.createElement("div");
-            content.classList.add("property");
+            content.classList.add("map-property");
             content.innerHTML = `
-                <div class="icon">
-                    <i aria-hidden="true" class="fa fa-${property.type}" title="${property.type}"></i>
-                    <span class="fa-sr-only">${property.type}</span>
-                </div>
                 <div class="details">
                     <div class="price">${property.price}</div>
-                    <div class="address">${property.address}</div>
-                    <div class="features">
-                        <div>
-                            <i aria-hidden="true" class="fa fa-bed fa-lg bed" title="bedroom"></i>
-                            <span class="fa-sr-only">bedroom</span>
-                            <span>${property.bed}</span>
-                        </div>
-                        <div>
-                            <i aria-hidden="true" class="fa fa-bath fa-lg bath" title="bathroom"></i>
-                            <span class="fa-sr-only">bathroom</span>
-                            <span>${property.bath}</span>
-                        </div>
-                        <div>
-                            <i aria-hidden="true" class="fa fa-ruler fa-lg size" title="size"></i>
-                            <span class="fa-sr-only">size</span>
-                            <span>${property.size} ft<sup>2</sup></span>
-                        </div>
-                    </div>
                 </div>
             `;
             return content;
@@ -490,7 +277,7 @@
 
         function displayProperties(propertiesToDisplay) {
             const propertyList = document.getElementById("property-list");
-            propertyList.innerHTML = ""; // Clear previous listings
+            propertyList.innerHTML = "";
 
             propertiesToDisplay.forEach(property => {
                 const propertyItem = document.createElement("div");
@@ -502,7 +289,6 @@
                     <div>Bedrooms: ${property.bed} | Bathrooms: ${property.bath} | Size: ${property.size} ft<sup>2</sup></div>
                 `;
                 propertyItem.onclick = () => {
-                    const markerContent = buildContent(property);
                     const markerPosition = property.position;
                     map.setCenter(markerPosition);
                     map.setZoom(14);
@@ -515,26 +301,25 @@
             const searchTerm = document.getElementById("search-input").value.toLowerCase();
             const filteredProperties = properties.filter(property => {
                 return property.address.toLowerCase().includes(searchTerm) ||
-                    property.description.toLowerCase().includes(searchTerm) ||
-                    property.type.toLowerCase().includes(searchTerm);
+                    property.description.toLowerCase().includes(searchTerm);
             });
             displayProperties(filteredProperties);
         }
 
         document.getElementById("search-button").onclick = filterProperties;
 
-        // Load Google Maps API
         function loadGoogleMaps() {
             const script = document.createElement("script");
-            script.src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyDp-tsXnJiAzAY9YLTJGN5OgUlUuRxV1TU&callback=initMap&libraries=places";
+            script.src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyDp-tsXnJiAzAY9YLTJGN5OgUlUuRxV1TU&callback=initMap";
             script.async = true; // Load script asynchronously
-            script.defer = true; // Defer execution of script
+            // script.defer = true; // Defer execution of script
             document.head.appendChild(script);
         }
 
-        // Call the function to load Google Maps
+
         loadGoogleMaps();
     </script>
+
 </body>
 
 </html>
