@@ -1,10 +1,97 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-    <title>Maps and Places Autocomplete</title>
-    <script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Property Listing with Map</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <style>
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
 
+        .container {
+            display: flex;
+            height: 100%;
+        }
+
+        .map-container {
+            width: 60%;
+            height: 100vh;
+            /* Ensure map takes full viewport height */
+            position: relative;
+        }
+
+        .search-container {
+            width: 40%;
+            padding: 20px;
+            background-color: #f8f8f8;
+            overflow-y: auto;
+            /* Enable scrolling if content overflows */
+        }
+
+        .search-bar {
+            display: flex;
+            margin-bottom: 20px;
+        }
+
+        .search-bar input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+
+        .property-item {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            background-color: #fff;
+            cursor: pointer;
+        }
+
+        .property {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .highlight {
+            background-color: yellow;
+            /* Highlight effect */
+        }
+
+        .card {
+            display: none;
+            /* Initially hidden */
+            position: absolute;
+            background: white;
+            border: 1px solid #ddd;
+            padding: 10px;
+            z-index: 1;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="map-container" id="map"></div>
+        <div class="search-container">
+            <div class="search-bar">
+                <input type="text" id="search-input" placeholder="Search properties..." />
+                <button id="search-button"><i class="fas fa-search"></i></button>
+            </div>
+            <h2>Property Listings</h2>
+            <div id="property-list"></div>
+        </div>
+    </div>
+
+    <script>
         const properties = [
             {
                 address: "215 Emily St, MountainView, CA",
@@ -303,80 +390,151 @@
         ];
 
 
+        let map, autocomplete;
 
+        async function initMap() {
+            const { Map } = await google.maps.importLibrary("maps");
+            const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
+            const { Autocomplete } = await google.maps.importLibrary("places");
 
-
-
-
-
-        async function init() {
-            await customElements.whenDefined('gmp-map');
-
-            const map = document.querySelector('gmp-map');
-            const marker = document.querySelector('gmp-advanced-marker');
-            const placePicker = document.querySelector('gmpx-place-picker');
-            const infowindow = new google.maps.InfoWindow();
-
-            map.innerMap.setOptions({
-                mapTypeControl: false
+            const center = { lat: 37.43238031167444, lng: -122.16795397128632 };
+            map = new Map(document.getElementById("map"), {
+                zoom: 11,
+                center,
+                mapId: "bfc8481f891778a4", // Replace with your Map ID
             });
 
-            placePicker.addEventListener('gmpx-placechange', () => {
-                const place = placePicker.value;
+            // Initialize Autocomplete
+            const input = document.getElementById("search-input");
+            autocomplete = new Autocomplete(input);
 
-                if (!place.location) {
-                    window.alert(
-                        "No details available for input: '" + place.name + "'"
-                    );
-                    infowindow.close();
-                    marker.position = null;
-                    return;
+            // Add place changed listener to autocomplete
+            autocomplete.addListener("place_changed", () => {
+                const place = autocomplete.getPlace();
+                if (place.geometry) {
+                    // Move the map to the selected place
+                    map.setCenter(place.geometry.location);
+                    map.setZoom(14);
                 }
+            });
 
-                if (place.viewport) {
-                    map.innerMap.fitBounds(place.viewport);
-                } else {
-                    map.center = place.location;
-                    map.zoom = 17;
-                }
+            properties.forEach(property => {
+                const marker = new AdvancedMarkerElement({
+                    map,
+                    content: buildContent(property),
+                    position: property.position,
+                    title: property.description,
+                });
 
-                marker.position = place.location;
-                infowindow.setContent(
-                    `<strong>${place.displayName}</strong><br>
-             <span>${place.formattedAddress}</span>
-          `);
-                infowindow.open(map.innerMap, marker);
+                // Show property card on hover
+                let card = createPropertyCard(property);
+                marker.addListener("mouseover", () => {
+                    card.style.display = "block";
+                    card.style.left = `${event.clientX}px`;
+                    card.style.top = `${event.clientY}px`;
+                });
+
+                marker.addListener("mouseout", () => {
+                    card.style.display = "none";
+                });
+            });
+
+            displayProperties(properties); // Initial display of properties
+        }
+
+        function createPropertyCard(property) {
+            const card = document.createElement("div");
+            card.className = "card";
+            card.innerHTML = `
+                <h4>${property.address}</h4>
+                <p>${property.description}</p>
+                <div>Price: ${property.price}</div>
+                <div>Bedrooms: ${property.bed} | Bathrooms: ${property.bath} | Size: ${property.size} ft<sup>2</sup></div>
+            `;
+            document.body.appendChild(card);
+            return card;
+        }
+
+        function buildContent(property) {
+            const content = document.createElement("div");
+            content.classList.add("property");
+            content.innerHTML = `
+                <div class="icon">
+                    <i aria-hidden="true" class="fa fa-${property.type}" title="${property.type}"></i>
+                    <span class="fa-sr-only">${property.type}</span>
+                </div>
+                <div class="details">
+                    <div class="price">${property.price}</div>
+                    <div class="address">${property.address}</div>
+                    <div class="features">
+                        <div>
+                            <i aria-hidden="true" class="fa fa-bed fa-lg bed" title="bedroom"></i>
+                            <span class="fa-sr-only">bedroom</span>
+                            <span>${property.bed}</span>
+                        </div>
+                        <div>
+                            <i aria-hidden="true" class="fa fa-bath fa-lg bath" title="bathroom"></i>
+                            <span class="fa-sr-only">bathroom</span>
+                            <span>${property.bath}</span>
+                        </div>
+                        <div>
+                            <i aria-hidden="true" class="fa fa-ruler fa-lg size" title="size"></i>
+                            <span class="fa-sr-only">size</span>
+                            <span>${property.size} ft<sup>2</sup></span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            return content;
+        }
+
+        function displayProperties(propertiesToDisplay) {
+            const propertyList = document.getElementById("property-list");
+            propertyList.innerHTML = ""; // Clear previous listings
+
+            propertiesToDisplay.forEach(property => {
+                const propertyItem = document.createElement("div");
+                propertyItem.className = "property-item";
+                propertyItem.innerHTML = `
+                    <h4>${property.address}</h4>
+                    <p>${property.description}</p>
+                    <div>Price: ${property.price}</div>
+                    <div>Bedrooms: ${property.bed} | Bathrooms: ${property.bath} | Size: ${property.size} ft<sup>2</sup></div>
+                `;
+                propertyItem.onclick = () => {
+                    const markerContent = buildContent(property);
+                    const markerPosition = property.position;
+                    map.setCenter(markerPosition);
+                    map.setZoom(14);
+                };
+                propertyList.appendChild(propertyItem);
             });
         }
 
-        document.addEventListener('DOMContentLoaded', init);
-    </script>
-    <script type="module" src="https://unpkg.com/@googlemaps/extended-component-library@0.6">
-    </script>
-    <style>
-        html,
-        body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
+        function filterProperties() {
+            const searchTerm = document.getElementById("search-input").value.toLowerCase();
+            const filteredProperties = properties.filter(property => {
+                return property.address.toLowerCase().includes(searchTerm) ||
+                    property.description.toLowerCase().includes(searchTerm) ||
+                    property.type.toLowerCase().includes(searchTerm);
+            });
+            displayProperties(filteredProperties);
         }
 
-        .place-picker-container {
-            padding: 20px;
-        }
-    </style>
-</head>
+        document.getElementById("search-button").onclick = filterProperties;
 
-<body>
-    <gmpx-api-loader key="AIzaSyDp-tsXnJiAzAY9YLTJGN5OgUlUuRxV1TU"
-        solution-channel="GMP_GE_mapsandplacesautocomplete_v1">
-    </gmpx-api-loader>
-    <gmp-map center="40.749933,-73.98633" zoom="13" map-id="2db4ad85-76e2-4287-b385-1b156b0bfd33">
-        <div slot="control-block-start-inline-start" class="place-picker-container">
-            <gmpx-place-picker placeholder="Enter an address"></gmpx-place-picker>
-        </div>
-        <gmp-advanced-marker></gmp-advanced-marker>
-    </gmp-map>
+        // Load Google Maps API
+        function loadGoogleMaps() {
+            const script = document.createElement("script");
+            script.src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyDp-tsXnJiAzAY9YLTJGN5OgUlUuRxV1TU&callback=initMap&libraries=places";
+            script.async = true; // Load script asynchronously
+            script.defer = true; // Defer execution of script
+            document.head.appendChild(script);
+        }
+
+        // Call the function to load Google Maps
+        loadGoogleMaps();
+    </script>
 </body>
 
 </html>
