@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Property Listing with Map</title>
+    <style>
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', sans-serif;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            display: flex;
+            height: 100%;
+            flex-direction: column;
+        }
+
+        .search-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            padding: 15px 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .map-and-listing {
+            display: flex;
+            flex: 1;
+            margin-top: 80px;
+        }
+
+        .map-container {
+            width: 70%;
+            position: relative;
+        }
+
+        .listing-container {
+            width: 30%;
+            padding: 15px;
+            background-color: #fff;
+            box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+            height: calc(100vh - 80px);
+            overflow-y: auto;
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 10px;
+        }
+
+        .search-bar input,
+        .search-bar select {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            flex: 1;
+        }
+
+        .property-item {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .property-item:hover {
+            transform: scale(1.02);
+            cursor: pointer;
+        }
+
+        .property-image {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+
+        .price {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background-color: #007bff;
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .details {
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        .details h4 {
+            margin: 5px 0;
+            font-size: 16px;
+        }
+
+        .map-property {
+            position: absolute;
+            border: 1px solid #ddd;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            max-width: 200px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            display: none;
+            z-index: 1;
+        }
+
+        .close-button {
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="search-container">
+            <div class="search-bar">
+                <input type="text" id="search-input" placeholder="Search by address" oninput="filterProperties()">
+
+                <select id="bedroom-filter" onchange="filterProperties()">
+                    <option value="">Bedrooms</option>
+                    <option value="1">1+</option>
+                    <option value="2">2+</option>
+                    <option value="3">3+</option>
+                </select>
+
+                <select id="bathroom-filter" onchange="filterProperties()">
+                    <option value="">Bathrooms</option>
+                    <option value="1">1+</option>
+                    <option value="2">2+</option>
+                    <option value="3">3+</option>
+                </select>
+
+                <select id="price-filter" onchange="filterProperties()">
+                    <option value="">Price Range</option>
+                    <option value="500000">$500K+</option>
+                    <option value="1000000">$1M+</option>
+                    <option value="2000000">$2M+</option>
+                </select>
+
+                <button id="search-button">Search</button>
+            </div>
+        </div>
+        <div class="map-and-listing">
+            <div class="map-container" id="map">
+                <div id="property-card" class="map-property">
+                    <button class="close-button" onclick="closePropertyCard()">×</button>
+                    <img id="property-card-image" src="" alt="" class="property-image">
+                    <div class="price" id="property-card-price"></div>
+                    <div class="details">
+                        <h4 id="property-card-address"></h4>
+                        <p id="property-card-description"></p>
+                        <div id="property-card-info"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="listing-container">
+                <h1 class="location-title">Search Location</h1>
+                <h4 class="property-count">6 properties available</h4>
+                <div id="property-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const properties = [
+            {
+                address: "215 Emily St, MountainView, CA",
+                description: "Single family house with modern design",
+                price: "$3,889,000",
+                type: "home",
+                bed: 5,
+                bath: 4.5,
+                size: 300,
+                position: {
+                    lat: 37.50024109655184,
+                    lng: -122.28528451834352,
+                },
+                image: "https://via.placeholder.com/400x300.png?text=Property+1"
+            },
+            {
+                address: "123 Main St, San Francisco, CA",
+                description: "Luxurious apartment in the heart of the city",
+                price: "$1,500,000",
+                type: "apartment",
+                bed: 2,
+                bath: 2,
+                size: 1200,
+                position: {
+                    lat: 37.7749,
+                    lng: -122.4194,
+                },
+                image: "https://via.placeholder.com/400x300.png?text=Property+2"
+            },
+            {
+                address: "456 Maple Ave, Los Angeles, CA",
+                description: "Spacious home with ocean views",
+                price: "$2,200,000",
+                type: "home",
+                bed: 4,
+                bath: 3,
+                size: 2500,
+                position: {
+                    lat: 34.0522,
+                    lng: -118.2437,
+                },
+                image: "https://via.placeholder.com/400x300.png?text=Property+3"
+            },
+            // Add more property objects here...
+        ];
+
+        let map;
+        let markers = [];
+
+        async function initMap() {
+            const { Map } = await google.maps.importLibrary("maps");
+            const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
+            const { Autocomplete } = await google.maps.importLibrary("places");
+
+            const center = { lat: 37.43238031167444, lng: -122.16795397128632 };
+            map = new Map(document.getElementById("map"), {
+                zoom: 11,
+                center,
+                mapTypeControl: false,
+                mapId: "bfc8481f891778a4", // Replace with your Map ID
+            });
+
+            const input = document.getElementById("search-input");
+            autocomplete = new Autocomplete(input);
+
+            autocomplete.addListener("place_changed", () => {
+                const place = autocomplete.getPlace();
+                if (place.geometry) {
+                    map.setCenter(place.geometry.location);
+                    map.setZoom(14);
+                    updateLocationTitle(place.name);
+                }
+            });
+
+            function updateLocationTitle(location) {
+                const locationTitle = document.querySelector('.location-title');
+                locationTitle.innerText = `${location} Properties`;
+            }
+
+            properties.forEach(property => {
+                const marker = new AdvancedMarkerElement({
+                    map,
+                    content: buildContent(property),
+                    position: property.position,
+                });
+
+                marker.addListener("click", (event) => {
+                    showPropertyCard(property, event);
+                });
+
+                markers.push({ marker, property });
+            });
+
+            displayProperties(properties);
+        }
+
+        function createPropertyCard(property) {
+            const card = document.createElement("div");
+            card.className = "card";
+            card.innerHTML = `
+                <button class="close-button" onclick="this.parentElement.style.display='none'">&times;</button>
+                <img src="${property.image}" alt="${property.address}" class="property-image">
+                <div class="price">${property.price}</div>
+                <div class="details">
+                    <h4>${property.address}</h4>
+                    <p>${property.description}</p>
+                    <div>Bedrooms: ${property.bed} | Bathrooms: ${property.bath} | Size: ${property.size} ft<sup>2</sup></div>
+                </div>
+            `;
+            document.body.appendChild(card);
+            return card;
+        }
+
+        function buildContent(property) {
+            const content = document.createElement("div");
+            content.classList.add("map-property");
+            content.innerHTML = `
+                <div class="details">
+                    <div class="price">${property.price}</div>
+                </div>
+            `;
+            return content;
+        }
+
+        function displayProperties(propertiesToDisplay) {
+            const propertyList = document.getElementById("property-list");
+            propertyList.innerHTML = "";
+
+            propertiesToDisplay.forEach(property => {
+                const propertyItem = document.createElement("div");
+                propertyItem.className = "property-item";
+                propertyItem.innerHTML = `
+                    <img src="${property.image}" alt="${property.address}" class="property-image">
+                    <div class="price">${property.price}</div>
+                    <div class="details">
+                        <h4>${property.address}</h4>
+                        <p>${property.description}</p>
+                        <div>Bedrooms: ${property.bed} | Bathrooms: ${property.bath} | Size: ${property.size} ft<sup>2</sup></div>
+                    </div>
+                `;
+                propertyList.appendChild(propertyItem);
+            });
+            updatePropertyCount(propertiesToDisplay.length);
+        }
+
+        function updatePropertyCount(count) {
+            const propertyCount = document.querySelector(".property-count");
+            propertyCount.innerText = `${count} properties available`;
+        }
+
+        function filterProperties() {
+            const query = document.getElementById('search-input').value.toLowerCase();
+            const bedFilter = document.getElementById('bedroom-filter').value;
+            const bathFilter = document.getElementById('bathroom-filter').value;
+            const priceFilter = document.getElementById('price-filter').value;
+
+            const filteredProperties = properties.filter(property => {
+                const matchesQuery = property.address.toLowerCase().includes(query);
+                const matchesBedrooms = bedFilter ? property.bed >= bedFilter : true;
+                const matchesBathrooms = bathFilter ? property.bath >= bathFilter : true;
+                const matchesPrice = priceFilter ? parseInt(property.price.replace(/\$|,/g, '')) >= parseInt(priceFilter) : true;
+
+                return matchesQuery && matchesBedrooms && matchesBathrooms && matchesPrice;
+            });
+
+            displayProperties(filteredProperties);
+            updateMarkers(filteredProperties);
+        }
+
+        function updateMarkers(filteredProperties) {
+            markers.forEach(({ marker, property }) => {
+                const isVisible = filteredProperties.includes(property);
+                marker.setVisible(isVisible);
+            });
+        }
+
+        function showPropertyCard(property, event) {
+            const propertyCard = document.getElementById("property-card");
+            propertyCard.style.display = "block";
+            propertyCard.style.left = `${event.pixel.x}px`;
+            propertyCard.style.top = `${event.pixel.y}px`;
+            document.getElementById("property-card-image").src = property.image;
+            document.getElementById("property-card-price").innerText = property.price;
+            document.getElementById("property-card-address").innerText = property.address;
+            document.getElementById("property-card-description").innerText = property.description;
+            document.getElementById("property-card-info").innerHTML = `Bedrooms: ${property.bed} | Bathrooms: ${property.bath} | Size: ${property.size} ft<sup>2</sup>`;
+        }
+
+        function closePropertyCard() {
+            const propertyCard = document.getElementById("property-card");
+            propertyCard.style.display = "none";
+        }
+
+        window.initMap = initMap;
+    </script>
+
+    <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDp-tsXnJiAzAY9YLTJGN5OgUlUuRxV1TU&callback=initMap"></script>
+</body>
+
+</html>

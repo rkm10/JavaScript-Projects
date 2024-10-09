@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Property Listing with Map</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" /> -->
     <style>
         html,
         body {
@@ -18,26 +18,48 @@
         .container {
             display: flex;
             height: 100%;
+            flex-direction: column;
+        }
+
+        .search-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            padding: 10px 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            /* Ensure it sits on top */
+        }
+
+        .map-and-listing {
+            display: flex;
+            flex: 1;
+            margin-top: 60px;
+            overflow: hidden;
+            /* Leave space for the fixed search bar */
         }
 
         .map-container {
             width: 60%;
-            height: 100vh;
-            /* Ensure map takes full viewport height */
+            height: 80vh;
+            /* Full height of the viewport */
             position: relative;
         }
 
-        .search-container {
+        .listing-container {
             width: 40%;
             padding: 20px;
             background-color: #f8f8f8;
             overflow-y: auto;
-            /* Enable scrolling if content overflows */
+            /* Allow scrolling */
+            height: calc(100vh - 60px);
+            /* Full height minus search bar */
         }
 
         .search-bar {
             display: flex;
-            margin-bottom: 20px;
         }
 
         .search-bar input {
@@ -56,19 +78,12 @@
             cursor: pointer;
         }
 
-        .property {
-            display: flex;
-            flex-direction: column;
-        }
-
         .highlight {
             background-color: yellow;
-            /* Highlight effect */
         }
 
         .card {
             display: none;
-            /* Initially hidden */
             position: absolute;
             background: white;
             border: 1px solid #ddd;
@@ -90,7 +105,6 @@
             z-index: 99;
             position: absolute;
             cursor: pointer;
-            overflow: hidden;
             text-align: center;
             vertical-align: middle;
             color: rgb(0, 0, 0);
@@ -98,39 +112,6 @@
             font-size: 18px;
             min-width: 36px;
             font-weight: 500;
-            /* Hide the control initially, to prevent it from appearing
-           before the map loads. */
-            /* display: none; */
-        }
-
-        /* Display the control once it is inside the map. */
-        #map .map-control {
-            display: block;
-        }
-
-        .selector-control {
-            font-size: 14px;
-            line-height: 30px;
-            padding-left: 5px;
-            padding-right: 5px;
-        }
-
-        /* .price {
-            background-color: #007bff;
-            padding: 5px 10px;
-            border-radius: 10px;
-            color: #fff;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-        } */
-
-        button.close-button {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rebeccapurple;
-            color: white;
         }
 
         .price {
@@ -147,28 +128,35 @@
             content: '';
             position: absolute;
             bottom: 100%;
-            left: 0;
             left: 34px;
             border-width: 8px;
             border-style: solid;
             border-color: transparent transparent #007bff transparent;
         }
+
+        div#property-list {
+            padding-bottom: 40px;
+        }
     </style>
 </head>
 
-
 <body>
     <div class="container">
-
-        <div class="map-container" id="map"></div>
         <div class="search-container">
             <div class="search-bar">
-                <input type="text" id="search-input" placeholder="Search properties..." />
+                <input type="text" id="search" placeholder="Search properties" oninput="searchProperties(this.value)">
+                <!-- Add filter UI here -->
+
                 <button id="search-button"><i class="fas fa-search"></i></button>
             </div>
-             <h1 class="location-title">Texas Rental Listings</h1>
-                <h4 class="property-count">6 properties available</h1>
-            <div id="property-list"></div>
+        </div>
+        <div class="map-and-listing">
+            <div class="map-container" id="map"></div>
+            <div class="listing-container">
+                <h1 class="location-title">Search Location</h1>
+                <h4 class="property-count">6 properties available</h4>
+                <div id="property-list"></div>
+            </div>
         </div>
     </div>
 
@@ -188,69 +176,20 @@
                 },
                 image: "https://via.placeholder.com/300x200.png?text=Property+1"
             },
-            {
-                address: "108 Squirrel Ln, Menlo Park, CA",
-                description: "Townhouse with friendly neighbors",
-                price: "$3,050,000",
-                type: "building",
-                bed: 4,
-                bath: 3,
-                size: 200,
-                position: {
-                    lat: 37.44440882321596,
-                    lng: -122.2160620727,
-                },
-                image: "https://via.placeholder.com/300x200.png?text=Property+2"
-            },
-            {
-                address: "100 Chris St, Portola Valley, CA",
-                description: "Spacious warehouse great for small business",
-                price: "$3,125,000",
-                type: "warehouse",
-                bed: 4,
-                bath: 4,
-                size: 800,
-                position: {
-                    lat: 37.39561833718522,
-                    lng: -122.21855116258479,
-                },
-                image: "https://via.placeholder.com/300x200.png?text=Property+3"
-            },
-            {
-                address: "50 Pine St, Palo Alto, CA",
-                description: "Luxury condo in the heart of downtown",
-                price: "$2,500,000",
-                type: "condo",
-                bed: 3,
-                bath: 2,
-                size: 150,
-                position: {
-                    lat: 37.441883,
-                    lng: -122.143019,
-                },
-                image: "https://via.placeholder.com/300x200.png?text=Property+4"
-            },
-            {
-                address: "10 Oak St, Redwood City, CA",
-                description: "Cozy cottage with a beautiful garden",
-                price: "$1,800,000",
-                type: "home",
-                bed: 2,
-                bath: 1,
-                size: 100,
-                position: {
-                    lat: 37.485215,
-                    lng: -122.237962,
-                },
-                image: "https://via.placeholder.com/300x200.png?text=Property+5"
-            },
-
+            
         ];
 
-        //Global variables
-        let map, autocomplete;
-        let openCard = null;
+        let map;
+        let markers = [];
 
+        function initMap() {
+            map = new google.maps.Map(document.getElementById("map"), {
+                center: { lat: 37.7749, lng: -122.4194 }, // Set to a default location
+                zoom: 10,
+            });
+            updateMarkers();
+            map.addListener("bounds_changed", updateMarkers);
+        }
 
         async function initMap() {
             const { Map } = await google.maps.importLibrary("maps");
@@ -265,19 +204,22 @@
                 mapId: "bfc8481f891778a4", // Replace with your Map ID
             });
 
-            // Initialize Autocomplete
             const input = document.getElementById("search-input");
             autocomplete = new Autocomplete(input);
 
-            // Add place changed listener to autocomplete
             autocomplete.addListener("place_changed", () => {
                 const place = autocomplete.getPlace();
                 if (place.geometry) {
-                    // Move the map to the selected place
                     map.setCenter(place.geometry.location);
                     map.setZoom(14);
+                    updateLocationTitle(place.name);
                 }
             });
+
+            function updateLocationTitle(location) {
+                const locationTitle = document.querySelector('.location-title');
+                locationTitle.innerText = `${location} Properties`;
+            }
 
             properties.forEach(property => {
                 const marker = new AdvancedMarkerElement({
@@ -286,9 +228,8 @@
                     position: property.position,
                 });
 
-                // Show property card on hover
                 let card = createPropertyCard(property);
-                marker.addListener("mouseover", () => {
+                marker.addListener("mouseover", (event) => {
                     card.style.display = "block";
                     card.style.left = `${event.clientX}px`;
                     card.style.top = `${event.clientY}px`;
@@ -298,14 +239,14 @@
                     card.style.display = "none";
                 });
 
-                marker.addListener("click", () => {
+                marker.addListener("click", (event) => {
                     card.style.display = "block";
                     card.style.left = `${event.clientX}px`;
                     card.style.top = `${event.clientY}px`;
                 });
             });
 
-            displayProperties(properties); // Initial display of properties
+            displayProperties(properties);
         }
 
         function createPropertyCard(property) {
@@ -322,13 +263,6 @@
             return card;
         }
 
-        function closeCard() {
-            if (openCard) {
-                openCard.style.display = 'none'; // Hide the currently open card
-                openCard = null; // Reset the openCard reference
-            }
-        }
-
         function buildContent(property) {
             const content = document.createElement("div");
             content.classList.add("map-property");
@@ -342,7 +276,6 @@
 
         function displayProperties(propertiesToDisplay) {
             const propertyList = document.getElementById("property-list");
-            propertyList.innerHTML = ``;
             propertyList.innerHTML = "";
 
             propertiesToDisplay.forEach(property => {
@@ -350,41 +283,31 @@
                 propertyItem.className = "property-item";
                 propertyItem.innerHTML = `
                     <h4>${property.address}</h4>
-                    <p>${property.description}</p>
                     <div>Price: ${property.price}</div>
-                    <div>Bedrooms: ${property.bed} | Bathrooms: ${property.bath} | Size: ${property.size} ft<sup>2</sup></div>
                 `;
-                propertyItem.onclick = () => {
-                    const markerPosition = property.position;
-                    map.setCenter(markerPosition);
-                    map.setZoom(14);
-                };
                 propertyList.appendChild(propertyItem);
             });
+            updatePropertyCount(propertiesToDisplay.length);
         }
 
-        function filterProperties() {
-            const searchTerm = document.getElementById("search-input").value.toLowerCase();
-            const filteredProperties = properties.filter(property => {
-                return property.address.toLowerCase().includes(searchTerm) ||
-                    property.description.toLowerCase().includes(searchTerm);
-            });
+        function updatePropertyCount(count) {
+            const propertyCount = document.querySelector(".property-count");
+            propertyCount.innerText = `${count} properties available`;
+        }
+
+        document.getElementById("search-button").addEventListener("click", () => {
+            const query = document.getElementById("search-input").value.toLowerCase();
+            const filteredProperties = properties.filter(property =>
+                property.address.toLowerCase().includes(query) ||
+                property.description.toLowerCase().includes(query)
+            );
             displayProperties(filteredProperties);
-        }
+        });
 
-        document.getElementById("search-button").onclick = filterProperties;
-
-        function loadGoogleMaps() {
-            const script = document.createElement("script");
-            script.src = "https://maps.googleapis.com/maps/api/js?key=AIzaSyDp-tsXnJiAzAY9YLTJGN5OgUlUuRxV1TU&callback=initMap";
-            script.async = true; // Load script asynchronously
-            // script.defer = true; // Defer execution of script
-            document.head.appendChild(script);
-        }
-
-        loadGoogleMaps();
+        window.initMap = initMap;
     </script>
-
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDp-tsXnJiAzAY9YLTJGN5OgUlUuRxV1TU&callback=initMap"
+        async defer></script>
 </body>
 
 </html>
