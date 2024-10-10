@@ -628,6 +628,14 @@
         let searchedLocation = null; // Set to null to indicate no search has been performed
         let shouldAdjustMap = true; // Flag to control map adjustment
 
+        // Variable to hold current filters
+        let currentFilters = {
+            type: '',
+            bedrooms: 0,
+            bathrooms: 0,
+            price: 0
+        };
+
         var map = new mapboxgl.Map({
             container: 'map',
             style: 'mapbox://styles/mapbox/streets-v11',
@@ -651,25 +659,10 @@
         // Update searched location when a new search is performed
         geocoder.on('result', function (e) {
             searchedLocation = e.result.geometry.coordinates;
-            map.setCenter(searchedLocation);
-            map.setZoom(10); // Adjust zoom level as needed
+            map.flyTo({ center: searchedLocation, zoom: 10 }); // Adjust zoom level as needed
             document.querySelector('.location-title').textContent = e.result.place_name; // Update location title
-            shouldAdjustMap = false; // Prevent map adjustment after search
             filterProperties(); // Apply filters based on the new location
         });
-
-        function getDistance(coord1, coord2) {
-            const R = 6371; // Earth's radius in kilometers
-            const lat1 = coord1[1] * (Math.PI / 180);
-            const lat2 = coord2[1] * (Math.PI / 180);
-            const deltaLat = (coord2[1] - coord1[1]) * (Math.PI / 180);
-            const deltaLon = (coord2[0] - coord1[0]) * (Math.PI / 180);
-            const a = Math.sin(deltaLat / 2) * Math.sin(deltaLat / 2) +
-                Math.cos(lat1) * Math.cos(lat2) *
-                Math.sin(deltaLon / 2) * Math.sin(deltaLon / 2);
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-            return R * c; // Distance in kilometers
-        }
 
         let markers = []; // Array to hold marker instances
 
@@ -682,32 +675,43 @@
             document.getElementById('list-view-btn').classList.toggle('active', view === 'list');
         }
 
-        function filterProperties() {
-            const type = document.getElementById('filter-type').value;
-            const bedrooms = parseInt(document.getElementById('filter-bedrooms').value) || 0;
-            const bathrooms = parseInt(document.getElementById('filter-bathrooms').value) || 0;
-            const price = parseInt(document.getElementById('price-filter').value) || 0;
-            const distanceThreshold = 200; // Distance threshold in kilometers
+        // Function to filter properties based on current filters and map bounds
+        function filterPropertiesByMapBounds() {
+            const bounds = map.getBounds();
 
             const filteredProperties = properties.filter((property) => {
-                let isWithinDistance = true;
-                if (searchedLocation) {
-                    const distance = getDistance(searchedLocation, property.position);
-                    isWithinDistance = distance <= distanceThreshold;
-                }
+                // Check if property is within map bounds
+                const isWithinBounds = bounds.contains([property.position[0], property.position[1]]);
 
-                return (
-                    isWithinDistance &&
-                    (!type || property.type === type) &&
-                    (!bedrooms || property.bed >= bedrooms) &&
-                    (!bathrooms || property.bath >= bathrooms) &&
-                    (!price || property.price >= price)
-                );
+                // Apply other filters
+                const matchesFilters =
+                    (!currentFilters.type || property.type === currentFilters.type) &&
+                    (!currentFilters.bedrooms || property.bed >= currentFilters.bedrooms) &&
+                    (!currentFilters.bathrooms || property.bath >= currentFilters.bathrooms) &&
+                    (!currentFilters.price || property.price >= currentFilters.price);
+
+                return isWithinBounds && matchesFilters;
             });
 
-            updatePropertyList(filteredProperties); // Update the list with the filtered properties
+            updatePropertyList(filteredProperties);
             document.querySelector('.property-count').textContent = `${filteredProperties.length} properties available`; // Update property count
         }
+
+        // Update filterProperties function to store current filters and call filterPropertiesByMapBounds
+        function filterProperties() {
+            currentFilters.type = document.getElementById('filter-type').value;
+            currentFilters.bedrooms = parseInt(document.getElementById('filter-bedrooms').value) || 0;
+            currentFilters.bathrooms = parseInt(document.getElementById('filter-bathrooms').value) || 0;
+            currentFilters.price = parseInt(document.getElementById('price-filter').value) || 0;
+
+            // Call filterPropertiesByMapBounds to apply filters based on current map bounds
+            filterPropertiesByMapBounds();
+        }
+
+        // Add event listener to map to update properties when map moves
+        map.on('moveend', () => {
+            filterPropertiesByMapBounds();
+        });
 
         function updatePropertyList(propertiesToShow) {
             const propertyList = document.getElementById('property-list');
@@ -751,17 +755,7 @@
                 markers.push(marker);
             });
 
-            // Adjust the map to fit all markers, only if shouldAdjustMap is true
-            if (shouldAdjustMap && markers.length > 0) {
-                const bounds = new mapboxgl.LngLatBounds();
-                markers.forEach(marker => {
-                    bounds.extend(marker.getLngLat());
-                });
-                map.fitBounds(bounds, { padding: 50 });
-            }
-
-            // Reset shouldAdjustMap to true for future interactions
-            shouldAdjustMap = true;
+            // No need to adjust map bounds here, since we are filtering based on current map bounds
         }
 
         function resetFilters() {
