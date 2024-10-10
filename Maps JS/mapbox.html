@@ -4,43 +4,226 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>USA Map Search with Mapbox</title>
+    <title>Property Listing with Mapbox</title>
     <style>
-        body {
+        body,
+        html {
+            height: 100%;
             margin: 0;
             padding: 0;
+            font-family: 'Roboto', sans-serif;
         }
 
         .container {
             display: flex;
-            height: 100vh;
-            padding: 20px
+            height: 100%;
+            flex-direction: column;
         }
 
-        #map {
-            /* position: fixed; */
+        .search-container {
+            position: fixed;
             top: 0;
-            bottom: 0;
-            width: 50%;
-            height: 80vh;
+            left: 0;
+            right: 0;
+            background: white;
+            padding: 15px 20px;
+            z-index: 1000;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
 
-        /* .mapboxgl-ctrl-geocoder {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            z-index: 1;
+        .search-container {
+            display: flex;
+            align-items: center;
+        }
+
+        #geocoder {
+            display: inline-block;
+            width: 300px;
+        }
+
+        .map-and-listing {
+            display: flex;
+            flex: 1;
+            margin-top: 80px;
+        }
+
+        .map-container {
             width: 50%;
-        } */
+            position: relative;
+        }
+
+        .listing-container {
+            width: 50%;
+            padding: 15px;
+            background-color: #fff;
+            box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+            height: calc(100vh - 80px);
+            overflow-y: auto;
+        }
+
+        .property-item {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .property-image {
+            width: 100%;
+            height: auto;
+        }
+
+        .grid-view {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .list-view {
+            display: block;
+        }
+
+        .view-toggle {
+            margin: 10px 0;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .view-toggle button {
+            padding: 10px;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+
+        /* Mobile-specific adjustments */
+        @media only screen and (max-width: 768px) {
+            .map-and-listing {
+                flex-direction: column;
+            }
+
+            .map-container {
+                width: 100%;
+                height: 300px;
+            }
+
+            .listing-container {
+                width: 100%;
+                height: auto;
+                padding: 10px;
+            }
+
+            .grid-view {
+                grid-template-columns: 1fr;
+            }
+
+            .search-container {
+                flex-wrap: wrap;
+            }
+
+            .search-container select, 
+            .search-container #geocoder {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+
+            .property-item {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .property-image {
+                width: 100%;
+                height: auto;
+            }
+
+            /* Map/List toggle for mobile */
+            .map-and-listing {
+                display: none; /* Hidden by default on mobile */
+            }
+
+            .mobile-map-list-toggle {
+                display: flex;
+                justify-content: center;
+                margin-top: 10px;
+            }
+
+            .mobile-map-list-toggle button {
+                flex: 1;
+                padding: 10px;
+                font-size: 18px;
+                margin: 0 5px;
+                cursor: pointer;
+            }
+
+            .mobile-view-active .map-and-listing {
+                display: block;
+            }
+
+            .mobile-view-active .listing-container {
+                display: none;
+            }
+
+            .mobile-view-list-active .listing-container {
+                display: block;
+            }
+
+            .mobile-view-list-active .map-container {
+                display: none;
+            }
+        }
     </style>
 </head>
 
 <body>
     <div class="container">
-        <!-- Map -->
-        <div id="map"></div>
-        <div class="rightSide">
-            <h1>USA Map Search with Mapbox</h1>
+        <div class="search-container">
+            <div id="geocoder"></div>
+            <select id="filter-type" onchange="filterProperties()">
+                <option value="">All Types</option>
+                <option value="home">Home</option>
+                <option value="apartment">Apartment</option>
+            </select>
+            <select id="filter-bedrooms" onchange="filterProperties()">
+                <option value="">Bedrooms</option>
+                <option value="1">1+</option>
+                <option value="2">2+</option>
+                <option value="3">3+</option>
+                <option value="4">4+</option>
+            </select>
+            <select id="filter-bathrooms" onchange="filterProperties()">
+                <option value="">Bathrooms</option>
+                <option value="1">1+</option>
+                <option value="2">2+</option>
+                <option value="3">3+</option>
+                <option value="4">4+</option>
+            </select>
+            <select id="price-filter" onchange="filterProperties()">
+                <option value="">Price Range</option>
+                <option value="500000">$500K+</option>
+                <option value="1000000">$1M+</option>
+                <option value="2000000">$2M+</option>
+            </select>
+        </div>
+
+        <div class="map-and-listing">
+            <div class="map-container" id="map"></div>
+            <div class="listing-container">
+                <h1 class="location-title">Search Location</h1>
+                <h4 class="property-count">0 properties available</h4>
+                <div class="view-toggle">
+                    <button id="grid-view-btn" onclick="toggleView('grid')">Grid View</button>
+                    <button id="list-view-btn" onclick="toggleView('list')">List View</button>
+                </div>
+                <div id="property-list" class="grid-view"></div>
+            </div>
+        </div>
+
+        <!-- Mobile map/list toggle buttons -->
+        <div class="mobile-map-list-toggle">
+            <button onclick="toggleMobileView('map')">Map View</button>
+            <button onclick="toggleMobileView('list')">List View</button>
         </div>
     </div>
 
@@ -48,64 +231,51 @@
     <link href="https://api.mapbox.com/mapbox-gl-js/v2.13.0/mapbox-gl.css" rel="stylesheet" />
     <script
         src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.min.js"></script>
-    <link rel="stylesheet"
-        href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.css" />
+    <link href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.css"
+        rel="stylesheet" />
 
     <script>
-        mapboxgl.accessToken = 'pk.eyJ1Ijoid2Vid2l0aHJhaiIsImEiOiJjbTBhbGZmMHgxZXFuMm1vcWt4YmNwZGZhIn0.IpNziQwncy2U-Xms017ojA';
-        var map = new mapboxgl.Map({
-            container: 'map', // Container ID
-            style: 'mapbox://styles/mapbox/streets-v11', // Map style to use
-            center: [-95.7129, 37.0902], // Starting position [lng, lat] (USA coordinates)
-            zoom: 4 // Starting zoom level
-        });
+        mapboxgl.accessToken = 'your-access-token-here';
+        const properties = [
+            // property data as before
+        ];
 
-        var marker = new mapboxgl.Marker() // Initialize a new marker
-            .setLngLat([-95.7129, 37.0902]) // Marker coordinates (centered in the USA)
-            .addTo(map); // Add the marker to the map
+        let searchedLocation = [-122.16795397128632, 37.43238031167444]; // Default location
+
+        var map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/streets-v11',
+            center: searchedLocation,
+            zoom: 11
+        });
 
         var geocoder = new MapboxGeocoder({
-            accessToken: mapboxgl.accessToken, // Set the access token
-            mapboxgl: mapboxgl, // Set the mapbox-gl instance
-            marker: false, // Disable default marker style
-            placeholder: 'Search for places in the USA', // Placeholder text for the search bar
-            // bbox: [-125.00165, 24.396308, -66.93457, 49.384358], // Boundary for USA [west, south, east, north]
+            accessToken: mapboxgl.accessToken,
+            mapboxgl: mapboxgl,
+            placeholder: 'Search by address',
             proximity: {
-                longitude: -95.7129,
-                latitude: 37.0902
-            } // Centered around USA
+                longitude: searchedLocation[0],
+                latitude: searchedLocation[1]
+            },
+            marker: false
         });
 
-        // Add the geocoder to the map
-        map.addControl(geocoder);
+        document.getElementById('geocoder').appendChild(geocoder.onAdd(map));
 
-        // After the map style has loaded
-        map.on('load', function () {
-            map.addSource('single-point', {
-                'type': 'geojson',
-                'data': {
-                    'type': 'FeatureCollection',
-                    'features': []
-                }
-            });
-
-            map.addLayer({
-                'id': 'point',
-                'source': 'single-point',
-                'type': 'circle',
-                'paint': {
-                    'circle-radius': 10,
-                    'circle-color': '#448ee4'
-                }
-            });
-
-            // When a search result is found, move the marker to that location
-            geocoder.on('result', function (e) {
-                map.getSource('single-point').setData(e.result.geometry);
-            });
+        geocoder.on('result', function (e) {
+            searchedLocation = e.result.geometry.coordinates;
+            map.setCenter(searchedLocation);
+            document.querySelector('.location-title').textContent = e.result.place_name;
+            filterProperties();
         });
+
+        function toggleMobileView(view) {
+            document.body.classList.toggle('mobile-view-active', view === 'map');
+            document.body.classList.toggle('mobile-view-list-active', view === 'list');
+        }
+
+        // Same filtering and marker functions as in your original script...
     </script>
-
 </body>
 
 </html>

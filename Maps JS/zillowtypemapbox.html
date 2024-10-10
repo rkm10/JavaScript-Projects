@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Meta Tags and Title -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Property Listing with Mapbox</title>
+
+    <!-- Mapbox CSS -->
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.13.0/mapbox-gl.css" rel="stylesheet" />
+
+    <!-- Mapbox Geocoder CSS -->
+    <link href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.css"
+        rel="stylesheet" />
+
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <!-- Custom CSS -->
+    <style>
+        /* Base Styles */
+        body,
+        html {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        /* Container */
+        .container {
+            display: flex;
+            height: 100%;
+            flex-direction: column;
+        }
+
+        /* Search Container */
+        .search-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            padding: 15px 20px;
+            z-index: 1000;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        #geocoder {
+            flex: 1 1 300px;
+            min-width: 200px;
+            margin-bottom: 10px;
+        }
+
+        .search-container select {
+            margin-right: 10px;
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            flex: 1 1 100px;
+            min-width: 100px;
+        }
+
+        .mapboxgl-ctrl-geocoder {
+            width: 100%;
+            position: relative;
+        }
+
+        .mapboxgl-ctrl-geocoder--icon {
+            width: 24px;
+            height: 24px;
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .mapboxgl-ctrl-geocoder--input {
+            padding-left: 40px;
+        }
+
+        /* Map and Listing */
+        .map-and-listing {
+            display: flex;
+            flex: 1;
+            margin-top: 80px;
+        }
+
+        .map-container {
+            width: 50%;
+            position: relative;
+        }
+
+        .listing-container {
+            width: 50%;
+            padding: 15px;
+            background-color: #fff;
+            box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+            height: calc(100vh - 80px);
+            overflow-y: auto;
+        }
+
+        /* Property Item */
+        .property-item {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .property-image {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+
+        .list-view .property-item {
+            display: flex;
+            align-items: center;
+        }
+
+        .list-view .property-image {
+            width: 120px;
+            height: 80px;
+            margin-right: 15px;
+            object-fit: cover;
+        }
+
+        .list-view .details {
+            flex: 1;
+            padding-left: 15px;
+        }
+
+        .price {
+            font-weight: bold;
+            color: #007bff;
+            margin-top: 5px;
+        }
+
+        .details p {
+            margin: 5px 0;
+        }
+
+        /* Grid and List Views */
+        .grid-view {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .list-view {
+            display: block;
+        }
+
+        /* Mapbox Popup */
+        .mapboxgl-popup {
+            max-width: 300px;
+        }
+
+        .mapboxgl-popup-content {
+            border-radius: 10px;
+        }
+
+        /* View Toggle Buttons */
+        .view-toggle {
+            margin: 10px 0;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .view-toggle button {
+            padding: 10px;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+
+        /* Hide Mobile Toggle Buttons on Desktop */
+        .mobile-toggle-buttons {
+            display: none;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 767px) {
+            /* Adjust Container */
+            .container {
+                height: 100vh;
+                display: flex;
+                flex-direction: column;
+            }
+
+            /* Hide View Toggle */
+            .view-toggle {
+                display: none;
+            }
+
+            /* Map and Listing Stack */
+            .map-and-listing {
+                flex-direction: column;
+                flex: 1;
+                margin-top: 80px;
+                overflow: hidden;
+            }
+
+            .map-container,
+            .listing-container {
+                width: 100%;
+                flex: 1;
+                display: none;
+                overflow-y: auto;
+            }
+
+            /* Show Listing by Default */
+            .listing-container {
+                display: block;
+            }
+
+            /* Adjust Heights */
+            .map-container,
+            .listing-container {
+                height: calc(100vh - 80px - 60px);
+            }
+
+            /* Mobile Toggle Buttons */
+            .mobile-toggle-buttons {
+                display: flex;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                background: #fff;
+                border-top: 1px solid #ccc;
+                z-index: 1000;
+            }
+
+            .mobile-toggle-buttons button {
+                flex: 1;
+                padding: 10px;
+                border: none;
+                background: none;
+                cursor: pointer;
+                font-size: 14px;
+            }
+
+            .mobile-toggle-buttons button.active {
+                background-color: #f0f0f0;
+            }
+
+            .mobile-toggle-buttons i {
+                display: block;
+                font-size: 20px;
+                margin-bottom: 3px;
+            }
+
+            .map-and-listing {
+                margin-bottom: 60px;
+            }
+
+            /* Search Container */
+            .search-container {
+                flex-wrap: wrap;
+                padding: 10px;
+            }
+
+            #geocoder {
+                flex: 1 1 100%;
+                margin-bottom: 10px;
+            }
+
+            .search-container select {
+                flex: 1 1 calc(50% - 10px);
+                margin-bottom: 10px;
+            }
+
+            /* Property Item */
+            .property-item {
+                padding: 10px;
+                margin-bottom: 15px;
+            }
+
+            .list-view .property-image {
+                width: 80px;
+                height: 60px;
+            }
+
+            .details p {
+                margin: 3px 0;
+                font-size: 14px;
+            }
+
+            .price {
+                font-size: 16px;
+            }
+
+            /* Grid View Adjustments */
+            .grid-view {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+
+            .grid-view .property-item {
+                padding: 10px;
+            }
+
+            .grid-view .property-image {
+                height: 100px;
+                object-fit: cover;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Search Container -->
+        <div class="search-container">
+            <div id="geocoder" style="display: inline-block;"></div>
+            <select id="filter-type" onchange="filterProperties()">
+                <option value="">All Types</option>
+                <option value="home">Home</option>
+                <option value="apartment">Apartment</option>
+            </select>
+            <select id="filter-bedrooms" onchange="filterProperties()">
+                <option value="">Bedrooms</option>
+                <option value="1">1+</option>
+                <option value="2">2+</option>
+                <option value="3">3+</option>
+                <option value="4">4+</option>
+            </select>
+            <select id="filter-bathrooms" onchange="filterProperties()">
+                <option value="">Bathrooms</option>
+                <option value="1">1+</option>
+                <option value="2">2+</option>
+                <option value="3">3+</option>
+                <option value="4">4+</option>
+            </select>
+            <select id="price-filter" onchange="filterProperties()">
+                <option value="">Price Range</option>
+                <option value="500000">$500K+</option>
+                <option value="1000000">$1M+</option>
+                <option value="2000000">$2M+</option>
+            </select>
+        </div>
+
+        <!-- Map and Listing -->
+        <div class="map-and-listing">
+            <!-- Map Container -->
+            <div class="map-container" id="map"></div>
+
+            <!-- Listing Container -->
+            <div class="listing-container">
+                <h1 class="location-title">Search Location</h1>
+                <h4 class="property-count">0 properties available</h4>
+                <div class="view-toggle">
+                    <button id="grid-view-btn" onclick="toggleView('grid')">Grid View</button>
+                    <button id="list-view-btn" onclick="toggleView('list')">List View</button>
+                </div>
+                <div id="property-list" class="grid-view"></div>
+            </div>
+        </div>
+
+        <!-- Mobile Toggle Buttons (only visible on mobile devices) -->
+        <div class="mobile-toggle-buttons">
+            <button id="mobile-listing-btn" class="active">
+                <i class="fas fa-list"></i>
+                <span>Listings</span>
+            </button>
+            <button id="mobile-map-btn">
+                <i class="fas fa-map"></i>
+                <span>Map</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Mapbox JS -->
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.13.0/mapbox-gl.js"></script>
+
+    <!-- Mapbox Geocoder JS -->
+    <script
+        src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.min.js"></script>
+
+    <!-- Custom JS -->
+    <script>
+        mapboxgl.accessToken = 'pk.eyJ1Ijoid2Vid2l0aHJhaiIsImEiOiJjbTBhbGZmMHgxZXFuMm1vcWt4YmNwZGZhIn0.IpNziQwncy2U-Xms017ojA';
+
+        const properties = [
+            {
+                address: "215 Emily St, MountainView, CA",
+                description: "Single family house with modern design",
+                price: 3889000,
+                type: "home",
+                bed: 5,
+                bath: 4.5,
+                size: 300,
+                position: [-122.28528451834352, 37.50024109655184],
+                image: "https://via.placeholder.com/400x300.png?text=Property+1"
+            },
+            {
+                address: "123 Main St, San Francisco, CA",
+                description: "Luxurious apartment in the heart of the city",
+                price: 1500000,
+                type: "apartment",
+                bed: 2,
+                bath: 2,
+                size: 1200,
+                position: [-122.4194, 37.7749],
+                image: "https://via.placeholder.com/400x300.png?text=Property+2"
+            }
+            // Add more property objects here...
+        ];
+
+        let searchedLocation = [-122.16795397128632, 37.43238031167444]; // Default location
+
+        var map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/streets-v11',
+            center: searchedLocation,
+            zoom: 11
+        });
+
+        // Initialize Geocoder (Search Bar) without creating new markers
+        var geocoder = new MapboxGeocoder({
+            accessToken: mapboxgl.accessToken,
+            mapboxgl: mapboxgl,
+            placeholder: 'Search by address',
+            proximity: {
+                longitude: searchedLocation[0],
+                latitude: searchedLocation[1]
+            },
+            marker: false // Disable default marker creation
+        });
+        document.getElementById('geocoder').appendChild(geocoder.onAdd(map));
+
+        // Update searched location when a new search is performed
+        geocoder.on('result', function (e) {
+            searchedLocation = e.result.geometry.coordinates;
+            map.setCenter(searchedLocation);
+            document.querySelector('.location-title').textContent = e.result.place_name; // Update location title
+            filterProperties(); // Apply filters based on the new location
+        });
+
+        function getDistance(coord1, coord2) {
+            const R = 6371; // Earth's radius in kilometers
+            const lat1 = coord1[1] * (Math.PI / 180);
+            const lat2 = coord2[1] * (Math.PI / 180);
+            const deltaLat = (coord2[1] - coord1[1]) * (Math.PI / 180);
+            const deltaLon = (coord2[0] - coord1[0]) * (Math.PI / 180);
+            const a = Math.sin(deltaLat / 2) * Math.sin(deltaLat / 2) +
+                Math.cos(lat1) * Math.cos(lat2) *
+                Math.sin(deltaLon / 2) * Math.sin(deltaLon / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            return R * c; // Distance in kilometers
+        }
+
+        let markers = []; // Array to hold marker instances
+
+        function toggleView(view) {
+            const propertyList = document.getElementById('property-list');
+            propertyList.className = view === 'grid' ? 'grid-view' : 'list-view';
+
+            // Optionally, you can also change the button styles to indicate the selected view
+            document.getElementById('grid-view-btn').classList.toggle('active', view === 'grid');
+            document.getElementById('list-view-btn').classList.toggle('active', view === 'list');
+        }
+
+        function filterProperties() {
+            const type = document.getElementById('filter-type').value;
+            const bedrooms = parseInt(document.getElementById('filter-bedrooms').value) || 0;
+            const bathrooms = parseInt(document.getElementById('filter-bathrooms').value) || 0;
+            const price = parseInt(document.getElementById('price-filter').value) || 0;
+
+            const filteredProperties = properties.filter((property) => {
+                const distance = getDistance(searchedLocation, property.position);
+                const isWithinDistance = distance <= 50; // Change to your desired range in km
+
+                return (
+                    isWithinDistance &&
+                    (!type || property.type === type) &&
+                    (!bedrooms || property.bed >= bedrooms) &&
+                    (!bathrooms || property.bath >= bathrooms) &&
+                    (!price || property.price >= price)
+                );
+            });
+
+            updatePropertyList(filteredProperties); // Update the list with the filtered properties
+            document.querySelector('.property-count').textContent = `${filteredProperties.length} properties available`; // Update property count
+        }
+
+        function updatePropertyList(propertiesToShow) {
+            const propertyList = document.getElementById('property-list');
+            propertyList.innerHTML = '';
+
+            // Clear existing markers from the map
+            markers.forEach((marker) => marker.remove());
+            markers = [];
+
+            propertiesToShow.forEach((property) => {
+                // Create property item in the list
+                const propertyItem = document.createElement('div');
+                propertyItem.classList.add('property-item');
+                propertyItem.innerHTML = `
+                    <img src="${property.image}" alt="Property" class="property-image" />
+                    <div class="details">
+                        <p>${property.address}</p>
+                        <p>${property.bed} Beds | ${property.bath} Baths | ${property.size} Sq.m</p>
+                        <p class="price">$${property.price.toLocaleString()}</p>
+                    </div>
+                `;
+                propertyList.appendChild(propertyItem);
+
+                // Add markers to the map for each property
+                const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(`
+                    <h3>${property.address}</h3>
+                    <p>${property.bed} Beds, ${property.bath} Baths, ${property.size} Sq.m</p>
+                    <p class="price">$${property.price.toLocaleString()}</p>
+                `);
+
+                const marker = new mapboxgl.Marker()
+                    .setLngLat(property.position)
+                    .setPopup(popup)
+                    .addTo(map);
+
+                markers.push(marker);
+            });
+        }
+
+        // Initial listing of properties
+        filterProperties();
+
+        // Mobile toggle buttons functionality
+        document.getElementById('mobile-listing-btn').addEventListener('click', function () {
+            document.querySelector('.listing-container').style.display = 'block';
+            document.querySelector('.map-container').style.display = 'none';
+            this.classList.add('active');
+            document.getElementById('mobile-map-btn').classList.remove('active');
+        });
+
+        document.getElementById('mobile-map-btn').addEventListener('click', function () {
+            document.querySelector('.listing-container').style.display = 'none';
+            document.querySelector('.map-container').style.display = 'block';
+            this.classList.add('active');
+            document.getElementById('mobile-listing-btn').classList.remove('active');
+            map.resize(); // Ensure the map resizes correctly
+        });
+    </script>
+</body>
+
+</html>

@@ -6,8 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Property Listing with Map</title>
     <style>
-        html,
-        body {
+        html, body {
             height: 100%;
             margin: 0;
             padding: 0;
@@ -73,6 +72,7 @@
             background-color: #fff;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease-in-out;
+            position: relative;
         }
 
         .property-item:hover {
@@ -108,15 +108,26 @@
         }
 
         .map-property {
-            position: absolute;
+            position: relative;
             border: 1px solid #ddd;
             padding: 15px;
             background: white;
             border-radius: 10px;
-            max-width: 200px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .card {
             display: none;
+            position: absolute;
+            background: white;
+            border: 1px solid #ddd;
+            padding: 10px;
             z-index: 1;
+            max-width: 80%;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .card.open {
+            display: block;
         }
 
         .close-button {
@@ -162,18 +173,7 @@
             </div>
         </div>
         <div class="map-and-listing">
-            <div class="map-container" id="map">
-                <div id="property-card" class="map-property">
-                    <button class="close-button" onclick="closePropertyCard()">×</button>
-                    <img id="property-card-image" src="" alt="" class="property-image">
-                    <div class="price" id="property-card-price"></div>
-                    <div class="details">
-                        <h4 id="property-card-address"></h4>
-                        <p id="property-card-description"></p>
-                        <div id="property-card-info"></div>
-                    </div>
-                </div>
-            </div>
+            <div class="map-container" id="map"></div>
             <div class="listing-container">
                 <h1 class="location-title">Search Location</h1>
                 <h4 class="property-count">6 properties available</h4>
@@ -239,7 +239,7 @@
 
             const center = { lat: 37.43238031167444, lng: -122.16795397128632 };
             map = new Map(document.getElementById("map"), {
-                zoom: 11,
+                zoom: 6,
                 center,
                 mapTypeControl: false,
                 mapId: "bfc8481f891778a4", // Replace with your Map ID
@@ -252,7 +252,7 @@
                 const place = autocomplete.getPlace();
                 if (place.geometry) {
                     map.setCenter(place.geometry.location);
-                    map.setZoom(14);
+                    map.setZoom(8);
                     updateLocationTitle(place.name);
                 }
             });
@@ -269,8 +269,21 @@
                     position: property.position,
                 });
 
+                let card = createPropertyCard(property);
+                marker.addListener("mouseover", (event) => {
+                    card.style.display = "block";
+                    card.style.left = `${event.clientX}px`;
+                    card.style.top = `${event.clientY}px`;
+                });
+
+                marker.addListener("mouseout", () => {
+                    card.style.display = "none";
+                });
+
                 marker.addListener("click", (event) => {
-                    showPropertyCard(property, event);
+                    card.style.display = "block";
+                    card.style.left = `${event.clientX}px`;
+                    card.style.top = `${event.clientY}px`;
                 });
 
                 markers.push({ marker, property });
@@ -357,23 +370,6 @@
                 const isVisible = filteredProperties.includes(property);
                 marker.setVisible(isVisible);
             });
-        }
-
-        function showPropertyCard(property, event) {
-            const propertyCard = document.getElementById("property-card");
-            propertyCard.style.display = "block";
-            propertyCard.style.left = `${event.pixel.x}px`;
-            propertyCard.style.top = `${event.pixel.y}px`;
-            document.getElementById("property-card-image").src = property.image;
-            document.getElementById("property-card-price").innerText = property.price;
-            document.getElementById("property-card-address").innerText = property.address;
-            document.getElementById("property-card-description").innerText = property.description;
-            document.getElementById("property-card-info").innerHTML = `Bedrooms: ${property.bed} | Bathrooms: ${property.bath} | Size: ${property.size} ft<sup>2</sup>`;
-        }
-
-        function closePropertyCard() {
-            const propertyCard = document.getElementById("property-card");
-            propertyCard.style.display = "none";
         }
 
         window.initMap = initMap;
