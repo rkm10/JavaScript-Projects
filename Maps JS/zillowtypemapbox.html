@@ -42,33 +42,44 @@
             left: 0;
             right: 0;
             background: white;
-            padding: 15px 20px;
+            padding: 10px 15px;
             z-index: 1000;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             display: flex;
             align-items: center;
             flex-wrap: wrap;
         }
 
-        #geocoder {
-            flex: 1 1 300px;
+        .search-left {
+            flex: 1;
             min-width: 200px;
+        }
+
+        .search-right {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-left: 10px;
+        }
+
+        .search-right > * {
+            margin-right: 10px;
             margin-bottom: 10px;
         }
 
-        .search-container select {
-            margin-right: 10px;
-            margin-bottom: 10px;
-            padding: 10px;
+        #geocoder {
+            width: 100%;
+        }
+
+        .search-container select,
+        .search-container input[type="number"] {
+            padding: 8px;
             border: 1px solid #ccc;
             border-radius: 4px;
-            flex: 1 1 100px;
-            min-width: 100px;
         }
 
         .search-container button {
-            padding: 10px 15px;
-            margin-bottom: 10px;
+            padding: 8px 12px;
             background-color: #007bff;
             border: none;
             color: white;
@@ -94,11 +105,40 @@
             padding-left: 40px;
         }
 
+        /* More Filters */
+        .more-filters {
+            position: relative;
+        }
+
+        .more-filters-content {
+            display: none;
+            position: absolute;
+            top: 40px;
+            right: 0;
+            background: white;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            z-index: 1000;
+            min-width: 200px;
+        }
+
+        .more-filters-content.show {
+            display: block;
+        }
+
+        .more-filters-content label,
+        .more-filters-content input[type="number"] {
+            display: block;
+            margin-bottom: 10px;
+        }
+
         /* Map and Listing */
         .map-and-listing {
             display: flex;
             flex: 1;
             margin-top: 80px;
+            overflow: hidden;
         }
 
         .map-container {
@@ -123,6 +163,7 @@
             border-radius: 8px;
             background-color: #fff;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
         }
 
         .property-image {
@@ -186,7 +227,7 @@
         }
 
         .view-toggle button {
-            padding: 10px;
+            padding: 8px;
             margin-left: 10px;
             cursor: pointer;
         }
@@ -194,6 +235,11 @@
         /* Hide Mobile Toggle Buttons on Desktop */
         .mobile-toggle-buttons {
             display: none;
+        }
+
+        /* Highlight on hover */
+        .property-item:hover {
+            background-color: #f0f0f0;
         }
 
         /* Responsive Styles */
@@ -235,7 +281,7 @@
             /* Adjust Heights */
             .map-container,
             .listing-container {
-                height: calc(100vh - 80px - 60px);
+                height: calc(100vh - 140px);
             }
 
             /* Mobile Toggle Buttons */
@@ -279,13 +325,18 @@
                 padding: 10px;
             }
 
-            #geocoder {
+            .search-left,
+            .search-right {
                 flex: 1 1 100%;
-                margin-bottom: 10px;
             }
 
-            .search-container select {
+            .search-right {
+                margin-left: 0;
+            }
+
+            .search-right > * {
                 flex: 1 1 calc(50% - 10px);
+                margin-right: 10px;
                 margin-bottom: 10px;
             }
 
@@ -322,6 +373,12 @@
                 height: 100px;
                 object-fit: cover;
             }
+
+            /* More Filters Position */
+            .more-filters-content {
+                position: static;
+                margin-top: 10px;
+            }
         }
     </style>
 </head>
@@ -330,35 +387,61 @@
     <div class="container">
         <!-- Search Container -->
         <div class="search-container">
-            <div id="geocoder" style="display: inline-block;"></div>
-            <select id="filter-type" onchange="filterProperties()">
-                <option value="">All Types</option>
-                <option value="home">Home</option>
-                <option value="apartment">Apartment</option>
-                <option value="condo">Condo</option>
-                <option value="townhouse">Townhouse</option>
-            </select>
-            <select id="filter-bedrooms" onchange="filterProperties()">
-                <option value="">Bedrooms</option>
-                <option value="1">1+</option>
-                <option value="2">2+</option>
-                <option value="3">3+</option>
-                <option value="4">4+</option>
-            </select>
-            <select id="filter-bathrooms" onchange="filterProperties()">
-                <option value="">Bathrooms</option>
-                <option value="1">1+</option>
-                <option value="2">2+</option>
-                <option value="3">3+</option>
-                <option value="4">4+</option>
-            </select>
-            <select id="price-filter" onchange="filterProperties()">
-                <option value="">Price Range</option>
-                <option value="500000">$500K+</option>
-                <option value="1000000">$1M+</option>
-                <option value="2000000">$2M+</option>
-            </select>
-            <button onclick="resetFilters()">Reset Filters</button>
+            <div class="search-left">
+                <div id="geocoder" style="display: inline-block;"></div>
+            </div>
+            <div class="search-right">
+                <!-- Types Dropdown -->
+                <select id="filter-type" onchange="filterProperties()">
+                    <option value="">Types</option>
+                    <option value="home">Home</option>
+                    <option value="apartment">Apartment</option>
+                    <option value="condo">Condo</option>
+                    <option value="townhouse">Townhouse</option>
+                </select>
+                <!-- Beds Dropdown -->
+                <select id="filter-bedrooms" onchange="filterProperties()">
+                    <option value="">Beds</option>
+                    <option value="1">1+</option>
+                    <option value="2">2+</option>
+                    <option value="3">3+</option>
+                    <option value="4">4+</option>
+                </select>
+                <!-- Baths Dropdown -->
+                <select id="filter-bathrooms" onchange="filterProperties()">
+                    <option value="">Baths</option>
+                    <option value="1">1+</option>
+                    <option value="2">2+</option>
+                    <option value="3">3+</option>
+                    <option value="4">4+</option>
+                </select>
+                <!-- Price Range Dropdown -->
+                <select id="price-range-filter" onchange="filterProperties()">
+                    <option value="">Price Range</option>
+                    <option value="500000">$500,000+</option>
+                    <option value="1000000">$1,000,000+</option>
+                    <option value="2000000">$2,000,000+</option>
+                    <option value="5000000-">$5,000,000+</option>
+                </select>
+                <!-- More filters -->
+                <div class="more-filters">
+                    <button id="more-filters-btn" type="button">More</button>
+                    <div class="more-filters-content">
+                        <!-- Garage checkbox -->
+                        <label><input type="checkbox" id="garage-filter" onchange="filterProperties()" /> Garage</label>
+                        <!-- Amenities checkboxes -->
+                        <div class="amenities-filters">
+                            <label><input type="checkbox" name="amenities" value="pool" onchange="filterProperties()" /> Pool</label>
+                            <label><input type="checkbox" name="amenities" value="gym" onchange="filterProperties()" /> Gym</label>
+                            <label><input type="checkbox" name="amenities" value="garden" onchange="filterProperties()" /> Garden</label>
+                        </div>
+                        <!-- Min and Max Square Feet Inputs -->
+                        <input type="number" id="min-size-filter" placeholder="Min Sq.ft" onchange="filterProperties()" />
+                        <input type="number" id="max-size-filter" placeholder="Max Sq.ft" onchange="filterProperties()" />
+                    </div>
+                </div>
+                <button onclick="resetFilters()">Reset Filters</button>
+            </div>
         </div>
 
         <!-- Map and Listing -->
@@ -399,9 +482,11 @@
         src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.min.js"></script>
 
     <!-- Custom JS -->
+     
     <script>
         mapboxgl.accessToken = 'pk.eyJ1Ijoid2Vid2l0aHJhaiIsImEiOiJjbTBhbGZmMHgxZXFuMm1vcWt4YmNwZGZhIn0.IpNziQwncy2U-Xms017ojA';
 
+        // replace the properties list here
         const properties = [
             {
                 address: "215 Emily St, Mountain View, CA",
@@ -410,9 +495,11 @@
                 type: "home",
                 bed: 5,
                 bath: 4.5,
-                size: 300,
+                size: 3200, // in Sq.ft
                 position: [-122.28528451834352, 37.50024109655184],
-                image: "https://via.placeholder.com/400x300.png?text=Property+1"
+                image: "https://via.placeholder.com/400x300.png?text=Property+1",
+                garage: true,
+                amenities: ["pool", "gym"],
             },
             {
                 address: "123 Main St, San Francisco, CA",
@@ -423,216 +510,38 @@
                 bath: 2,
                 size: 1200,
                 position: [-122.4194, 37.7749],
-                image: "https://via.placeholder.com/400x300.png?text=Property+2"
+                image: "https://via.placeholder.com/400x300.png?text=Property+2",
+                garage: false,
+                amenities: ["gym"],
             },
             {
-                address: "456 Maple Ave, Brooklyn, NY",
-                description: "Charming brownstone in Brooklyn",
-                price: 2800000,
-                type: "home",
-                bed: 4,
-                bath: 3,
-                size: 2500,
-                position: [-73.9542, 40.6782],
-                image: "https://via.placeholder.com/400x300.png?text=Property+3"
-            },
-            {
-                address: "789 Ocean Blvd, Miami, FL",
-                description: "Oceanfront condo with stunning views",
-                price: 2200000,
+                address: "456 Oak Ave, Los Angeles, CA",
+                description: "Beautiful condo with city views",
+                price: 2000000,
                 type: "condo",
-                bed: 3,
-                bath: 3,
-                size: 1500,
-                position: [-80.1349, 25.7617],
-                image: "https://via.placeholder.com/400x300.png?text=Property+4"
-            },
-            {
-                address: "321 Pine St, Seattle, WA",
-                description: "Modern loft in a vibrant neighborhood",
-                price: 950000,
-                type: "apartment",
-                bed: 1,
-                bath: 1,
-                size: 800,
-                position: [-122.3352, 47.6062],
-                image: "https://via.placeholder.com/400x300.png?text=Property+5"
-            },
-            {
-                address: "654 Oak Dr, Austin, TX",
-                description: "Stylish home with a large backyard",
-                price: 675000,
-                type: "home",
                 bed: 3,
                 bath: 2,
                 size: 1800,
-                position: [-97.7431, 30.2672],
-                image: "https://via.placeholder.com/400x300.png?text=Property+6"
+                position: [-118.2437, 34.0522],
+                image: "https://via.placeholder.com/400x300.png?text=Property+3",
+                garage: true,
+                amenities: ["pool", "garden"],
             },
-            {
-                address: "987 Willow St, Chicago, IL",
-                description: "Beautiful vintage apartment with high ceilings",
-                price: 1200000,
-                type: "apartment",
-                bed: 2,
-                bath: 2,
-                size: 1300,
-                position: [-87.6298, 41.8781],
-                image: "https://via.placeholder.com/400x300.png?text=Property+7"
-            },
-            {
-                address: "135 Sunset Blvd, Los Angeles, CA",
-                description: "Luxurious villa with a pool and views",
-                price: 4500000,
-                type: "home",
-                bed: 6,
-                bath: 5,
-                size: 4000,
-                position: [-118.4085, 34.0202],
-                image: "https://via.placeholder.com/400x300.png?text=Property+8"
-            },
-            {
-                address: "246 Elm St, Boston, MA",
-                description: "Cozy townhouse in a historic area",
-                price: 850000,
-                type: "townhouse",
-                bed: 3,
-                bath: 2,
-                size: 1600,
-                position: [-71.0589, 42.3601],
-                image: "https://via.placeholder.com/400x300.png?text=Property+9"
-            },
-            {
-                address: "369 River Rd, Denver, CO",
-                description: "Spacious home with mountain views",
-                price: 720000,
-                type: "home",
-                bed: 4,
-                bath: 3,
-                size: 2500,
-                position: [-104.9903, 39.7392],
-                image: "https://via.placeholder.com/400x300.png?text=Property+10"
-            },
-            {
-                address: "852 Park Ln, San Diego, CA",
-                description: "Beachside bungalow with private access",
-                price: 2300000,
-                type: "home",
-                bed: 3,
-                bath: 2,
-                size: 1200,
-                position: [-117.1611, 32.7157],
-                image: "https://via.placeholder.com/400x300.png?text=Property+11"
-            },
-            {
-                address: "147 Hill St, Nashville, TN",
-                description: "Charming cottage in a lively neighborhood",
-                price: 550000,
-                type: "home",
-                bed: 2,
-                bath: 1,
-                size: 1400,
-                position: [-86.7816, 36.1627],
-                image: "https://via.placeholder.com/400x300.png?text=Property+12"
-            },
-            {
-                address: "258 Spring St, Portland, OR",
-                description: "Modern condo in a bustling area",
-                price: 800000,
-                type: "condo",
-                bed: 1,
-                bath: 1,
-                size: 900,
-                position: [-122.6762, 45.5235],
-                image: "https://via.placeholder.com/400x300.png?text=Property+13"
-            },
-            {
-                address: "369 Cedar Ave, Salt Lake City, UT",
-                description: "Newly renovated home close to downtown",
-                price: 650000,
-                type: "home",
-                bed: 4,
-                bath: 2,
-                size: 2000,
-                position: [-111.8910, 40.7608],
-                image: "https://via.placeholder.com/400x300.png?text=Property+14"
-            },
-            {
-                address: "159 Birch St, Raleigh, NC",
-                description: "Modern apartment with great amenities",
-                price: 300000,
-                type: "apartment",
-                bed: 2,
-                bath: 2,
-                size: 1100,
-                position: [-78.6382, 35.7796],
-                image: "https://via.placeholder.com/400x300.png?text=Property+15"
-            },
-            {
-                address: "753 Prairie Rd, Minneapolis, MN",
-                description: "Spacious family home with a big yard",
-                price: 475000,
-                type: "home",
-                bed: 4,
-                bath: 3,
-                size: 2200,
-                position: [-93.2650, 44.9778],
-                image: "https://via.placeholder.com/400x300.png?text=Property+16"
-            },
-            {
-                address: "864 Valley Blvd, Las Vegas, NV",
-                description: "Luxurious condo with strip views",
-                price: 1750000,
-                type: "condo",
-                bed: 3,
-                bath: 3,
-                size: 1600,
-                position: [-115.1739, 36.1699],
-                image: "https://via.placeholder.com/400x300.png?text=Property+17"
-            },
-            {
-                address: "975 Greenway Dr, Phoenix, AZ",
-                description: "Charming home with a spacious patio",
-                price: 400000,
-                type: "home",
-                bed: 3,
-                bath: 2,
-                size: 1700,
-                position: [-112.0740, 33.4484],
-                image: "https://via.placeholder.com/400x300.png?text=Property+18"
-            },
-            {
-                address: "186 Blue Sky Ave, Atlanta, GA",
-                description: "Modern apartment in a prime location",
-                price: 620000,
-                type: "apartment",
-                bed: 2,
-                bath: 2,
-                size: 1400,
-                position: [-84.3879, 33.7485],
-                image: "https://via.placeholder.com/400x300.png?text=Property+19"
-            },
-            {
-                address: "293 Sunset Ct, Honolulu, HI",
-                description: "Ocean view home with tropical landscaping",
-                price: 3500000,
-                type: "home",
-                bed: 4,
-                bath: 3,
-                size: 2800,
-                position: [-157.8583, 21.3069],
-                image: "https://via.placeholder.com/400x300.png?text=Property+20"
-            }
         ];
-
+        
         let searchedLocation = null; // Set to null to indicate no search has been performed
-        let shouldAdjustMap = true; // Flag to control map adjustment
-// Variable to hold current filters
+        let markers = []; // Array to hold marker instances
+        
+        // Variable to hold current filters
         let currentFilters = {
             type: '',
             bedrooms: 0,
             bathrooms: 0,
-            price: 0
+            priceRange: '',
+            garage: false,
+            amenities: [],
+            minSize: 0,
+            maxSize: Infinity,
         };
 
         var map = new mapboxgl.Map({
@@ -658,12 +567,12 @@
         // Update searched location when a new search is performed
         geocoder.on('result', function (e) {
             searchedLocation = e.result.geometry.coordinates;
-            map.flyTo({ center: searchedLocation, zoom: 10 }); // Adjust zoom level as needed
+            map.flyTo({ center: searchedLocation, zoom: 8 }); // Adjust zoom level as needed
             document.querySelector('.location-title').textContent = e.result.place_name; // Update location title
             filterProperties(); // Apply filters based on the new location
+            updateURLParameters(); // Update URL
         });
 
-        let markers = []; // Array to hold marker instances
 
         function toggleView(view) {
             const propertyList = document.getElementById('property-list');
@@ -674,9 +583,116 @@
             document.getElementById('list-view-btn').classList.toggle('active', view === 'list');
         }
 
+        // Function to update the URL parameters
+        function updateURLParameters() {
+            const params = new URLSearchParams();
+
+            // Search location
+            if (searchedLocation) {
+                params.set('search_location', encodeURIComponent(document.querySelector('.location-title').textContent));
+                params.set('lat', searchedLocation[1]); // Latitude
+                params.set('lng', searchedLocation[0]); // Longitude
+            }
+
+            // Filters
+            if (currentFilters.type) params.set('type', currentFilters.type);
+            if (currentFilters.bedrooms) params.set('bedrooms', currentFilters.bedrooms);
+            if (currentFilters.bathrooms) params.set('bathrooms', currentFilters.bathrooms);
+            if (currentFilters.priceRange) params.set('price_range', currentFilters.priceRange);
+            if (currentFilters.garage) params.set('garage', currentFilters.garage);
+            if (currentFilters.amenities.length > 0) params.set('amenities', currentFilters.amenities.join(','));
+            if (currentFilters.minSize && currentFilters.minSize !== 0) params.set('min_size', currentFilters.minSize);
+            if (currentFilters.maxSize && currentFilters.maxSize !== Infinity) params.set('max_size', currentFilters.maxSize);
+
+            // Update the URL without reloading the page
+            const newURL = window.location.pathname + '?' + params.toString();
+            history.replaceState(null, '', newURL);
+        }
+
+        // Function to get URL parameters on page load
+        function getURLParameters() {
+            const params = new URLSearchParams(window.location.search);
+
+            // Search location
+            const lat = parseFloat(params.get('lat'));
+            const lng = parseFloat(params.get('lng'));
+            const searchLocation = decodeURIComponent(params.get('search_location') || '');
+
+            if (!isNaN(lat) && !isNaN(lng)) {
+                searchedLocation = [lng, lat];
+                map.setCenter(searchedLocation);
+                map.setZoom(10);
+                document.querySelector('.location-title').textContent = searchLocation || 'Search Location';
+            }
+
+            // Filters
+            currentFilters.type = params.get('type') || '';
+            currentFilters.bedrooms = parseInt(params.get('bedrooms')) || 0;
+            currentFilters.bathrooms = parseInt(params.get('bathrooms')) || 0;
+            currentFilters.priceRange = params.get('price_range') || '';
+            currentFilters.garage = params.get('garage') === 'true';
+            currentFilters.amenities = params.get('amenities') ? params.get('amenities').split(',') : [];
+            currentFilters.minSize = parseInt(params.get('min_size')) || 0;
+            currentFilters.maxSize = parseInt(params.get('max_size')) || Infinity;
+
+            // Set the filter inputs
+            document.getElementById('filter-type').value = currentFilters.type;
+            document.getElementById('filter-bedrooms').value = currentFilters.bedrooms || '';
+            document.getElementById('filter-bathrooms').value = currentFilters.bathrooms || '';
+            document.getElementById('price-range-filter').value = currentFilters.priceRange || '';
+            document.getElementById('garage-filter').checked = currentFilters.garage;
+            document.getElementById('min-size-filter').value = currentFilters.minSize || '';
+            document.getElementById('max-size-filter').value = (currentFilters.maxSize !== Infinity) ? currentFilters.maxSize : '';
+
+            // Set amenities checkboxes
+            currentFilters.amenities.forEach(amenity => {
+                const checkbox = document.querySelector(`input[name="amenities"][value="${amenity}"]`);
+                if (checkbox) checkbox.checked = true;
+            });
+
+            // Apply filters
+            filterProperties();
+        }
+
+        // Update filterProperties function to store current filters and call filterPropertiesByMapBounds
+        function filterProperties() {
+            currentFilters.type = document.getElementById('filter-type').value;
+            currentFilters.bedrooms = parseInt(document.getElementById('filter-bedrooms').value) || 0;
+            currentFilters.bathrooms = parseInt(document.getElementById('filter-bathrooms').value) || 0;
+            currentFilters.priceRange = document.getElementById('price-range-filter').value;
+            currentFilters.garage = document.getElementById('garage-filter').checked;
+            currentFilters.amenities = Array.from(document.querySelectorAll('input[name="amenities"]:checked')).map(el => el.value);
+            currentFilters.minSize = parseInt(document.getElementById('min-size-filter').value) || 0;
+            currentFilters.maxSize = parseInt(document.getElementById('max-size-filter').value) || Infinity;
+
+            // Call filterPropertiesByMapBounds to apply filters based on current map bounds
+            filterPropertiesByMapBounds();
+
+            // Update the URL with the new filters
+            updateURLParameters();
+        }
+
+        // Debounce function to limit how often a function can fire
+        function debounce(func, wait) {
+            let timeout;
+            return function (...args) {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(this, args), wait);
+            };
+        }
+
         // Function to filter properties based on current filters and map bounds
-        function filterPropertiesByMapBounds() {
+        const filterPropertiesByMapBounds = debounce(function () {
             const bounds = map.getBounds();
+
+            // Parse price range
+            let minPrice = 0;
+            let maxPrice = Infinity;
+            if (currentFilters.priceRange) {
+                const priceParts = currentFilters.priceRange.split('-');
+                minPrice = parseInt(priceParts[0]) || 0;
+                maxPrice = priceParts[1] ? parseInt(priceParts[1]) : Infinity;
+            }
 
             const filteredProperties = properties.filter((property) => {
                 // Check if property is within map bounds
@@ -687,36 +703,28 @@
                     (!currentFilters.type || property.type === currentFilters.type) &&
                     (!currentFilters.bedrooms || property.bed >= currentFilters.bedrooms) &&
                     (!currentFilters.bathrooms || property.bath >= currentFilters.bathrooms) &&
-                    (!currentFilters.price || property.price >= currentFilters.price);
+                    (property.price >= minPrice) &&
+                    (property.price <= maxPrice) &&
+                    (!currentFilters.garage || property.garage === currentFilters.garage) &&
+                    (property.size >= currentFilters.minSize) &&
+                    (property.size <= currentFilters.maxSize) &&
+                    currentFilters.amenities.every(amenity => property.amenities.includes(amenity));
 
                 return isWithinBounds && matchesFilters;
             });
 
             updatePropertyList(filteredProperties);
             document.querySelector('.property-count').textContent = `${filteredProperties.length} properties available`; // Update property count
-        }
+        }, 200); // Adjust the debounce delay as needed
 
-        // Update filterProperties function to store current filters and call filterPropertiesByMapBounds
-        function filterProperties() {
-            currentFilters.type = document.getElementById('filter-type').value;
-            currentFilters.bedrooms = parseInt(document.getElementById('filter-bedrooms').value) || 0;
-            currentFilters.bathrooms = parseInt(document.getElementById('filter-bathrooms').value) || 0;
-            currentFilters.price = parseInt(document.getElementById('price-filter').value) || 0;
-
-            // Call filterPropertiesByMapBounds to apply filters based on current map bounds
-            filterPropertiesByMapBounds();
-        }
-
-        // Add event listener to map to update properties when map moves
-        map.on('moveend', () => {
-            filterPropertiesByMapBounds();
-        });
+        // Added event listener to map to update properties when map moves
+        map.on('moveend', filterPropertiesByMapBounds);
 
         function updatePropertyList(propertiesToShow) {
             const propertyList = document.getElementById('property-list');
             propertyList.innerHTML = '';
 
-            // Clear existing markers from the map
+            // Clears existing markers from the map
             markers.forEach((marker) => marker.remove());
             markers = [];
 
@@ -725,15 +733,15 @@
                 return;
             }
 
-            propertiesToShow.forEach((property, index) => {
-                // Create property item in the list
+            propertiesToShow.forEach((property) => {
+                // Creating property item in the list
                 const propertyItem = document.createElement('div');
                 propertyItem.classList.add('property-item');
                 propertyItem.innerHTML = `
                     <img src="${property.image}" alt="Property at ${property.address}" class="property-image" />
                     <div class="details">
                         <p>${property.address}</p>
-                        <p>${property.bed} Beds | ${property.bath} Baths | ${property.size} Sq.m</p>
+                        <p>${property.bed} Beds | ${property.bath} Baths | ${property.size} Sq.ft</p>
                         <p class="price">$${property.price.toLocaleString()}</p>
                     </div>
                 `;
@@ -742,7 +750,7 @@
                 // Add markers to the map for each property
                 const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(`
                     <h3>${property.address}</h3>
-                    <p>${property.bed} Beds, ${property.bath} Baths, ${property.size} Sq.m</p>
+                    <p>${property.bed} Beds, ${property.bath} Baths, ${property.size} Sq.ft</p>
                     <p class="price">$${property.price.toLocaleString()}</p>
                 `);
 
@@ -755,8 +763,6 @@
 
                 // Add hover event listeners to the property item
                 propertyItem.addEventListener('mouseover', () => {
-                    // Fly to the property's location
-                    map.flyTo({ center: property.position, zoom: 14 });
                     // Open the popup
                     marker.getPopup().addTo(map);
                 });
@@ -774,12 +780,19 @@
             document.getElementById('filter-type').value = '';
             document.getElementById('filter-bedrooms').value = '';
             document.getElementById('filter-bathrooms').value = '';
-            document.getElementById('price-filter').value = '';
+            document.getElementById('price-range-filter').value = '';
+            document.getElementById('garage-filter').checked = false;
+            document.getElementById('min-size-filter').value = '';
+            document.getElementById('max-size-filter').value = '';
+            // Uncheck all amenities
+            document.querySelectorAll('input[name="amenities"]').forEach(el => el.checked = false);
             filterProperties(); // Apply filters after resetting
         }
 
-        // Initial listing of properties
-        filterProperties();
+        // Call getURLParameters() when the page loads
+        window.onload = function () {
+            getURLParameters();
+        };
 
         // Mobile toggle buttons functionality
         document.getElementById('mobile-listing-btn').addEventListener('click', function () {
@@ -795,6 +808,11 @@
             this.classList.add('active');
             document.getElementById('mobile-listing-btn').classList.remove('active');
             map.resize(); // Ensure the map resizes correctly
+        });
+
+        // More Filters toggle functionality
+        document.getElementById('more-filters-btn').addEventListener('click', function () {
+            document.querySelector('.more-filters-content').classList.toggle('show');
         });
     </script>
 </body>
