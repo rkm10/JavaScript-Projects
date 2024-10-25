@@ -307,6 +307,23 @@
 
     }
 
+    .more-filters-fixed-buttons {
+        display: flex;
+
+    }
+
+
+
+    button.apply-filters-btn-mobile {
+        display: none;
+    }
+
+    button#apply-filters-btn {
+        width: 100%;
+        background-color: #000000;
+        display: block;
+    }
+
     @media screen and (min-width: 1577px) {
         .listing-container {
             width: 35%;
@@ -340,6 +357,39 @@
     /* Responsive Styles */
     @media (max-width: 767px) {
 
+        .close-filters {
+            display: flex !important;
+            border-bottom: 1px solid #d1d1d5;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+            padding: 15px;
+        }
+
+        .more-filters-fixed-buttons {
+            display: flex;
+            justify-content: space-evenly;
+            position: fixed;
+            bottom: 10px;
+            width: 100vw;
+        }
+
+        button.apply-filters-btn-desktop {
+            display: none;
+        }
+
+        button.apply-filters-btn-mobile {
+            display: block;
+            width: 40%;
+            background: #000000;
+        }
+
+        button#apply-filters-btn {
+            color: #f5f5f5;
+            background: #000000;
+            width: 40%;
+            display: block;
+        }
 
         /* Adjust Container */
         .container {
@@ -375,7 +425,10 @@
         }
 
         /* Adjust Heights */
-        .map-container,
+        .map-container {
+            height: calc(100vh - 310px);
+        }
+
         .listing-container {
             height: calc(100vh - 140px);
         }
@@ -421,7 +474,7 @@
             position: sticky;
             top: 0;
             padding: 10px;
-            height: max-content;
+            /* height: max-content; */
         }
 
         .search-left,
@@ -548,17 +601,7 @@
     }
 
     .close-filters {
-        display: flex;
-        border-bottom: 1px solid #d1d1d5;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 14px;
-        padding: 15px;
-    }
-
-    button#apply-filters-btn {
-        color: black;
-        background: #fff3ee;
+        display: none;
     }
 
     .more-filters-filter {
@@ -724,12 +767,15 @@
                                 onchange="filterProperties()" />
                             <input type="number" id="max-size-filter" placeholder="Max Sq.ft"
                                 onchange="filterProperties()" />
-
-                            <button type="button" id="apply-filters-btn">Apply</button>
+                            <div class="more-filters-fixed-buttons">
+                                <button class="apply-filters-btn-mobile" onclick="resetFilters()" type="button">Reset
+                                    Filters</button>
+                                <button type="button" id="apply-filters-btn">Apply</button>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <button onclick="resetFilters()" type="button">Reset Filters</button>
+                <button class="apply-filters-btn-desktop" onclick="resetFilters()" type="button">Reset Filters</button>
             </div>
         </div>
 
@@ -1020,7 +1066,7 @@
             });
 
             updatePropertyList(filteredProperties);
-            document.querySelector('.property-count').textContent = `${filteredProperties.length} properties available`; // Update property count
+            document.querySelectorAll('.property-count').textContent = `${filteredProperties.length} properties available`; // Update property count
         }, 200); // Adjust the debounce delay as needed
 
         // Added event listener to map to update properties when map moves
@@ -1139,9 +1185,12 @@
             });
 
             updatePropertyList(properties);
-            document.querySelector('.property-count').textContent = `${properties.length} properties available`;
+            document.querySelectorAll('.property-count').forEach(element => {
+                element.textContent = `${properties.length} properties available`;
+            }); //update property count
         }
 
+        // Popup functionality
         function togglePopup(popupId, iconId) {
             const popup = document.getElementById(popupId);
             const icon = document.getElementById(iconId);
@@ -1149,6 +1198,7 @@
             icon.classList.toggle('rotate-icon');
         }
 
+        // Replace the properties list here
         function selectOption(selectId, value) {
             const selectElement = document.getElementById(selectId);
             const buttonText = document.querySelector(`#${selectId}-btn`).firstChild;
@@ -1161,6 +1211,7 @@
             document.getElementById(`toggle-icon-${selectId.split('-')[1]}`).classList.remove('rotate-icon');
         }
 
+        // Added event listener to filter button 
         document.addEventListener('click', (event) => {
             const wrappers = document.querySelectorAll('.filter-type-wrapper');
             wrappers.forEach(wrapper => {
@@ -1191,6 +1242,11 @@
         // More Filters toggle functionality
         document.getElementById('more-filters-btn').addEventListener('click', function () {
             document.querySelector('.more-filters-content').classList.toggle('show');
+        });
+
+        // More Filters close button functionality
+        document.getElementById('close-filters-btn').addEventListener('click', function () {
+            document.querySelector('.more-filters-content').classList.remove('show');
         });
     </script>
 </body>
