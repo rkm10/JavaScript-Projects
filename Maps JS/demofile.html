@@ -1,0 +1,87 @@
+<!-- Filter Type Button -->
+<div class="filter-type-wrapper">
+    <button id="filter-type-btn" onclick="togglePopup()">Types</button>
+    <div id="filter-type-popup" class="popup hidden">
+        <div onclick="selectType('')">Types</div>
+        <div onclick="selectType('home')">Home</div>
+        <div onclick="selectType('apartment')">Apartment</div>
+        <div onclick="selectType('condo')">Condo</div>
+        <div onclick="selectType('townhouse')">Townhouse</div>
+    </div>
+</div>
+
+<!-- Hidden Select Element -->
+<select id="filter-type" onchange="filterProperties()" style="display: none;">
+    <option value="">Types</option>
+    <option value="home">Home</option>
+    <option value="apartment">Apartment</option>
+    <option value="condo">Condo</option>
+    <option value="townhouse">Townhouse</option>
+</select>
+<style>
+    /* Style for the filter button */
+    #filter-type-btn {
+        padding: 10px 15px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    /* Style for the popup */
+    .popup {
+        position: absolute;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        margin-top: 5px;
+        z-index: 10;
+    }
+
+    /* Hide popup initially */
+    .hidden {
+        display: none;
+    }
+
+    /* Style for each option inside popup */
+    .popup div {
+        padding: 10px 15px;
+        cursor: pointer;
+    }
+
+    .popup div:hover {
+        background-color: #f0f0f0;
+    }
+</style>
+
+<script>
+    // Toggle popup visibility
+    function togglePopup() {
+        document.getElementById('filter-type-popup').classList.toggle('hidden');
+    }
+
+    // Select a type and update the button
+    function selectType(type) {
+        const filterTypeBtn = document.getElementById('filter-type-btn');
+        const filterTypeSelect = document.getElementById('filter-type');
+
+        // Update button text and select value
+        filterTypeBtn.textContent = type ? type.charAt(0).toUpperCase() + type.slice(1) : 'Types';
+        filterTypeSelect.value = type;
+
+        // Trigger onchange event for select
+        filterTypeSelect.dispatchEvent(new Event('change'));
+
+        // Close popup
+        togglePopup();
+    }
+
+    // Close popup when clicking outside
+    document.addEventListener('click', (event) => {
+        const isClickInside = document.querySelector('.filter-type-wrapper').contains(event.target);
+        if (!isClickInside) {
+            document.getElementById('filter-type-popup').classList.add('hidden');
+        }
+    });
+
+</script>

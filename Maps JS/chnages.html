@@ -82,15 +82,13 @@
     }
 
     .search-container button {
-        padding: 8px 12px;
         background-color: transparent;
-        border: none;
         color: white;
-        border-radius: 4px;
-        display: flex;
         cursor: pointer;
-        gap: 10px;
+        display: flex;
         align-items: center;
+        gap: 10px;
+        padding: 9.6px 16px 6.4px;
     }
 
     .mapboxgl-ctrl-geocoder {
@@ -122,7 +120,7 @@
         top: 40px;
         right: 0;
         background: white;
-        padding: 15px;
+        /* padding: 15px; */
         border: 1px solid #ccc;
         border-radius: 4px;
         z-index: 1000;
@@ -189,21 +187,44 @@
         overflow-y: auto;
     }
 
+    /* location title */
+    h1.location-title {
+        margin-bottom: 0px;
+    }
+
+    /* property count */
+    h4.property-count {
+        margin-bottom: 0px;
+    }
+
+    /* sort div*/
+    select#sort-by {
+        padding: 0px 10px;
+        margin-bottom: 10px;
+    }
+
     /* Property Item */
     .property-item {
-        margin-bottom: 20px;
-        padding: 15px;
+        margin-bottom: 0px;
+        /* padding: 15px; */
         border: 1px solid #ddd;
-        border-radius: 8px;
+        /* border-radius: 8px; */
         background-color: #fff;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        box-shadow: rgba(0, 0, 0, 0.3) 0px 2px 4px 0px;
         cursor: pointer;
     }
 
     .property-image {
         width: 100%;
-        height: auto;
-        border-radius: 8px;
+        height: 230px;
+        top: -26px;
+        position: relative;
+        margin-bottom: -12px;
+        object-fit: cover;
+    }
+
+    .details {
+        padding: 0px 10px 10px 10px;
     }
 
     .list-view .property-item {
@@ -237,7 +258,7 @@
     .grid-view {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-        gap: 15px;
+        gap: 10px;
     }
 
     .list-view {
@@ -283,19 +304,8 @@
     .location-title,
     .property-count {
         color: #000000 !important;
-    }
 
-    /* featured property */
-    .featured-label {
-        display: inline-block;
-        background-color: #ffd700;
-        color: #fff;
-        padding: 5px 10px;
-        border-radius: 4px;
-        font-weight: bold;
-        margin-top: 5px;
     }
-
 
     @media screen and (min-width: 1577px) {
         .listing-container {
@@ -310,6 +320,13 @@
         }
     }
 
+    @media screen and (min-width: 1363px) {
+        .search-left {
+            /* flex: 1; */
+            min-width: 500px;
+        }
+    }
+
 
     @media screen and (min-width: 640px) {
         .mapboxgl-ctrl-geocoder {
@@ -317,11 +334,6 @@
             font-size: 15px;
             line-height: 20px;
             max-width: none;
-        }
-
-        .search-left {
-            /* flex: 1; */
-            min-width: 500px;
         }
     }
 
@@ -377,7 +389,7 @@
             right: 0;
             background: #1f363e;
             border-top: 1px solid #ccc;
-            z-index: 1000;
+            /* z-index: 1000; */
         }
 
         .mobile-toggle-buttons button {
@@ -431,7 +443,7 @@
         /* Property Item */
         .property-item {
             padding: 10px;
-            margin-bottom: 15px;
+            margin-bottom: 0px;
         }
 
         .list-view .property-image {
@@ -451,21 +463,24 @@
         /* Grid View Adjustments */
         .grid-view {
             grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 10px;
         }
 
         .grid-view .property-item {
-            padding: 10px;
+            padding: 0px;
         }
 
         .grid-view .property-image {
-            height: 100px;
+            height: 177px;
             object-fit: cover;
         }
 
         /* More Filters Position */
         .more-filters-content {
-            position: static;
-            margin-top: 10px;
+            position: fixed;
+            width: 100vw;
+            height: 100vh;
+            top: 0px;
         }
 
         /* wordpress styles */
@@ -474,20 +489,25 @@
         }
     }
 
-
     /* wordpress styles ends here*/
-    /* Style for the filter button */
-    /* #filter-type-btn {
-        padding: 10px 15px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        width: 160px;
-        /* Adjust width as needed */
 
+
+    /* featured property */
+    .featured-label {
+        background-color: #3d3c3661;
+        position: relative;
+        font-size: 12px;
+        color: #fff9f9;
+        padding: 0px 5px;
+        top: 0px;
+        margin-left: 6px;
+        font-weight: 500;
+        z-index: 99;
+    }
+
+    .nofeatured {
+        visibility: hidden;
+    }
 
     .toggle-icon {
         width: 20px;
@@ -505,10 +525,11 @@
         position: absolute;
         background-color: #fff;
         border: 1px solid #ccc;
-        border-radius: 5px;
+        border-radius: 0px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         margin-top: 5px;
         z-index: 10;
+        width: 120px;
     }
 
     /* Hide popup initially */
@@ -524,6 +545,28 @@
 
     .popup div:hover {
         background-color: #f0f0f0;
+    }
+
+    .close-filters {
+        display: flex;
+        border-bottom: 1px solid #d1d1d5;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 14px;
+        padding: 15px;
+    }
+
+    button#apply-filters-btn {
+        color: black;
+        background: #fff3ee;
+    }
+
+    .more-filters-filter {
+        padding: 15px;
+    }
+
+    svg#close-icon {
+        color: black;
     }
 </style>
 </head>
@@ -644,69 +687,87 @@
                     <option value="2000000">$2,000,000+</option>
                     <option value="5000000-">$5,000,000+</option>
                 </select>
-            </div>
 
-            <!-- More filters -->
-            <div class="more-filters">
-                <button id="more-filters-btn" type="button">More</button>
-                <div class="more-filters-content">
-                    <!-- Garage checkbox -->
-                    <label><input type="checkbox" id="garage-filter" onchange="filterProperties()" /> Garage</label>
-                    <!-- Amenities checkboxes -->
-                    <div class="amenities-filters">
-                        <label><input type="checkbox" name="amenities" value="pool" onchange="filterProperties()" />
-                            Pool</label>
-                        <label><input type="checkbox" name="amenities" value="gym" onchange="filterProperties()" />
-                            Gym</label>
-                        <label><input type="checkbox" name="amenities" value="garden" onchange="filterProperties()" />
-                            Garden</label>
+                <!-- More filters -->
+                <div class="more-filters">
+                    <button id="more-filters-btn" type="button">More</button>
+                    <div class="more-filters-content">
+                        <div class="close-filters">
+                            <span class="property-count">0 properties available</span>
+                            <button type="button" id="close-filters-btn"><svg id="close-icon" width="14" height="14"
+                                    viewBox="0 0 32 32" aria-hidden="true" focusable="false" role="img"
+                                    fill="currentColor">
+                                    <path
+                                        d="M18.83,16,29.41,5.41a2,2,0,0,0-2.82-2.82L16,13.17,5.41,2.59A2,2,0,0,0,2.59,5.41L13.17,16,2.59,26.59a2,2,0,1,0,2.82,2.82L16,18.83,26.59,29.41a2,2,0,0,0,2.82-2.82Z">
+                                    </path>
+                                </svg>
+                            </button>
+                        </div>
+                        <!-- Garage checkbox -->
+                        <div class="more-filters-filter">
+                            <label><input type="checkbox" id="garage-filter" onchange="filterProperties()" />
+                                Garage</label>
+                            <!-- Amenities checkboxes -->
+                            <div class="amenities-filters">
+                                <label><input type="checkbox" name="amenities" value="pool"
+                                        onchange="filterProperties()" />
+                                    Pool</label>
+                                <label><input type="checkbox" name="amenities" value="gym"
+                                        onchange="filterProperties()" />
+                                    Gym</label>
+                                <label><input type="checkbox" name="amenities" value="garden"
+                                        onchange="filterProperties()" />
+                                    Garden</label>
+                            </div>
+                            <!-- Min and Max Square Feet Inputs -->
+                            <input type="number" id="min-size-filter" placeholder="Min Sq.ft"
+                                onchange="filterProperties()" />
+                            <input type="number" id="max-size-filter" placeholder="Max Sq.ft"
+                                onchange="filterProperties()" />
+
+                            <button type="button" id="apply-filters-btn">Apply</button>
+                        </div>
                     </div>
-                    <!-- Min and Max Square Feet Inputs -->
-                    <input type="number" id="min-size-filter" placeholder="Min Sq.ft" onchange="filterProperties()" />
-                    <input type="number" id="max-size-filter" placeholder="Max Sq.ft" onchange="filterProperties()" />
                 </div>
+                <button onclick="resetFilters()" type="button">Reset Filters</button>
             </div>
-            <button onclick="resetFilters()" type="button">Reset Filters</button>
         </div>
-    </div>
 
-    <!-- Map and Listing -->
-    <div class="map-and-listing">
-        <!-- Map Container -->
-        <div class="map-container" id="map"></div>
+        <!-- Map and Listing -->
+        <div class="map-and-listing">
+            <!-- Map Container -->
+            <div class="map-container" id="map"></div>
 
-        <!-- Listing Container -->
-        <div class="listing-container">
-            <h1 class="location-title">All Properties</h1>
-            <h4 class="property-count">0 properties available</h4>
-            <div class="view-toggle">
-                <!-- Sort Dropdown -->
-                <select id="sort-by" onchange="sortAndFilterProperties()">
-                    <option value="default">Default</option>
-                    <option value="price-asc">Price: Low to High</option>
-                    <option value="price-desc">Price: High to Low</option>
-                    <option value="size-asc">Size: Small to Large</option>
-                    <option value="size-desc">Size: Large to Small</option>
-                </select>
-                <!-- View Toggle -->
-                <!-- <button id="grid-view-btn" onclick="toggleView('grid')" class="active">Grid View</button>
+            <!-- Listing Container -->
+            <div class="listing-container">
+                <h1 class="location-title">All Properties</h1>
+                <h4 class="property-count">0 properties available</h4>
+                <div class="view-toggle">
+                    <select id="sort-by" onchange="sortAndFilterProperties()">
+                        <option value="default">Default</option>
+                        <option value="price-asc">Price: Low to High</option>
+                        <option value="price-desc">Price: High to Low</option>
+                        <option value="size-asc">Size: Small to Large</option>
+                        <option value="size-desc">Size: Large to Small</option>
+                    </select>
+                    <!-- <button id="grid-view-btn" onclick="toggleView('grid')" class="active">Grid View</button>
                     <button id="list-view-btn" onclick="toggleView('list')">List View</button> -->
+                </div>
+                <div id="property-list" class="grid-view"></div>
             </div>
-            <div id="property-list" class="grid-view"></div>
         </div>
-    </div>
 
-    <!-- Mobile Toggle Buttons (only visible on mobile devices) -->
-    <div class="mobile-toggle-buttons">
-        <button id="mobile-map-btn" class="active">
-            <i class="fas fa-map"></i>
-            <span>Map</span>
-        </button>
-        <button id="mobile-listing-btn">
-            <i class="fas fa-list"></i>
-            <span>Listings</span>
-        </button>
-    </div>
+        <!-- Mobile Toggle Buttons (only visible on mobile devices) -->
+        <div class="mobile-toggle-buttons">
+            <button id="mobile-map-btn" class="active">
+                <i class="fas fa-map"></i>
+                <span>Map</span>
+            </button>
+            <button id="mobile-listing-btn">
+                <i class="fas fa-list"></i>
+                <span>Listings</span>
+            </button>
+        </div>
     </div>
 
     <!-- Mapbox JS -->
@@ -721,36 +782,10 @@
     <script>
         mapboxgl.accessToken = 'pk.eyJ1Ijoid2Vid2l0aHJhaiIsImEiOiJjbTBhbGZmMHgxZXFuMm1vcWt4YmNwZGZhIn0.IpNziQwncy2U-Xms017ojA';
 
-
-        function togglePopup(popupId, iconId) {
-            const popup = document.getElementById(popupId);
-            const icon = document.getElementById(iconId);
-            popup.classList.toggle('hidden');
-            icon.classList.toggle('rotate-icon');
-        }
-
-        function selectOption(selectId, value) {
-            const selectElement = document.getElementById(selectId);
-            const buttonText = document.querySelector(`#${selectId}-btn`).firstChild;
-            buttonText.textContent = value ? value : selectElement.options[0].textContent;
-            selectElement.value = value;
-
-            selectElement.dispatchEvent(new Event('change'));
-
-            document.getElementById(`${selectId}-popup`).classList.add('hidden');
-            document.getElementById(`toggle-icon-${selectId.split('-')[1]}`).classList.remove('rotate-icon');
-        }
-
-        document.addEventListener('click', (event) => {
-            const wrappers = document.querySelectorAll('.filter-type-wrapper');
-            wrappers.forEach(wrapper => {
-                if (!wrapper.contains(event.target)) {
-                    wrapper.querySelector('.popup').classList.add('hidden');
-                    wrapper.querySelector('.toggle-icon').classList.remove('rotate-icon');
-                }
-            });
-        });
-
+        fetch('https://aqua-stingray-548056.hostingersite.com/wp-json/wp/v2/property') // API for the GET request
+            .then(response => response.json())
+            .then(data => console.log(data))
+            .catch(error => console.error('Error:', error));  // Add error handling
 
         // replace the properties list here
         const properties = [
@@ -763,7 +798,7 @@
                 bath: 4.5,
                 size: 3200, // in Sq.ft
                 position: [-122.28528451834352, 37.50024109655184],
-                image: "https://via.placeholder.com/400x300.png?text=Property+1",
+                image: "https://aqua-stingray-548056.hostingersite.com/wp-content/uploads/2024/10/Gallery-Hero-Slide-1.webp",
                 garage: true,
                 amenities: ["pool", "gym"],
             },
@@ -776,9 +811,10 @@
                 bath: 2,
                 size: 1200,
                 position: [-122.4194, 37.7749],
-                image: "https://via.placeholder.com/400x300.png?text=Property+2",
+                image: "https://aqua-stingray-548056.hostingersite.com/wp-content/uploads/2024/10/Gallery-Hero-Slide-2.webp",
                 garage: false,
                 amenities: ["gym", "garage"],
+                featured: true,
             },
             {
                 address: "456 Oak Ave, Los Angeles, CA",
@@ -789,13 +825,11 @@
                 bath: 2,
                 size: 1800,
                 position: [-118.2437, 34.0522],
-                image: "https://via.placeholder.com/400x300.png?text=Property+3",
+                image: "https://aqua-stingray-548056.hostingersite.com/wp-content/uploads/2024/10/active-listing-img1-ezgif.webp",
                 garage: true,
                 amenities: ["pool", "garden"],
                 featured: true,
-
             },
-
         ];
 
         let searchedLocation = null; // Set to null to indicate no search has been performed
@@ -811,7 +845,6 @@
             amenities: [],
             minSize: 0,
             maxSize: Infinity,
-            sortBy: 'default',
         };
 
         var map = new mapboxgl.Map({
@@ -1011,12 +1044,12 @@
                 const propertyItem = document.createElement('div');
                 propertyItem.classList.add('property-item');
                 propertyItem.innerHTML = `
+                ${property.featured ? '<span class="featured-label">Featured</span>' : '<span class="featured-label nofeatured">Featured</span>'}
                     <img src="${property.image}" alt="Property at ${property.address}" class="property-image" />
                     <div class="details">
                         <p>${property.address}</p>
                         <p>${property.bed} Beds | ${property.bath} Baths | ${property.size} Sq.ft</p>
                         <p class="price">$${property.price.toLocaleString()}</p>
-                         ${property.featured ? '<span class="featured-label">Featured</span>' : ''}
                     </div>
                 `;
                 propertyList.appendChild(propertyItem);
@@ -1046,6 +1079,8 @@
                     marker.getPopup().remove();
                 });
             });
+
+            // No need to adjust map bounds here, since we are filtering based on current map bounds
         }
 
         function resetFilters() {
@@ -1070,29 +1105,6 @@
         window.onload = function () {
             sortAndFilterProperties();
         };
-
-        // // Mobile toggle buttons functionality
-        document.getElementById('mobile-map-btn').addEventListener('click', function () {
-            document.querySelector('.map-container').style.display = 'block';
-            document.querySelector('.listing-container').style.display = 'none';
-            this.classList.add('active');
-            document.getElementById('mobile-listing-btn').classList.remove('active');
-            map.resize(); // Ensure the map resizes correctly
-        });
-
-        document.getElementById('mobile-listing-btn').addEventListener('click', function () {
-            document.querySelector('.map-container').style.display = 'none';
-            document.querySelector('.listing-container').style.display = 'block';
-            this.classList.add('active');
-            document.getElementById('mobile-map-btn').classList.remove('active');
-        });
-
-
-        // More Filters toggle functionality
-        document.getElementById('more-filters-btn').addEventListener('click', function () {
-            document.querySelector('.more-filters-content').classList.toggle('show');
-        });
-
 
         // Initial listing of properties
         function sortAndFilterProperties() {
@@ -1130,5 +1142,55 @@
             document.querySelector('.property-count').textContent = `${properties.length} properties available`;
         }
 
+        function togglePopup(popupId, iconId) {
+            const popup = document.getElementById(popupId);
+            const icon = document.getElementById(iconId);
+            popup.classList.toggle('hidden');
+            icon.classList.toggle('rotate-icon');
+        }
+
+        function selectOption(selectId, value) {
+            const selectElement = document.getElementById(selectId);
+            const buttonText = document.querySelector(`#${selectId}-btn`).firstChild;
+            buttonText.textContent = value ? value : selectElement.options[0].textContent;
+            selectElement.value = value;
+
+            selectElement.dispatchEvent(new Event('change'));
+
+            document.getElementById(`${selectId}-popup`).classList.add('hidden');
+            document.getElementById(`toggle-icon-${selectId.split('-')[1]}`).classList.remove('rotate-icon');
+        }
+
+        document.addEventListener('click', (event) => {
+            const wrappers = document.querySelectorAll('.filter-type-wrapper');
+            wrappers.forEach(wrapper => {
+                if (!wrapper.contains(event.target)) {
+                    wrapper.querySelector('.popup').classList.add('hidden');
+                    wrapper.querySelector('.toggle-icon').classList.remove('rotate-icon');
+                }
+            });
+        });
+
+        // // Mobile toggle buttons functionality
+        document.getElementById('mobile-map-btn').addEventListener('click', function () {
+            document.querySelector('.map-container').style.display = 'block';
+            document.querySelector('.listing-container').style.display = 'none';
+            this.classList.add('active');
+            document.getElementById('mobile-listing-btn').classList.remove('active');
+            map.resize(); // Ensure the map resizes correctly
+        });
+
+        document.getElementById('mobile-listing-btn').addEventListener('click', function () {
+            document.querySelector('.map-container').style.display = 'none';
+            document.querySelector('.listing-container').style.display = 'block';
+            this.classList.add('active');
+            document.getElementById('mobile-map-btn').classList.remove('active');
+        });
+
+
+        // More Filters toggle functionality
+        document.getElementById('more-filters-btn').addEventListener('click', function () {
+            document.querySelector('.more-filters-content').classList.toggle('show');
+        });
     </script>
 </body>

@@ -83,14 +83,11 @@
 
     .search-container button {
         padding: 8px 12px;
-        background-color: transparent;
+        /* background-color: #007bff; */
         border: none;
         color: white;
         border-radius: 4px;
-        display: flex;
         cursor: pointer;
-        gap: 10px;
-        align-items: center;
     }
 
     .mapboxgl-ctrl-geocoder {
@@ -283,19 +280,8 @@
     .location-title,
     .property-count {
         color: #000000 !important;
-    }
 
-    /* featured property */
-    .featured-label {
-        display: inline-block;
-        background-color: #ffd700;
-        color: #fff;
-        padding: 5px 10px;
-        border-radius: 4px;
-        font-weight: bold;
-        margin-top: 5px;
     }
-
 
     @media screen and (min-width: 1577px) {
         .listing-container {
@@ -308,6 +294,8 @@
             position: relative;
             height: 79.5vh;
         }
+
+
     }
 
 
@@ -476,55 +464,6 @@
 
 
     /* wordpress styles ends here*/
-    /* Style for the filter button */
-    /* #filter-type-btn {
-        padding: 10px 15px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        width: 160px;
-        /* Adjust width as needed */
-
-
-    .toggle-icon {
-        width: 20px;
-        height: 20px;
-        transition: transform 0.3s;
-    }
-
-    /* Rotate icon when popup is visible */
-    .rotate-icon {
-        transform: rotate(180deg);
-    }
-
-    /* Style for the popup */
-    .popup {
-        position: absolute;
-        background-color: #fff;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        margin-top: 5px;
-        z-index: 10;
-    }
-
-    /* Hide popup initially */
-    .hidden {
-        display: none;
-    }
-
-    /* Style for each option inside popup */
-    .popup div {
-        padding: 10px 15px;
-        cursor: pointer;
-    }
-
-    .popup div:hover {
-        background-color: #f0f0f0;
-    }
 </style>
 </head>
 
@@ -536,177 +475,92 @@
                 <div id="geocoder" style="display: inline-block;"></div>
             </div>
             <div class="search-right">
-
                 <!-- Types Dropdown -->
-                <div class="filter-type-wrapper">
-                    <button id="filter-type-btn" onclick="togglePopup('filter-type-popup', 'toggle-icon-type')">
-                        Types
-                        <svg id="toggle-icon-type" class="toggle-icon" width="20" height="20" viewBox="0 0 24 24"
-                            fill="currentColor">
-                            <path d="M7 10l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round" />
-                        </svg>
-                    </button>
-                    <div id="filter-type-popup" class="popup hidden">
-                        <div onclick="selectOption('filter-type', '')">Types</div>
-                        <div onclick="selectOption('filter-type', 'home')">Home</div>
-                        <div onclick="selectOption('filter-type', 'apartment')">Apartment</div>
-                        <div onclick="selectOption('filter-type', 'condo')">Condo</div>
-                        <div onclick="selectOption('filter-type', 'townhouse')">Townhouse</div>
-                    </div>
-                </div>
-
-                <!-- Beds Dropdown -->
-                <div class="filter-type-wrapper">
-                    <button id="filter-bedrooms-btn"
-                        onclick="togglePopup('filter-bedrooms-popup', 'toggle-icon-bedrooms')">
-                        Beds
-                        <svg id="toggle-icon-bedrooms" class="toggle-icon" width="20" height="20" viewBox="0 0 24 24"
-                            fill="currentColor">
-                            <path d="M7 10l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round" />
-                        </svg>
-                    </button>
-                    <div id="filter-bedrooms-popup" class="popup hidden">
-                        <div onclick="selectOption('filter-bedrooms', '')">Beds</div>
-                        <div onclick="selectOption('filter-bedrooms', '1')">1+</div>
-                        <div onclick="selectOption('filter-bedrooms', '2')">2+</div>
-                        <div onclick="selectOption('filter-bedrooms', '3')">3+</div>
-                        <div onclick="selectOption('filter-bedrooms', '4')">4+</div>
-                    </div>
-                </div>
-
-                <!-- Baths Dropdown -->
-                <div class="filter-type-wrapper">
-                    <button id="filter-bathrooms-btn"
-                        onclick="togglePopup('filter-bathrooms-popup', 'toggle-icon-bathrooms')">
-                        Baths
-                        <svg id="toggle-icon-bathrooms" class="toggle-icon" width="20" height="20" viewBox="0 0 24 24"
-                            fill="currentColor">
-                            <path d="M7 10l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round" />
-                        </svg>
-                    </button>
-                    <div id="filter-bathrooms-popup" class="popup hidden">
-                        <div onclick="selectOption('filter-bathrooms', '')">Baths</div>
-                        <div onclick="selectOption('filter-bathrooms', '1')">1+</div>
-                        <div onclick="selectOption('filter-bathrooms', '2')">2+</div>
-                        <div onclick="selectOption('filter-bathrooms', '3')">3+</div>
-                        <div onclick="selectOption('filter-bathrooms', '4')">4+</div>
-                    </div>
-                </div>
-
-                <!-- Price Range Dropdown -->
-                <div class="filter-type-wrapper">
-                    <button id="price-range-btn" onclick="togglePopup('price-range-popup', 'toggle-icon-price')">
-                        Price
-                        <svg id="toggle-icon-price" class="toggle-icon" width="20" height="20" viewBox="0 0 24 24"
-                            fill="currentColor">
-                            <path d="M7 10l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round" />
-                        </svg>
-                    </button>
-                    <div id="price-range-popup" class="popup hidden">
-                        <div onclick="selectOption('price-range-filter', '')">Price</div>
-                        <div onclick="selectOption('price-range-filter', '500000')">$500,000+</div>
-                        <div onclick="selectOption('price-range-filter', '1000000')">$1,000,000+</div>
-                        <div onclick="selectOption('price-range-filter', '2000000')">$2,000,000+</div>
-                        <div onclick="selectOption('price-range-filter', '5000000-')">$5,000,000+</div>
-                    </div>
-                </div>
-
-                <!-- Hidden Select Elements -->
-                <select id="filter-type" onchange="filterProperties()" style="display: none;">
+                <select id="filter-type" onchange="filterProperties()">
                     <option value="">Types</option>
                     <option value="home">Home</option>
                     <option value="apartment">Apartment</option>
                     <option value="condo">Condo</option>
                     <option value="townhouse">Townhouse</option>
                 </select>
-                <select id="filter-bedrooms" onchange="filterProperties()" style="display: none;">
+                <!-- Beds Dropdown -->
+                <select id="filter-bedrooms" onchange="filterProperties()">
                     <option value="">Beds</option>
                     <option value="1">1+</option>
                     <option value="2">2+</option>
                     <option value="3">3+</option>
                     <option value="4">4+</option>
                 </select>
-                <select id="filter-bathrooms" onchange="filterProperties()" style="display: none;">
+                <!-- Baths Dropdown -->
+                <select id="filter-bathrooms" onchange="filterProperties()">
                     <option value="">Baths</option>
                     <option value="1">1+</option>
                     <option value="2">2+</option>
                     <option value="3">3+</option>
                     <option value="4">4+</option>
                 </select>
-                <select id="price-range-filter" onchange="filterProperties()" style="display: none;">
+                <!-- Price Range Dropdown -->
+                <select id="price-range-filter" onchange="filterProperties()">
                     <option value="">Price</option>
                     <option value="500000">$500,000+</option>
                     <option value="1000000">$1,000,000+</option>
                     <option value="2000000">$2,000,000+</option>
                     <option value="5000000-">$5,000,000+</option>
                 </select>
-            </div>
-
-            <!-- More filters -->
-            <div class="more-filters">
-                <button id="more-filters-btn" type="button">More</button>
-                <div class="more-filters-content">
-                    <!-- Garage checkbox -->
-                    <label><input type="checkbox" id="garage-filter" onchange="filterProperties()" /> Garage</label>
-                    <!-- Amenities checkboxes -->
-                    <div class="amenities-filters">
-                        <label><input type="checkbox" name="amenities" value="pool" onchange="filterProperties()" />
-                            Pool</label>
-                        <label><input type="checkbox" name="amenities" value="gym" onchange="filterProperties()" />
-                            Gym</label>
-                        <label><input type="checkbox" name="amenities" value="garden" onchange="filterProperties()" />
-                            Garden</label>
+                <!-- More filters -->
+                <div class="more-filters">
+                    <button id="more-filters-btn" type="button">More</button>
+                    <div class="more-filters-content">
+                        <!-- Garage checkbox -->
+                        <label><input type="checkbox" id="garage-filter" onchange="filterProperties()" /> Garage</label>
+                        <!-- Amenities checkboxes -->
+                        <div class="amenities-filters">
+                            <label><input type="checkbox" name="amenities" value="pool" onchange="filterProperties()" />
+                                Pool</label>
+                            <label><input type="checkbox" name="amenities" value="gym" onchange="filterProperties()" />
+                                Gym</label>
+                            <label><input type="checkbox" name="amenities" value="garden"
+                                    onchange="filterProperties()" /> Garden</label>
+                        </div>
+                        <!-- Min and Max Square Feet Inputs -->
+                        <input type="number" id="min-size-filter" placeholder="Min Sq.ft"
+                            onchange="filterProperties()" />
+                        <input type="number" id="max-size-filter" placeholder="Max Sq.ft"
+                            onchange="filterProperties()" />
                     </div>
-                    <!-- Min and Max Square Feet Inputs -->
-                    <input type="number" id="min-size-filter" placeholder="Min Sq.ft" onchange="filterProperties()" />
-                    <input type="number" id="max-size-filter" placeholder="Max Sq.ft" onchange="filterProperties()" />
                 </div>
+                <button onclick="resetFilters()" type="button">Reset Filters</button>
             </div>
-            <button onclick="resetFilters()" type="button">Reset Filters</button>
         </div>
-    </div>
 
-    <!-- Map and Listing -->
-    <div class="map-and-listing">
-        <!-- Map Container -->
-        <div class="map-container" id="map"></div>
+        <!-- Map and Listing -->
+        <div class="map-and-listing">
+            <!-- Map Container -->
+            <div class="map-container" id="map"></div>
 
-        <!-- Listing Container -->
-        <div class="listing-container">
-            <h1 class="location-title">All Properties</h1>
-            <h4 class="property-count">0 properties available</h4>
-            <div class="view-toggle">
-                <!-- Sort Dropdown -->
-                <select id="sort-by" onchange="sortAndFilterProperties()">
-                    <option value="default">Default</option>
-                    <option value="price-asc">Price: Low to High</option>
-                    <option value="price-desc">Price: High to Low</option>
-                    <option value="size-asc">Size: Small to Large</option>
-                    <option value="size-desc">Size: Large to Small</option>
-                </select>
-                <!-- View Toggle -->
-                <!-- <button id="grid-view-btn" onclick="toggleView('grid')" class="active">Grid View</button>
-                    <button id="list-view-btn" onclick="toggleView('list')">List View</button> -->
+            <!-- Listing Container -->
+            <div class="listing-container">
+                <h1 class="location-title">All Properties</h1>
+                <h4 class="property-count">0 properties available</h4>
+                <!-- <div class="view-toggle">
+                    <button id="grid-view-btn" onclick="toggleView('grid')" class="active">Grid View</button>
+                    <button id="list-view-btn" onclick="toggleView('list')">List View</button>
+                </div> -->
+                <div id="property-list" class="grid-view"></div>
             </div>
-            <div id="property-list" class="grid-view"></div>
         </div>
-    </div>
 
-    <!-- Mobile Toggle Buttons (only visible on mobile devices) -->
-    <div class="mobile-toggle-buttons">
-        <button id="mobile-map-btn" class="active">
-            <i class="fas fa-map"></i>
-            <span>Map</span>
-        </button>
-        <button id="mobile-listing-btn">
-            <i class="fas fa-list"></i>
-            <span>Listings</span>
-        </button>
-    </div>
+        <!-- Mobile Toggle Buttons (only visible on mobile devices) -->
+        <div class="mobile-toggle-buttons">
+            <button id="mobile-map-btn" class="active">
+                <i class="fas fa-map"></i>
+                <span>Map</span>
+            </button>
+            <button id="mobile-listing-btn">
+                <i class="fas fa-list"></i>
+                <span>Listings</span>
+            </button>
+        </div>
     </div>
 
     <!-- Mapbox JS -->
@@ -721,36 +575,10 @@
     <script>
         mapboxgl.accessToken = 'pk.eyJ1Ijoid2Vid2l0aHJhaiIsImEiOiJjbTBhbGZmMHgxZXFuMm1vcWt4YmNwZGZhIn0.IpNziQwncy2U-Xms017ojA';
 
-
-        function togglePopup(popupId, iconId) {
-            const popup = document.getElementById(popupId);
-            const icon = document.getElementById(iconId);
-            popup.classList.toggle('hidden');
-            icon.classList.toggle('rotate-icon');
-        }
-
-        function selectOption(selectId, value) {
-            const selectElement = document.getElementById(selectId);
-            const buttonText = document.querySelector(`#${selectId}-btn`).firstChild;
-            buttonText.textContent = value ? value : selectElement.options[0].textContent;
-            selectElement.value = value;
-
-            selectElement.dispatchEvent(new Event('change'));
-
-            document.getElementById(`${selectId}-popup`).classList.add('hidden');
-            document.getElementById(`toggle-icon-${selectId.split('-')[1]}`).classList.remove('rotate-icon');
-        }
-
-        document.addEventListener('click', (event) => {
-            const wrappers = document.querySelectorAll('.filter-type-wrapper');
-            wrappers.forEach(wrapper => {
-                if (!wrapper.contains(event.target)) {
-                    wrapper.querySelector('.popup').classList.add('hidden');
-                    wrapper.querySelector('.toggle-icon').classList.remove('rotate-icon');
-                }
-            });
-        });
-
+        fetch('https://aqua-stingray-548056.hostingersite.com/wp-json/wp/v2/property') // API for the GET request
+            .then(response => response.json())
+            .then(data => console.log(data))
+            .catch(error => console.error('Error:', error));  // Add error handling
 
         // replace the properties list here
         const properties = [
@@ -792,10 +620,7 @@
                 image: "https://via.placeholder.com/400x300.png?text=Property+3",
                 garage: true,
                 amenities: ["pool", "garden"],
-                featured: true,
-
             },
-
         ];
 
         let searchedLocation = null; // Set to null to indicate no search has been performed
@@ -811,7 +636,6 @@
             amenities: [],
             minSize: 0,
             maxSize: Infinity,
-            sortBy: 'default',
         };
 
         var map = new mapboxgl.Map({
@@ -1016,7 +840,6 @@
                         <p>${property.address}</p>
                         <p>${property.bed} Beds | ${property.bath} Baths | ${property.size} Sq.ft</p>
                         <p class="price">$${property.price.toLocaleString()}</p>
-                         ${property.featured ? '<span class="featured-label">Featured</span>' : ''}
                     </div>
                 `;
                 propertyList.appendChild(propertyItem);
@@ -1046,6 +869,8 @@
                     marker.getPopup().remove();
                 });
             });
+
+            // No need to adjust map bounds here, since we are filtering based on current map bounds
         }
 
         function resetFilters() {
@@ -1064,11 +889,6 @@
         // Call getURLParameters() when the page loads
         window.onload = function () {
             getURLParameters();
-        };
-
-        // Call sortAndFilterProperties() when the page loads
-        window.onload = function () {
-            sortAndFilterProperties();
         };
 
         // // Mobile toggle buttons functionality
@@ -1092,43 +912,5 @@
         document.getElementById('more-filters-btn').addEventListener('click', function () {
             document.querySelector('.more-filters-content').classList.toggle('show');
         });
-
-
-        // Initial listing of properties
-        function sortAndFilterProperties() {
-            filterProperties();
-            sortProperties();
-        }
-
-        function sortProperties() {
-            const sortBy = document.getElementById('sort-by').value;
-
-            properties.sort((a, b) => {
-                // When default sorting is selected, show featured properties first
-                if (sortBy === 'default') {
-                    if (a.featured && !b.featured) return -1;
-                    if (!a.featured && b.featured) return 1;
-                    return 0;
-                }
-
-                // If a sorting option is selected, sort strictly based on the selected criteria
-                switch (sortBy) {
-                    case 'price-asc':
-                        return a.price - b.price;
-                    case 'price-desc':
-                        return b.price - a.price;
-                    case 'size-asc':
-                        return a.size - b.size;
-                    case 'size-desc':
-                        return b.size - a.size;
-                    default:
-                        return 0;
-                }
-            });
-
-            updatePropertyList(properties);
-            document.querySelector('.property-count').textContent = `${properties.length} properties available`;
-        }
-
     </script>
 </body>
