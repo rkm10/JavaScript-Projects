@@ -1,0 +1,974 @@
+<!-- Mapbox CSS -->
+<link href="https://api.mapbox.com/mapbox-gl-js/v2.13.0/mapbox-gl.css" rel="stylesheet" />
+
+<!-- Mapbox Geocoder CSS -->
+<link href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.css"
+    rel="stylesheet" />
+
+<!-- Font Awesome for Icons -->
+<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" /> -->
+
+<!-- Custom CSS -->
+<style>
+    /* Base Styles */
+    body,
+    html {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        font-family: 'Roboto', sans-serif;
+    }
+
+    /* Container */
+    .main-container {
+        display: flex;
+        height: 100%;
+        flex-direction: column;
+    }
+
+    /* Search Container */
+    .search-container {
+        position: fixed;
+        top: 80px;
+        left: 0;
+        right: 0;
+        background: #1f363e;
+        padding: 10px 15px;
+        z-index: 1000;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        justify-content: center;
+        height: 115px;
+    }
+
+
+    .search-right {
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: center;
+        margin-left: 10px;
+    }
+
+    .search-right>* {
+        margin-right: 10px;
+        /* margin-bottom: 10px; */
+    }
+
+    #geocoder {
+        width: 100%;
+    }
+
+    .search-container select {
+        padding: 8px;
+        border: none;
+        border-radius: 0px;
+        background-color: transparent;
+        color: #fff;
+        width: fit-content;
+    }
+
+    .search-container input[type="number"] {
+        padding: 8px;
+        border: none;
+        border-radius: 0px;
+        background-color: transparent;
+        color: #000000;
+    }
+
+    select:focus-visible {
+        outline: none;
+    }
+
+    .search-container button {
+        padding: 8px 12px;
+        /* background-color: #007bff; */
+        border: none;
+        color: white;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .mapboxgl-ctrl-geocoder {
+        width: 100%;
+        position: relative;
+    }
+
+    .mapboxgl-ctrl-geocoder--icon {
+        width: 24px;
+        height: 24px;
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    .mapboxgl-ctrl-geocoder--input {
+        padding-left: 40px;
+    }
+
+    /* More Filters */
+    .more-filters {
+        position: relative;
+    }
+
+    .more-filters-content {
+        display: none;
+        position: absolute;
+        top: 40px;
+        right: 0;
+        background: white;
+        padding: 15px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        z-index: 1000;
+        min-width: 200px;
+    }
+
+    .more-filters-content.show {
+        display: block;
+    }
+
+    .more-filters-content label,
+    .more-filters-content input[type="number"] {
+        display: block;
+        margin-bottom: 10px;
+    }
+
+
+    input[type="text"],
+    input[type="number"],
+    input[type="email"],
+    input[type="url"],
+    input[type="password"],
+    input[type="search"],
+    input[type=reset],
+    input[type=tel],
+    input[type=date],
+    select,
+    textarea {
+        font-size: 16px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 24px;
+        width: 100%;
+        padding: 12px 38px;
+        border-radius: 4px;
+        box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
+        color: var(--ast-form-input-text, #475569);
+    }
+
+    option {
+        color: black;
+    }
+
+
+    /* Map and Listing */
+    .map-and-listing {
+        display: flex;
+        flex: 1;
+        margin-top: 60px;
+        overflow: hidden;
+    }
+
+    .map-container {
+        width: 50%;
+        position: relative;
+    }
+
+    .listing-container {
+        width: 50%;
+        padding: 15px;
+        background-color: #fff;
+        box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+        height: calc(100vh - 195px);
+        overflow-y: auto;
+    }
+
+    /* Property Item */
+    .property-item {
+        margin-bottom: 20px;
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background-color: #fff;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+    }
+
+    .property-image {
+        width: 100%;
+        height: auto;
+        border-radius: 8px;
+    }
+
+    .list-view .property-item {
+        display: flex;
+        align-items: center;
+    }
+
+    .list-view .property-image {
+        width: 120px;
+        height: 80px;
+        margin-right: 15px;
+        object-fit: cover;
+    }
+
+    .list-view .details {
+        flex: 1;
+        padding-left: 15px;
+    }
+
+    .price {
+        font-weight: bold;
+        color: #007bff;
+        margin-top: 5px;
+    }
+
+    .details p {
+        margin: 5px 0;
+    }
+
+    /* Grid and List Views */
+    .grid-view {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 15px;
+    }
+
+    .list-view {
+        display: block;
+    }
+
+    /* Mapbox Popup */
+    .mapboxgl-popup {
+        max-width: 300px;
+    }
+
+    .mapboxgl-popup-content {
+        border-radius: 10px;
+    }
+
+    /* View Toggle Buttons */
+    .view-toggle {
+        margin: 10px 0;
+        display: flex;
+        justify-content: flex-end;
+    }
+
+    .view-toggle button {
+        padding: 8px;
+        margin-left: 10px;
+        cursor: pointer;
+    }
+
+    .view-toggle button:active {
+        background: #121d21;
+    }
+
+    /* Hide Mobile Toggle Buttons on Desktop */
+    .mobile-toggle-buttons {
+        display: none;
+    }
+
+    /* Highlight on hover */
+    .property-item:hover {
+        background-color: #f0f0f0;
+    }
+
+    .location-title,
+    .property-count {
+        color: #000000 !important;
+
+    }
+
+    /* featured property */
+    .featured-label {
+        display: inline-block;
+        background-color: #ffd700;
+        color: #fff;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-weight: bold;
+        margin-top: 5px;
+    }
+
+
+    @media screen and (min-width: 1577px) {
+        .listing-container {
+            width: 35%;
+            height: calc(100vh - 195px);
+        }
+
+        .map-container {
+            width: 65%;
+            position: relative;
+            height: 79.5vh;
+        }
+
+
+    }
+
+
+    @media screen and (min-width: 640px) {
+        .mapboxgl-ctrl-geocoder {
+            width: 100%;
+            font-size: 15px;
+            line-height: 20px;
+            max-width: none;
+        }
+
+        .search-left {
+            /* flex: 1; */
+            min-width: 500px;
+        }
+    }
+
+    /* Responsive Styles */
+    @media (max-width: 767px) {
+
+
+        /* Adjust Container */
+        .container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Hide View Toggle */
+        .view-toggle {
+            display: none;
+        }
+
+        /* Map and Listing Stack */
+        .map-and-listing {
+            /* flex-direction: column; */
+            flex: 1;
+            margin-top: 0px;
+            overflow: hidden;
+        }
+
+        .map-container,
+        .listing-container {
+            width: 100%;
+            flex: 1;
+            display: none;
+            overflow-y: auto;
+        }
+
+        /* Show Listing by Default */
+        .map-container {
+            display: block;
+        }
+
+        /* Adjust Heights */
+        .map-container,
+        .listing-container {
+            height: calc(100vh - 140px);
+        }
+
+        /* Mobile Toggle Buttons */
+        .mobile-toggle-buttons {
+            display: flex;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #1f363e;
+            border-top: 1px solid #ccc;
+            z-index: 1000;
+        }
+
+        .mobile-toggle-buttons button {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .mobile-toggle-buttons button.active {
+            background-color: #121d21;
+        }
+
+        .mobile-toggle-buttons i {
+            display: block;
+            font-size: 20px;
+            margin-bottom: 3px;
+        }
+
+        /* .map-and-listing {
+            /* margin-bottom: 60px; */
+        /* } */
+
+        /* Search Container */
+        .search-container {
+            flex-wrap: wrap;
+            position: sticky;
+            top: 0;
+            padding: 10px;
+            height: max-content;
+        }
+
+        .search-left,
+        .search-right {
+            flex: 1 1 100%;
+        }
+
+        .search-right {
+            margin-left: 0;
+            flex-wrap: wrap;
+        }
+
+        .search-right>* {
+            flex: 1 1 calc(50% - 10px);
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        /* Property Item */
+        .property-item {
+            padding: 10px;
+            margin-bottom: 15px;
+        }
+
+        .list-view .property-image {
+            width: 80px;
+            height: 60px;
+        }
+
+        .details p {
+            margin: 3px 0;
+            font-size: 14px;
+        }
+
+        .price {
+            font-size: 16px;
+        }
+
+        /* Grid View Adjustments */
+        .grid-view {
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        }
+
+        .grid-view .property-item {
+            padding: 10px;
+        }
+
+        .grid-view .property-image {
+            height: 100px;
+            object-fit: cover;
+        }
+
+        /* More Filters Position */
+        .more-filters-content {
+            position: static;
+            margin-top: 10px;
+        }
+
+        /* wordpress styles */
+        .ast-container {
+            padding: 0 !important;
+        }
+    }
+
+
+    /* wordpress styles ends here*/
+</style>
+</head>
+
+<body>
+    <div class="main-container">
+        <!-- Search Container -->
+        <div class="search-container">
+            <div class="search-left">
+                <div id="geocoder" style="display: inline-block;"></div>
+            </div>
+            <div class="search-right">
+                <!-- Types Dropdown -->
+                <select id="filter-type" onchange="filterProperties()">
+                    <option value="">Types</option>
+                    <option value="home">Home</option>
+                    <option value="apartment">Apartment</option>
+                    <option value="condo">Condo</option>
+                    <option value="townhouse">Townhouse</option>
+                </select>
+                <!-- Beds Dropdown -->
+                <select id="filter-bedrooms" onchange="filterProperties()">
+                    <option value="">Beds</option>
+                    <option value="1">1+</option>
+                    <option value="2">2+</option>
+                    <option value="3">3+</option>
+                    <option value="4">4+</option>
+                </select>
+                <!-- Baths Dropdown -->
+                <select id="filter-bathrooms" onchange="filterProperties()">
+                    <option value="">Baths</option>
+                    <option value="1">1+</option>
+                    <option value="2">2+</option>
+                    <option value="3">3+</option>
+                    <option value="4">4+</option>
+                </select>
+                <!-- Price Range Dropdown -->
+                <select id="price-range-filter" onchange="filterProperties()">
+                    <option value="">Price</option>
+                    <option value="500000">$500,000+</option>
+                    <option value="1000000">$1,000,000+</option>
+                    <option value="2000000">$2,000,000+</option>
+                    <option value="5000000-">$5,000,000+</option>
+                </select>
+                <!-- More filters -->
+                <div class="more-filters">
+                    <button id="more-filters-btn" type="button">More</button>
+                    <div class="more-filters-content">
+                        <!-- Garage checkbox -->
+                        <label><input type="checkbox" id="garage-filter" onchange="filterProperties()" /> Garage</label>
+                        <!-- Amenities checkboxes -->
+                        <div class="amenities-filters">
+                            <label><input type="checkbox" name="amenities" value="pool" onchange="filterProperties()" />
+                                Pool</label>
+                            <label><input type="checkbox" name="amenities" value="gym" onchange="filterProperties()" />
+                                Gym</label>
+                            <label><input type="checkbox" name="amenities" value="garden"
+                                    onchange="filterProperties()" /> Garden</label>
+                        </div>
+                        <!-- Min and Max Square Feet Inputs -->
+                        <input type="number" id="min-size-filter" placeholder="Min Sq.ft"
+                            onchange="filterProperties()" />
+                        <input type="number" id="max-size-filter" placeholder="Max Sq.ft"
+                            onchange="filterProperties()" />
+                    </div>
+                </div>
+                <button onclick="resetFilters()" type="button">Reset Filters</button>
+            </div>
+        </div>
+
+        <!-- Map and Listing -->
+        <div class="map-and-listing">
+            <!-- Map Container -->
+            <div class="map-container" id="map"></div>
+
+            <!-- Listing Container -->
+            <div class="listing-container">
+                <h1 class="location-title">All Properties</h1>
+                <h4 class="property-count">0 properties available</h4>
+                <div class="view-toggle">
+                    <!-- Sort Dropdown -->
+                    <select id="sort-by" onchange="sortAndFilterProperties()">
+                        <option value="default">Sort By</option>
+                        <option value="price-asc">Price: Low to High</option>
+                        <option value="price-desc">Price: High to Low</option>
+                        <option value="size-asc">Size: Small to Large</option>
+                        <option value="size-desc">Size: Large to Small</option>
+                    </select>
+                    <button id="grid-view-btn" onclick="toggleView('grid')" class="active">Grid View</button>
+                    <button id="list-view-btn" onclick="toggleView('list')">List View</button>
+                </div>
+                <div id="property-list" class="grid-view"></div>
+            </div>
+        </div>
+
+        <!-- Mobile Toggle Buttons (only visible on mobile devices) -->
+        <div class="mobile-toggle-buttons">
+            <button id="mobile-map-btn" class="active">
+                <i class="fas fa-map"></i>
+                <span>Map</span>
+            </button>
+            <button id="mobile-listing-btn">
+                <i class="fas fa-list"></i>
+                <span>Listings</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Mapbox JS -->
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.13.0/mapbox-gl.js"></script>
+
+    <!-- Mapbox Geocoder JS -->
+    <script
+        src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.min.js"></script>
+
+    <!-- Custom JS -->
+
+    <script>
+        mapboxgl.accessToken = 'pk.eyJ1Ijoid2Vid2l0aHJhaiIsImEiOiJjbTBhbGZmMHgxZXFuMm1vcWt4YmNwZGZhIn0.IpNziQwncy2U-Xms017ojA';
+
+
+        // replace the properties list here
+        const properties = [
+            {
+                address: "215 Emily St, Mountain View, CA",
+                description: "Single family house with modern design",
+                price: 3889000,
+                type: "home",
+                bed: 5,
+                bath: 4.5,
+                size: 3200, // in Sq.ft
+                position: [-122.28528451834352, 37.50024109655184],
+                image: "https://via.placeholder.com/400x300.png?text=Property+1",
+                garage: true,
+                amenities: ["pool", "gym"],
+            },
+            {
+                address: "123 Main St, San Francisco, CA",
+                description: "Luxurious apartment in the heart of the city",
+                price: 1500000,
+                type: "apartment",
+                bed: 2,
+                bath: 2,
+                size: 1200,
+                position: [-122.4194, 37.7749],
+                image: "https://via.placeholder.com/400x300.png?text=Property+2",
+                garage: false,
+                amenities: ["gym", "garage"],
+            },
+            {
+                address: "456 Oak Ave, Los Angeles, CA",
+                description: "Beautiful condo with city views",
+                price: 2000000,
+                type: "condo",
+                bed: 3,
+                bath: 2,
+                size: 1800,
+                position: [-118.2437, 34.0522],
+                image: "https://via.placeholder.com/400x300.png?text=Property+3",
+                garage: true,
+                amenities: ["pool", "garden"],
+                featured: true,
+
+            },
+
+        ];
+
+        let searchedLocation = null; // Set to null to indicate no search has been performed
+        let markers = []; // Array to hold marker instances
+
+        // Variable to hold current filters
+        let currentFilters = {
+            type: '',
+            bedrooms: 0,
+            bathrooms: 0,
+            priceRange: '',
+            garage: false,
+            amenities: [],
+            minSize: 0,
+            maxSize: Infinity,
+            sortBy: 'default',
+        };
+
+        var map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/streets-v11',
+            center: [-98.5795, 39.8283], // Center of the US
+            zoom: 2 // Zoomed out to show the entire US
+        });
+
+        // Initialize Geocoder (Search Bar) without creating new markers
+        var geocoder = new MapboxGeocoder({
+            accessToken: mapboxgl.accessToken,
+            mapboxgl: mapboxgl,
+            placeholder: 'Search by address',
+            proximity: {
+                longitude: -98.5795,
+                latitude: 39.8283
+            },
+            marker: false // Disable default marker creation
+        });
+        document.getElementById('geocoder').appendChild(geocoder.onAdd(map));
+
+        // Update searched location when a new search is performed
+        geocoder.on('result', function (e) {
+            searchedLocation = e.result.geometry.coordinates;
+            map.flyTo({ center: searchedLocation, zoom: 8 }); // Adjust zoom level as needed
+            document.querySelector('.location-title').textContent = e.result.place_name; // Update location title
+            filterProperties(); // Apply filters based on the new location
+            updateURLParameters(); // Update URL
+        });
+
+
+        function toggleView(view) {
+            const propertyList = document.getElementById('property-list');
+            propertyList.className = view === 'grid' ? 'grid-view' : 'list-view';
+
+            // Update button styles
+            document.getElementById('grid-view-btn').classList.toggle('active', view === 'grid');
+            document.getElementById('list-view-btn').classList.toggle('active', view === 'list');
+        }
+
+        // Function to update the URL parameters
+        function updateURLParameters() {
+            const params = new URLSearchParams();
+
+            // Search location
+            if (searchedLocation) {
+                params.set('search_location', encodeURIComponent(document.querySelector('.location-title').textContent));
+                params.set('lat', searchedLocation[1]); // Latitude
+                params.set('lng', searchedLocation[0]); // Longitude
+            }
+
+            // Filters
+            if (currentFilters.type) params.set('type', currentFilters.type);
+            if (currentFilters.bedrooms) params.set('bedrooms', currentFilters.bedrooms);
+            if (currentFilters.bathrooms) params.set('bathrooms', currentFilters.bathrooms);
+            if (currentFilters.priceRange) params.set('price_range', currentFilters.priceRange);
+            if (currentFilters.garage) params.set('garage', currentFilters.garage);
+            if (currentFilters.amenities.length > 0) params.set('amenities', currentFilters.amenities.join(','));
+            if (currentFilters.minSize && currentFilters.minSize !== 0) params.set('min_size', currentFilters.minSize);
+            if (currentFilters.maxSize && currentFilters.maxSize !== Infinity) params.set('max_size', currentFilters.maxSize);
+
+            // Update the URL without reloading the page
+            const newURL = window.location.pathname + '?' + params.toString();
+            history.replaceState(null, '', newURL);
+        }
+
+        // Function to get URL parameters on page load
+        function getURLParameters() {
+            const params = new URLSearchParams(window.location.search);
+
+            // Search location
+            const lat = parseFloat(params.get('lat'));
+            const lng = parseFloat(params.get('lng'));
+            const searchLocation = decodeURIComponent(params.get('search_location') || '');
+
+            if (!isNaN(lat) && !isNaN(lng)) {
+                searchedLocation = [lng, lat];
+                map.setCenter(searchedLocation);
+                map.setZoom(10);
+                document.querySelector('.location-title').textContent = searchLocation || 'Search Location';
+            }
+
+            // Filters
+            currentFilters.type = params.get('type') || '';
+            currentFilters.bedrooms = parseInt(params.get('bedrooms')) || 0;
+            currentFilters.bathrooms = parseInt(params.get('bathrooms')) || 0;
+            currentFilters.priceRange = params.get('price_range') || '';
+            currentFilters.garage = params.get('garage') === 'true';
+            currentFilters.amenities = params.get('amenities') ? params.get('amenities').split(',') : [];
+            currentFilters.minSize = parseInt(params.get('min_size')) || 0;
+            currentFilters.maxSize = parseInt(params.get('max_size')) || Infinity;
+
+            // Set the filter inputs
+            document.getElementById('filter-type').value = currentFilters.type;
+            document.getElementById('filter-bedrooms').value = currentFilters.bedrooms || '';
+            document.getElementById('filter-bathrooms').value = currentFilters.bathrooms || '';
+            document.getElementById('price-range-filter').value = currentFilters.priceRange || '';
+            document.getElementById('garage-filter').checked = currentFilters.garage;
+            document.getElementById('min-size-filter').value = currentFilters.minSize || '';
+            document.getElementById('max-size-filter').value = (currentFilters.maxSize !== Infinity) ? currentFilters.maxSize : '';
+
+            // Set amenities checkboxes
+            currentFilters.amenities.forEach(amenity => {
+                const checkbox = document.querySelector(`input[name="amenities"][value="${amenity}"]`);
+                if (checkbox) checkbox.checked = true;
+            });
+
+            // Apply filters
+            filterProperties();
+
+            // Clear URL parameters after applying filters
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+
+        // Update filterProperties function to store current filters and call filterPropertiesByMapBounds
+        function filterProperties() {
+            currentFilters.type = document.getElementById('filter-type').value;
+            currentFilters.bedrooms = parseInt(document.getElementById('filter-bedrooms').value) || 0;
+            currentFilters.bathrooms = parseInt(document.getElementById('filter-bathrooms').value) || 0;
+            currentFilters.priceRange = document.getElementById('price-range-filter').value;
+            currentFilters.garage = document.getElementById('garage-filter').checked;
+            currentFilters.amenities = Array.from(document.querySelectorAll('input[name="amenities"]:checked')).map(el => el.value);
+            currentFilters.minSize = parseInt(document.getElementById('min-size-filter').value) || 0;
+            currentFilters.maxSize = parseInt(document.getElementById('max-size-filter').value) || Infinity;
+
+            // Call filterPropertiesByMapBounds to apply filters based on current map bounds
+            filterPropertiesByMapBounds();
+
+            // Update the URL with the new filters
+            updateURLParameters();
+        }
+
+        // Debounce function to limit how often a function can fire
+        function debounce(func, wait) {
+            let timeout;
+            return function (...args) {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(this, args), wait);
+            };
+        }
+
+        // Function to filter properties based on current filters and map bounds
+        const filterPropertiesByMapBounds = debounce(function () {
+            const bounds = map.getBounds();
+
+            // Parse price range
+            let minPrice = 0;
+            // let maxPrice = Infinity;
+            if (currentFilters.priceRange) {
+                const priceParts = currentFilters.priceRange.split('-');
+                minPrice = parseInt(priceParts[0]) || 0;
+                maxPrice = priceParts[1] ? parseInt(priceParts[1]) : Infinity;
+            }
+
+            const filteredProperties = properties.filter((property) => {
+                // Check if property is within map bounds
+                const isWithinBounds = bounds.contains([property.position[0], property.position[1]]);
+
+                // Apply other filters
+                const matchesFilters =
+                    (!currentFilters.type || property.type === currentFilters.type) &&
+                    (!currentFilters.bedrooms || property.bed >= currentFilters.bedrooms) &&
+                    (!currentFilters.bathrooms || property.bath >= currentFilters.bathrooms) &&
+                    (!currentFilters.garage || property.garage === currentFilters.garage) &&
+                    (property.price >= minPrice) &&
+                    (property.size >= currentFilters.minSize) &&
+                    // (property.price <= maxPrice) &&
+                    // (property.size <= currentFilters.maxSize) &&
+                    currentFilters.amenities.every(amenity => property.amenities.includes(amenity));
+
+                return isWithinBounds && matchesFilters;
+            });
+
+            updatePropertyList(filteredProperties);
+            document.querySelector('.property-count').textContent = `${filteredProperties.length} properties available`; // Update property count
+        }, 200); // Adjust the debounce delay as needed
+
+        // Added event listener to map to update properties when map moves
+        map.on('moveend', filterPropertiesByMapBounds);
+
+        function updatePropertyList(propertiesToShow) {
+            const propertyList = document.getElementById('property-list');
+            propertyList.innerHTML = '';
+
+            // Clears existing markers from the map
+            markers.forEach((marker) => marker.remove());
+            markers = [];
+
+            if (propertiesToShow.length === 0) {
+                propertyList.innerHTML = '<p>No properties found based on the selected criteria.</p>';
+                return;
+            }
+
+            propertiesToShow.forEach((property) => {
+                // Creating property item in the list
+                const propertyItem = document.createElement('div');
+                propertyItem.classList.add('property-item');
+                propertyItem.innerHTML = `
+                    <img src="${property.image}" alt="Property at ${property.address}" class="property-image" />
+                    <div class="details">
+                        <p>${property.address}</p>
+                        <p>${property.bed} Beds | ${property.bath} Baths | ${property.size} Sq.ft</p>
+                        <p class="price">$${property.price.toLocaleString()}</p>
+                         ${property.featured ? '<span class="featured-label">Featured</span>' : ''}
+                    </div>
+                `;
+                propertyList.appendChild(propertyItem);
+
+                // Add markers to the map for each property
+                const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(`
+                    <h3>${property.address}</h3>
+                    <p>${property.bed} Beds, ${property.bath} Baths, ${property.size} Sq.ft</p>
+                    <p class="price">$${property.price.toLocaleString()}</p>
+                `);
+
+                const marker = new mapboxgl.Marker()
+                    .setLngLat(property.position)
+                    .setPopup(popup)
+                    .addTo(map);
+
+                markers.push(marker);
+
+                // Add hover event listeners to the property item
+                propertyItem.addEventListener('mouseover', () => {
+                    // Open the popup
+                    marker.getPopup().addTo(map);
+                });
+
+                propertyItem.addEventListener('mouseout', () => {
+                    // Close the popup
+                    marker.getPopup().remove();
+                });
+            });
+        }
+
+        function resetFilters() {
+            document.getElementById('filter-type').value = '';
+            document.getElementById('filter-bedrooms').value = '';
+            document.getElementById('filter-bathrooms').value = '';
+            document.getElementById('price-range-filter').value = '';
+            document.getElementById('garage-filter').checked = false;
+            document.getElementById('min-size-filter').value = '';
+            document.getElementById('max-size-filter').value = '';
+            // Uncheck all amenities
+            document.querySelectorAll('input[name="amenities"]').forEach(el => el.checked = false);
+            filterProperties(); // Apply filters after resetting
+        }
+
+        // Call getURLParameters() when the page loads
+        window.onload = function () {
+            getURLParameters();
+            sortAndFilterProperties();
+        };
+
+        // // Mobile toggle buttons functionality
+        document.getElementById('mobile-map-btn').addEventListener('click', function () {
+            document.querySelector('.map-container').style.display = 'block';
+            document.querySelector('.listing-container').style.display = 'none';
+            this.classList.add('active');
+            document.getElementById('mobile-listing-btn').classList.remove('active');
+            map.resize(); // Ensure the map resizes correctly
+        });
+
+        document.getElementById('mobile-listing-btn').addEventListener('click', function () {
+            document.querySelector('.map-container').style.display = 'none';
+            document.querySelector('.listing-container').style.display = 'block';
+            this.classList.add('active');
+            document.getElementById('mobile-map-btn').classList.remove('active');
+        });
+
+
+        // More Filters toggle functionality
+        document.getElementById('more-filters-btn').addEventListener('click', function () {
+            document.querySelector('.more-filters-content').classList.toggle('show');
+        });
+
+
+        // Initial listing of properties
+        function sortAndFilterProperties() {
+            filterProperties();
+            sortProperties();
+        }
+
+        function sortProperties() {
+            const sortBy = document.getElementById('sort-by').value;
+
+            properties.sort((a, b) => {
+                // When default sorting is selected, show featured properties first
+                if (sortBy === 'default') {
+                    if (a.featured && !b.featured) return -1;
+                    if (!a.featured && b.featured) return 1;
+                    return 0;
+                }
+
+                // If a sorting option is selected, sort strictly based on the selected criteria
+                switch (sortBy) {
+                    case 'price-asc':
+                        return a.price - b.price;
+                    case 'price-desc':
+                        return b.price - a.price;
+                    case 'size-asc':
+                        return a.size - b.size;
+                    case 'size-desc':
+                        return b.size - a.size;
+                    default:
+                        return 0;
+                }
+            });
+
+            updatePropertyList(properties);
+            document.querySelector('.property-count').textContent = `${properties.length} properties available`;
+        }
+
+    </script>
+</body>
