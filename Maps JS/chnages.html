@@ -11,7 +11,10 @@
 <!-- Custom CSS -->
 <style>
     /* Base Styles */
-    body,
+    body {
+        background-color: #e8e1d6 !important;
+    }
+
     html {
         height: 100%;
         margin: 0;
@@ -181,7 +184,7 @@
     .listing-container {
         width: 50%;
         padding: 15px;
-        background-color: #fff;
+        background-color: #e8e1d6;
         box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
         height: calc(100vh - 195px);
         overflow-y: auto;
@@ -195,32 +198,78 @@
     /* property count */
     h4.property-count {
         margin-bottom: 0px;
+        font-family: 'Albert Sans', sans-serif;
+        font-size: 16px;
+        font-weight: 400;
+    }
+
+    h4.view-toggle-title {
+        font-size: 16px;
+        color: #222222;
+        margin-bottom: 0px;
+        font-family: 'Albert Sans', sans-serif;
+    }
+
+    .sorrting-div {
+        display: flex;
+        align-items: center;
+        gap: 10px;
     }
 
     /* sort div*/
     select#sort-by {
         padding: 0px 10px;
-        margin-bottom: 10px;
+        width: 160px;
+        height: 30px;
+        background: transparent;
+        border: none;
     }
 
     /* Property Item */
     .property-item {
         margin-bottom: 0px;
-        /* padding: 15px; */
         border: 1px solid #ddd;
-        /* border-radius: 8px; */
-        background-color: #fff;
+        /* background-color: #fff; */
         box-shadow: rgba(0, 0, 0, 0.3) 0px 2px 4px 0px;
         cursor: pointer;
+        position: relative;
+    }
+
+    .property-image-container {
+        position: relative;
+        width: 100%;
+        height: 212px;
+        /* margin-bottom: -12px; */
+        margin-top: -26px;
+        overflow: hidden;
+        /* Ensures overlay and image stay within bounds */
     }
 
     .property-image {
         width: 100%;
-        height: 230px;
-        top: -26px;
-        position: relative;
-        margin-bottom: -12px;
+        height: 100%;
         object-fit: cover;
+        position: relative;
+        /* top: -26px; */
+    }
+
+    /* image layour */
+    .property-image-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.75) 100%);
+        opacity: 1;
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    /* hover effect for images */
+    .property-image-container:hover::before {
+        background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.1) 50%, rgba(10, 0, 0, 10) 100%);
     }
 
     .details {
@@ -245,20 +294,53 @@
     }
 
     .price {
+        position: absolute;
         font-weight: bold;
-        color: #007bff;
-        margin-top: 5px;
+        color: #fff;
+        margin-top: -45px;
+        left: 20px;
+        z-index: 2;
     }
 
+    /* Property Details */
     .details p {
-        margin: 5px 0;
+        margin: 0px 0;
+    }
+
+    p.property-name {
+        font-weight: 600;
+        font-size: 16px;
+    }
+
+    p.property-address {
+        margin-bottom: 10px;
+        color: #636363;
+        font-weight: 600;
+        font-size: 13px;
+        -o-text-overflow: ellipsis;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+    }
+
+    p.property-amenities {
+        color: #222222;
+        font-weight: 600;
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
+
+    p.property-type {
+        font-size: 12px;
+        font-weight: 600;
+        color: #1a1a1a;
     }
 
     /* Grid and List Views */
     .grid-view {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-        gap: 10px;
+        gap: 20px;
     }
 
     .list-view {
@@ -278,7 +360,7 @@
     .view-toggle {
         margin: 10px 0;
         display: flex;
-        justify-content: flex-end;
+        justify-content: space-between;
     }
 
     .view-toggle button {
@@ -298,7 +380,7 @@
 
     /* Highlight on hover */
     .property-item:hover {
-        background-color: #f0f0f0;
+        box-shadow: 0px 0px 15px rgba(30, 30, 30, 0.5);
     }
 
     .location-title,
@@ -342,6 +424,15 @@
             /* flex: 1; */
             min-width: 500px;
         }
+
+        /* .property-item {
+            width: 283px;
+        }
+
+        .property-item img {
+            width: 283px;
+            height: 212px;
+        } */
     }
 
 
@@ -516,7 +607,7 @@
         /* Grid View Adjustments */
         .grid-view {
             grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 10px;
+            gap: 20px;
         }
 
         .grid-view .property-item {
@@ -736,7 +827,7 @@
                     <button id="more-filters-btn" type="button">More</button>
                     <div class="more-filters-content">
                         <div class="close-filters">
-                            <span class="property-count">0 properties available</span>
+                            <span class="property-count">0 Results Found</span>
                             <button type="button" id="close-filters-btn"><svg id="close-icon" width="14" height="14"
                                     viewBox="0 0 32 32" aria-hidden="true" focusable="false" role="img"
                                     fill="currentColor">
@@ -787,15 +878,19 @@
             <!-- Listing Container -->
             <div class="listing-container">
                 <h1 class="location-title">All Properties</h1>
-                <h4 class="property-count">0 properties available</h4>
                 <div class="view-toggle">
-                    <select id="sort-by" onchange="sortAndFilterProperties()">
-                        <option value="default">Default</option>
-                        <option value="price-asc">Price: Low to High</option>
-                        <option value="price-desc">Price: High to Low</option>
-                        <option value="size-asc">Size: Small to Large</option>
-                        <option value="size-desc">Size: Large to Small</option>
-                    </select>
+                    <h4 class="property-count">0 Results Found</h4>
+                    <div class="sorrting-div">
+                        <h4 class="view-toggle-title">Sort By:</h4>
+                        <!-- Sort Dropdown -->
+                        <select id="sort-by" onchange="sortAndFilterProperties()">
+                            <option value="default">Default</option>
+                            <option value="price-asc">Price: Low to High</option>
+                            <option value="price-desc">Price: High to Low</option>
+                            <option value="size-asc">Size: Small to Large</option>
+                            <option value="size-desc">Size: Large to Small</option>
+                        </select>
+                    </div>
                     <!-- <button id="grid-view-btn" onclick="toggleView('grid')" class="active">Grid View</button>
                     <button id="list-view-btn" onclick="toggleView('list')">List View</button> -->
                 </div>
@@ -836,6 +931,7 @@
         // replace the properties list here
         const properties = [
             {
+                name: "queen",
                 address: "215 Emily St, Mountain View, CA",
                 description: "Single family house with modern design",
                 price: 3889000,
@@ -849,6 +945,7 @@
                 amenities: ["pool", "gym"],
             },
             {
+                name: "king",
                 address: "123 Main St, San Francisco, CA",
                 description: "Luxurious apartment in the heart of the city",
                 price: 1500000,
@@ -863,6 +960,7 @@
                 featured: true,
             },
             {
+                name: "rook",
                 address: "456 Oak Ave, Los Angeles, CA",
                 description: "Beautiful condo with city views",
                 price: 2000000,
@@ -1066,7 +1164,7 @@
             });
 
             updatePropertyList(filteredProperties);
-            document.querySelectorAll('.property-count').textContent = `${filteredProperties.length} properties available`; // Update property count
+            document.querySelectorAll('.property-count').textContent = `${filteredProperties.length} Results Found`; // Update property count
         }, 200); // Adjust the debounce delay as needed
 
         // Added event listener to map to update properties when map moves
@@ -1091,11 +1189,15 @@
                 propertyItem.classList.add('property-item');
                 propertyItem.innerHTML = `
                 ${property.featured ? '<span class="featured-label">Featured</span>' : '<span class="featured-label nofeatured">Featured</span>'}
+                <div class="property-image-container">
                     <img src="${property.image}" alt="Property at ${property.address}" class="property-image" />
+                    </div>
+                    <p class="price">$${property.price.toLocaleString()}</p>
                     <div class="details">
-                        <p>${property.address}</p>
-                        <p>${property.bed} Beds | ${property.bath} Baths | ${property.size} Sq.ft</p>
-                        <p class="price">$${property.price.toLocaleString()}</p>
+                        <p class="property-name">${property.name}</p>
+                        <p class="property-address">${property.address}</p>
+                        <p class="property-amenities">${property.bed} Beds | ${property.bath} Baths | ${property.size} Sq.ft</p>
+                        <p class="property-type">${property.type.toUpperCase()}</p>
                     </div>
                 `;
                 propertyList.appendChild(propertyItem);
@@ -1186,7 +1288,7 @@
 
             updatePropertyList(properties);
             document.querySelectorAll('.property-count').forEach(element => {
-                element.textContent = `${properties.length} properties available`;
+                element.textContent = `${properties.length} Results Found`;
             }); //update property count
         }
 
