@@ -434,6 +434,10 @@
         display: block;
     }
 
+    .more-filters-mobile-only {
+        display: none;
+    }
+
     @media screen and (min-width: 1577px) {
         .listing-container {
             width: 35%;
@@ -475,6 +479,15 @@
 
     /* Responsive Styles */
     @media (max-width: 767px) {
+
+        #filter-bedrooms-wrapper,
+        #filter-bathrooms-wrapper {
+            display: none;
+        }
+
+        .more-filters-mobile-only {
+            display: block;
+        }
 
         .close-filters {
             display: flex !important;
@@ -593,7 +606,7 @@
             position: sticky;
             top: 0;
             padding: 10px;
-            /* height: max-content; */
+            height: 90px;
         }
 
         .search-left,
@@ -603,7 +616,7 @@
 
         .search-right {
             margin-left: 0;
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
         }
 
         .search-right>* {
@@ -759,7 +772,7 @@
                 </div>
 
                 <!-- Beds Dropdown -->
-                <div class="filter-type-wrapper">
+                <div class="filter-type-wrapper" id="filter-bedrooms-wrapper">
                     <button id="filter-bedrooms-btn"
                         onclick="togglePopup('filter-bedrooms-popup', 'toggle-icon-bedrooms')">
                         Beds
@@ -778,8 +791,9 @@
                     </div>
                 </div>
 
+
                 <!-- Baths Dropdown -->
-                <div class="filter-type-wrapper">
+                <div class="filter-type-wrapper" id="filter-bathrooms-wrapper">
                     <button id="filter-bathrooms-btn"
                         onclick="togglePopup('filter-bathrooms-popup', 'toggle-icon-bathrooms')">
                         Baths
@@ -880,23 +894,78 @@
                             </div> -->
 
                             <!-- Min and Max Square Feet Inputs -->
+                            <div class="more-filters-mobile-only">
+                                <select id="filter-bedrooms" onchange="filterProperties()">
+                                    <option value="">Beds</option>
+                                    <option value="1">1+</option>
+                                    <option value="2">2+</option>
+                                    <option value="3">3+</option>
+                                    <option value="4">4+</option>
+                                </select>
+                                <select id="filter-bathrooms" onchange="filterProperties()">
+                                    <option value="">Baths</option>
+                                    <option value="1">1+</option>
+                                    <option value="2">2+</option>
+                                    <option value="3">3+</option>
+                                    <option value="4">4+</option>
+                                </select>
+                            </div>
                             <div>
                                 <h4 class="more-filters-title">Square Feet</h4>
                                 <div class="square-feet">
-                                    <input type="number" id="min-size-filter" placeholder="Minimum"
+                                    <select name="square-feet" id="min-square-feet" onchange="filterProperties()"
+                                        placeholder="Minimum">
+                                        <option value="any">Any</option>
+                                        <option value="4000">4000</option>
+                                        <option value="4500">4500</option>
+                                        <option value="5000">5000</option>
+                                        <option value="5500">5500</option>
+                                        <option value="6000">6000</option>
+                                    </select>
+                                    <select name="square-feet" id="max-square-feet" onchange="filterProperties()"
+                                        placeholder="Maximum">
+                                        <option value="any">Any</option>
+                                        <option value="4500">4500</option>
+                                        <option value="5000">5000</option>
+                                        <option value="5500">5500</option>
+                                        <option value="6000">6000</option>
+                                        <option value="6500">6500</option>
+                                    </select>
+                                    <!-- <input type="number" id="min-size-filter" placeholder="Minimum"
                                         onchange="filterProperties()" />
                                     <input type="number" id="max-size-filter" placeholder="Maximum"
-                                        onchange="filterProperties()" />
+                                        onchange="filterProperties()" /> -->
                                 </div>
                             </div>
                             <!-- Min and Max Lot Size Inputs -->
                             <div>
                                 <h4 class="more-filters-title">Lot Size</h4>
                                 <div class="lot-size">
-                                    <input type="number" id="min-size-filter" placeholder="Minimum"
+                                    <!-- select type -->
+                                    <select name="lot-size" id="min-lot-size" onchange="filterProperties()"
+                                        aria-placeholder="Minimum">
+                                        <option value="any">Any</option>
+                                        <option value="3000">3000</option>
+                                        <option value="5000">5000</option>
+                                        <option value="7000">7000</option>
+                                        <option value="10000">10000</option>
+                                        <option value="20000">20000</option>
+                                    </select>
+                                    <select name="lot-size" id="max-lot-size" onchange="filterProperties()"
+                                        aria-placeholder="Maximum">
+                                        <option value="any">Any</option>
+                                        <option value="3000">3000</option>
+                                        <option value="5000">5000</option>
+                                        <option value="7000">7000</option>
+                                        <option value="10000">10000</option>
+                                        <option value="20000">20000</option>
+                                    </select>
+
+                                    <!-- input type -->
+                                    <!-- <input type="number" id="min-size-filter" placeholder="Minimum"
                                         onchange="filterProperties()" />
                                     <input type="number" id="max-size-filter" placeholder="Maximum"
-                                        onchange="filterProperties()" />
+                                        onchange="filterProperties()" /> -->
                                 </div>
                             </div>
                             <!-- HOA -->
@@ -1047,6 +1116,7 @@
                 featured: true,
             },
         ];
+
 
         let searchedLocation = null; // Set to null to indicate no search has been performed
         let markers = []; // Array to hold marker instances
