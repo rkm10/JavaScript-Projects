@@ -67,16 +67,16 @@
         padding: 8px;
         border: none;
         border-radius: 0px;
-        background-color: transparent;
-        color: #fff;
-        width: fit-content;
+        background-color: #ffffff;
+        color: #222222;
+        margin-bottom: 15px;
     }
 
     .search-container input[type="number"] {
         padding: 8px;
         border: none;
         border-radius: 0px;
-        background-color: transparent;
+        background-color: #ffffff;
         color: #000000;
     }
 
@@ -122,24 +122,29 @@
         position: absolute;
         top: 40px;
         right: 0;
-        background: white;
+        background: #f1f1f1;
         /* padding: 15px; */
         border: 1px solid #ccc;
-        border-radius: 4px;
+        /* border-radius: 4px; */
         z-index: 1000;
-        min-width: 200px;
+        min-width: 250px;
+    }
+
+
+    .more-filters-filter {
+        padding: 20px;
     }
 
     .more-filters-content.show {
         display: block;
     }
 
-    .more-filters-content label,
     .more-filters-content input[type="number"] {
         display: block;
         margin-bottom: 10px;
+        width: 115px;
+        height: 30px;
     }
-
 
     input[type="text"],
     input[type="number"],
@@ -165,6 +170,30 @@
 
     option {
         color: black;
+    }
+
+    .square-feet,
+    .lot-size {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+
+    h4.more-filters-title {
+        color: #222222;
+        font-size: 14px;
+        font-family: 'Albert Sans', sans-serif;
+        margin-bottom: 10px;
+    }
+
+    label.more-filters-label {
+        display: flex;
+        gap: 10px;
+        width: 185px;
+        align-items: center;
+        background-color: #ffffff;
+        padding: 10px;
+        margin-bottom: 15px;
     }
 
 
@@ -393,7 +422,6 @@
         display: flex;
 
     }
-
 
 
     button.apply-filters-btn-mobile {
@@ -673,7 +701,7 @@
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         margin-top: 5px;
         z-index: 10;
-        width: 120px;
+        min-width: 126px;
     }
 
     /* Hide popup initially */
@@ -685,6 +713,7 @@
     .popup div {
         padding: 10px 15px;
         cursor: pointer;
+        /* width: fit-content; */
     }
 
     .popup div:hover {
@@ -693,10 +722,6 @@
 
     .close-filters {
         display: none;
-    }
-
-    .more-filters-filter {
-        padding: 15px;
     }
 
     svg#close-icon {
@@ -839,10 +864,10 @@
                         </div>
                         <!-- Garage checkbox -->
                         <div class="more-filters-filter">
-                            <label><input type="checkbox" id="garage-filter" onchange="filterProperties()" />
-                                Garage</label>
+                            <!-- <label><input type="checkbox" id="garage-filter" onchange="filterProperties()" />
+                                Garage</label> -->
                             <!-- Amenities checkboxes -->
-                            <div class="amenities-filters">
+                            <!-- <div class="amenities-filters">
                                 <label><input type="checkbox" name="amenities" value="pool"
                                         onchange="filterProperties()" />
                                     Pool</label>
@@ -852,12 +877,59 @@
                                 <label><input type="checkbox" name="amenities" value="garden"
                                         onchange="filterProperties()" />
                                     Garden</label>
-                            </div>
+                            </div> -->
+
                             <!-- Min and Max Square Feet Inputs -->
-                            <input type="number" id="min-size-filter" placeholder="Min Sq.ft"
-                                onchange="filterProperties()" />
-                            <input type="number" id="max-size-filter" placeholder="Max Sq.ft"
-                                onchange="filterProperties()" />
+                            <div>
+                                <h4 class="more-filters-title">Square Feet</h4>
+                                <div class="square-feet">
+                                    <input type="number" id="min-size-filter" placeholder="Minimum"
+                                        onchange="filterProperties()" />
+                                    <input type="number" id="max-size-filter" placeholder="Maximum"
+                                        onchange="filterProperties()" />
+                                </div>
+                            </div>
+                            <!-- Min and Max Lot Size Inputs -->
+                            <div>
+                                <h4 class="more-filters-title">Lot Size</h4>
+                                <div class="lot-size">
+                                    <input type="number" id="min-size-filter" placeholder="Minimum"
+                                        onchange="filterProperties()" />
+                                    <input type="number" id="max-size-filter" placeholder="Maximum"
+                                        onchange="filterProperties()" />
+                                </div>
+                            </div>
+                            <!-- HOA -->
+                            <div>
+                                <h4 class="more-filters-title">HOA</h4>
+                                <select id="hoa-filter" onchange="filterProperties()">
+                                    <option value="Any">Any</option>
+                                    <option value="0">No HOA Fee</option>
+                                    <option value="1">$500+ / month</option>
+                                </select>
+                            </div>
+                            <!-- Floors -->
+                            <div>
+                                <h4 class="more-filters-title">Floors</h4>
+                                <select id="floors-filter" onchange="filterProperties()">
+                                    <option value="Any">Any</option>
+                                    <option value="1">1+</option>
+                                    <option value="2">2+</option>
+                                    <option value="3">2+</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <!-- With Basement -->
+                                <label class="more-filters-label"><input type="checkbox" id="with-basement"
+                                        onchange="filterProperties()" /> with
+                                    Basement</label>
+                                <!-- Must have 3D Tour -->
+                                <label class="more-filters-label"><input type="checkbox" id="with-basement"
+                                        onchange="filterProperties()" /> Must
+                                    have 3D Tour</label>
+                            </div>
+
                             <div class="more-filters-fixed-buttons">
                                 <button class="apply-filters-btn-mobile" onclick="resetFilters()" type="button">Reset
                                     Filters</button>
