@@ -302,7 +302,7 @@
     }
 
     .details {
-        padding: 0px 10px 10px 10px;
+        padding: 10px 10px 10px 10px;
     }
 
     .list-view .property-item {
@@ -558,7 +558,7 @@
 
         /* Adjust Heights */
         .map-container {
-            height: calc(100vh - 310px);
+            height: calc(100vh - 202px);
         }
 
         .listing-container {
@@ -574,7 +574,7 @@
             right: 0;
             background: #1f363e;
             border-top: 1px solid #ccc;
-            /* z-index: 1000; */
+            z-index: 1000;
         }
 
         .mobile-toggle-buttons button {
@@ -990,11 +990,11 @@
 
                             <div>
                                 <!-- With Basement -->
-                                <label class="more-filters-label"><input type="checkbox" id="with-basement"
+                                <label class="more-filters-label"><input type="checkbox" id="with-basement-filter"
                                         onchange="filterProperties()" /> with
                                     Basement</label>
                                 <!-- Must have 3D Tour -->
-                                <label class="more-filters-label"><input type="checkbox" id="with-basement"
+                                <label class="more-filters-label"><input type="checkbox" id="threedtour-filter"
                                         onchange="filterProperties()" /> Must
                                     have 3D Tour</label>
                             </div>
@@ -1066,8 +1066,33 @@
 
         fetch('https://aqua-stingray-548056.hostingersite.com/wp-json/wp/v2/property') // API for the GET request
             .then(response => response.json())
-            .then(data => console.log(data))
-            .catch(error => console.error('Error:', error));  // Add error handling
+            .then(data => {
+                // console.log("properties", data);
+                const propertie = data;
+
+                console.log("Properties:", propertie); // This will log the properties
+                const propertData = {
+                    "Image": propertie[5].gallery[0].guid,
+                    "Bathrooms": propertie[5].bathrooms,
+                    "Name": propertie[5].title.rendered,
+                    "Position": propertie[5].position,
+                    "Bedrooms": propertie[5].bedrooms,
+                    "Area Size": propertie[5].area_size,
+                    "Property Link": propertie[5].link,
+                    "Lot Size": propertie[5].lot_size,
+                    "Price": propertie[5].price,
+                    "Address": propertie[5].address,
+                    "Types": propertie[5].types,
+                    "Basement": propertie[5].basement,
+                    "3D Tour": propertie[5].threed_tour,
+                    "Featured": propertie[5].featured
+                }
+                // console.log("Properties:", properties); // This will log the old properties
+                console.table(propertData) // This will log the new properties
+            })
+            .catch(error => console.error('Error:', error)); // Add error handling
+
+
 
         // replace the properties list here
         const properties = [
@@ -1110,6 +1135,21 @@
                 bath: 2,
                 size: 1800,
                 position: [-118.2437, 34.0522],
+                image: "https://aqua-stingray-548056.hostingersite.com/wp-content/uploads/2024/10/active-listing-img1-ezgif.webp",
+                garage: true,
+                amenities: ["pool", "garden"],
+                featured: true,
+            },
+            {
+                name: "rooks",
+                address: "456 Oak Ave, Los Angeles, CA",
+                description: "Beautiful condo with city views",
+                price: 2000000,
+                type: "condo",
+                bed: 3,
+                bath: 2,
+                size: 1800,
+                position: [-114.2437, 34.0529],
                 image: "https://aqua-stingray-548056.hostingersite.com/wp-content/uploads/2024/10/active-listing-img1-ezgif.webp",
                 garage: true,
                 amenities: ["pool", "garden"],
@@ -1188,7 +1228,7 @@
             if (currentFilters.bedrooms) params.set('bedrooms', currentFilters.bedrooms);
             if (currentFilters.bathrooms) params.set('bathrooms', currentFilters.bathrooms);
             if (currentFilters.priceRange) params.set('price_range', currentFilters.priceRange);
-            if (currentFilters.garage) params.set('garage', currentFilters.garage);
+            if (currentFilters.basement) params.set('with-basement-filter', currentFilters.basement);
             if (currentFilters.amenities.length > 0) params.set('amenities', currentFilters.amenities.join(','));
             if (currentFilters.minSize && currentFilters.minSize !== 0) params.set('min_size', currentFilters.minSize);
             if (currentFilters.maxSize && currentFilters.maxSize !== Infinity) params.set('max_size', currentFilters.maxSize);
@@ -1219,7 +1259,7 @@
             currentFilters.bedrooms = parseInt(params.get('bedrooms')) || 0;
             currentFilters.bathrooms = parseInt(params.get('bathrooms')) || 0;
             currentFilters.priceRange = params.get('price_range') || '';
-            currentFilters.garage = params.get('garage') === 'true';
+            currentFilters.basement = params.get('with-basement-filter') === 'true';
             currentFilters.amenities = params.get('amenities') ? params.get('amenities').split(',') : [];
             currentFilters.minSize = parseInt(params.get('min_size')) || 0;
             currentFilters.maxSize = parseInt(params.get('max_size')) || Infinity;
@@ -1229,7 +1269,7 @@
             document.getElementById('filter-bedrooms').value = currentFilters.bedrooms || '';
             document.getElementById('filter-bathrooms').value = currentFilters.bathrooms || '';
             document.getElementById('price-range-filter').value = currentFilters.priceRange || '';
-            document.getElementById('garage-filter').checked = currentFilters.garage;
+            document.getElementById('with-basement-filter').checked = currentFilters.basement;
             document.getElementById('min-size-filter').value = currentFilters.minSize || '';
             document.getElementById('max-size-filter').value = (currentFilters.maxSize !== Infinity) ? currentFilters.maxSize : '';
 
@@ -1252,7 +1292,7 @@
             currentFilters.bedrooms = parseInt(document.getElementById('filter-bedrooms').value) || 0;
             currentFilters.bathrooms = parseInt(document.getElementById('filter-bathrooms').value) || 0;
             currentFilters.priceRange = document.getElementById('price-range-filter').value;
-            currentFilters.garage = document.getElementById('garage-filter').checked;
+            currentFilters.basement = document.getElementById('with-basement-filter').checked;
             currentFilters.amenities = Array.from(document.querySelectorAll('input[name="amenities"]:checked')).map(el => el.value);
             currentFilters.minSize = parseInt(document.getElementById('min-size-filter').value) || 0;
             currentFilters.maxSize = parseInt(document.getElementById('max-size-filter').value) || Infinity;
@@ -1295,7 +1335,7 @@
                     (!currentFilters.type || property.type === currentFilters.type) &&
                     (!currentFilters.bedrooms || property.bed >= currentFilters.bedrooms) &&
                     (!currentFilters.bathrooms || property.bath >= currentFilters.bathrooms) &&
-                    (!currentFilters.garage || property.garage === currentFilters.garage) &&
+                    (!currentFilters.basement || property.basement === currentFilters.basement) &&
                     (property.price >= minPrice) &&
                     (property.size >= currentFilters.minSize) &&
                     // (property.price <= maxPrice) &&
@@ -1378,7 +1418,7 @@
             document.getElementById('filter-bedrooms').value = '';
             document.getElementById('filter-bathrooms').value = '';
             document.getElementById('price-range-filter').value = '';
-            document.getElementById('garage-filter').checked = false;
+            document.getElementById('with-basement-filter').checked = false;
             document.getElementById('min-size-filter').value = '';
             document.getElementById('max-size-filter').value = '';
             // Uncheck all amenities
@@ -1492,5 +1532,6 @@
         document.getElementById('close-filters-btn').addEventListener('click', function () {
             document.querySelector('.more-filters-content').classList.remove('show');
         });
+
     </script>
 </body>
