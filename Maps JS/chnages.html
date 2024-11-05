@@ -834,10 +834,8 @@
                 <!-- Hidden Select Elements -->
                 <select id="filter-type" onchange="filterProperties()" style="display: none;">
                     <option value="">Types</option>
-                    <option value="home">Home</option>
-                    <option value="apartment">Apartment</option>
-                    <option value="condo">Condo</option>
-                    <option value="townhouse">Townhouse</option>
+                    <option value="home">Single Family Residential</option>
+                    <option value="apartment">Single Family Detached</option>
                 </select>
                 <select id="filter-bedrooms" onchange="filterProperties()" style="display: none;">
                     <option value="">Beds</option>
@@ -1064,33 +1062,34 @@
     <script>
         mapboxgl.accessToken = 'pk.eyJ1Ijoid2Vid2l0aHJhaiIsImEiOiJjbTBhbGZmMHgxZXFuMm1vcWt4YmNwZGZhIn0.IpNziQwncy2U-Xms017ojA';
 
-        fetch('https://aqua-stingray-548056.hostingersite.com/wp-json/wp/v2/property') // API for the GET request
-            .then(response => response.json())
-            .then(data => {
-                // console.log("properties", data);
-                const propertie = data;
+        // // fetch('https://aqua-stingray-548056.hostingersite.com/wp-json/wp/v2/property') // API for the GET request
+        // fetch('https://aqua-stingray-548056.hostingersite.com/wp-json/wp/v2/place') // API for the GET request
+        //     .then(response => response.json())
+        //     .then(data => {
+        //         // console.log("properties", data);
+        //         const propertie = data;
 
-                console.log("Properties:", propertie); // This will log the properties
-                const propertData = {
-                    "Image": propertie[5].gallery[0].guid,
-                    "Bathrooms": propertie[5].bathrooms,
-                    "Name": propertie[5].title.rendered,
-                    "Position": propertie[5].position,
-                    "Bedrooms": propertie[5].bedrooms,
-                    "Area Size": propertie[5].area_size,
-                    "Property Link": propertie[5].link,
-                    "Lot Size": propertie[5].lot_size,
-                    "Price": propertie[5].price,
-                    "Address": propertie[5].address,
-                    "Types": propertie[5].types,
-                    "Basement": propertie[5].basement,
-                    "3D Tour": propertie[5].threed_tour,
-                    "Featured": propertie[5].featured
-                }
-                // console.log("Properties:", properties); // This will log the old properties
-                console.table(propertData) // This will log the new properties
-            })
-            .catch(error => console.error('Error:', error)); // Add error handling
+        //         console.log("Properties:", propertie); // This will log the properties
+        //         const propertData = {
+        //             "Image": propertie[0].gallery[0].guid,
+        //             "Bathrooms": propertie[0].bathrooms,
+        //             "Name": propertie[0].title.rendered,
+        //             "Position": propertie[0].position,
+        //             "Bedrooms": propertie[0].bedrooms,
+        //             "Area Size": propertie[0].area_size,
+        //             "Property Link": propertie[0].link,
+        //             "Lot Size": propertie[0].lot_size,
+        //             "Price": propertie[0].price,
+        //             "Address": propertie[0].address,
+        //             "Types": propertie[0].types,
+        //             "Basement": propertie[0].basement,
+        //             "3D Tour": propertie[0].threed_tour,
+        //             "Featured": propertie[0].featured
+        //         }
+        //         // console.log("Properties:", properties); // This will log the old properties
+        //         console.table(propertData) // This will log the new properties
+        //     })
+        //     .catch(error => console.error('Error:', error)); // Add error handling
 
 
 
@@ -1098,17 +1097,22 @@
         const properties = [
             {
                 name: "queen",
-                address: "215 Emily St, Mountain View, CA",
+                address: "3224, Amherst Avenue, Dallas, Texas, 75225",
                 description: "Single family house with modern design",
                 price: 3889000,
-                type: "home",
+                type: "Single Family Residential",
                 bed: 5,
                 bath: 4.5,
-                size: 3200, // in Sq.ft
+                area_size: 5161.1, // in Sq.ft
                 position: [-122.28528451834352, 37.50024109655184],
                 image: "https://aqua-stingray-548056.hostingersite.com/wp-content/uploads/2024/10/Gallery-Hero-Slide-1.webp",
                 garage: true,
                 amenities: ["pool", "gym"],
+                hoa: 0,
+                featured: true,
+                floors: 3,
+
+
             },
             {
                 name: "king",
@@ -1118,7 +1122,7 @@
                 type: "apartment",
                 bed: 2,
                 bath: 2,
-                size: 1200,
+                area_size: 1200,
                 position: [-122.4194, 37.7749],
                 image: "https://aqua-stingray-548056.hostingersite.com/wp-content/uploads/2024/10/Gallery-Hero-Slide-2.webp",
                 garage: false,
@@ -1133,7 +1137,7 @@
                 type: "condo",
                 bed: 3,
                 bath: 2,
-                size: 1800,
+                area_size: 1800,
                 position: [-118.2437, 34.0522],
                 image: "https://aqua-stingray-548056.hostingersite.com/wp-content/uploads/2024/10/active-listing-img1-ezgif.webp",
                 garage: true,
@@ -1148,7 +1152,7 @@
                 type: "condo",
                 bed: 3,
                 bath: 2,
-                size: 1800,
+                area_size: 1800,
                 position: [-114.2437, 34.0529],
                 image: "https://aqua-stingray-548056.hostingersite.com/wp-content/uploads/2024/10/active-listing-img1-ezgif.webp",
                 garage: true,
@@ -1337,7 +1341,7 @@
                     (!currentFilters.bathrooms || property.bath >= currentFilters.bathrooms) &&
                     (!currentFilters.basement || property.basement === currentFilters.basement) &&
                     (property.price >= minPrice) &&
-                    (property.size >= currentFilters.minSize) &&
+                    (property.area_size >= currentFilters.minSize) &&
                     // (property.price <= maxPrice) &&
                     // (property.size <= currentFilters.maxSize) &&
                     currentFilters.amenities.every(amenity => property.amenities.includes(amenity));
@@ -1378,7 +1382,7 @@
                     <div class="details">
                         <p class="property-name">${property.name}</p>
                         <p class="property-address">${property.address}</p>
-                        <p class="property-amenities">${property.bed} Beds | ${property.bath} Baths | ${property.size} Sq.ft</p>
+                        <p class="property-amenities">${property.bed} Beds | ${property.bath} Baths | ${property.area_size} Sq.ft</p>
                         <p class="property-type">${property.type.toUpperCase()}</p>
                     </div>
                 `;
@@ -1387,7 +1391,7 @@
                 // Add markers to the map for each property
                 const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(`
                     <h3>${property.address}</h3>
-                    <p>${property.bed} Beds, ${property.bath} Baths, ${property.size} Sq.ft</p>
+                    <p>${property.bed} Beds, ${property.bath} Baths, ${property.area_size} Sq.ft</p>
                     <p class="price">$${property.price.toLocaleString()}</p>
                 `);
 
@@ -1460,9 +1464,9 @@
                     case 'price-desc':
                         return b.price - a.price;
                     case 'size-asc':
-                        return a.size - b.size;
+                        return a.area_size - b.area_size;
                     case 'size-desc':
-                        return b.size - a.size;
+                        return b.area_size - a.area_size;
                     default:
                         return 0;
                 }
