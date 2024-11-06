@@ -247,6 +247,37 @@ image: "https://via.placeholder.com/400x300.png?text=Property+20"
 
 
 </body>
-<script src="script.js"></script>
+<script src="script.js">
+    fetch('https://aqua-stingray-548056.hostingersite.com/wp-json/wp/v2/property') // API for the GET request
+    // fetch('https://rosybrown-goose-111113.hostingersite.com/wp-json/wp/v2/property') // API for the GET request
+    //     .then(response => response.json())
+    //     .then(data => {
+    //         // console.log("properties", data);
+    //         const propertie = data;
+
+    //         console.log("Properties:", propertie); // This will log the properties
+    //         const propertData = {
+    //             "Image": propertie[0].gallery[0].guid,
+    //             "Bathrooms": propertie[0].bathrooms,
+    //             "Name": propertie[0].title.rendered,
+    //             "Position": propertie[0].position,
+    //             "Bedrooms": propertie[0].bedrooms,
+    //             "Area Size": propertie[0].area_size,
+    //             "Property Link": propertie[0].link,
+    //             "Lot Size": propertie[0].lot_size,
+    //             "Price": propertie[0].price,
+    //             "Address": propertie[0].address,
+    //             "Types": propertie[0].types,
+    //             "Basement": propertie[0].basement,
+    //             "3D Tour": propertie[0].threed_tour,
+    //             "Featured": propertie[0].featured
+    //         }
+    //         // console.log("Properties:", properties); // This will log the old properties
+    //         console.table(propertData) // This will log the new properties
+    //     })
+    //     .catch(error => console.error('Error:', error)); // Add error handling
+
+
+</script>
 
 </html>

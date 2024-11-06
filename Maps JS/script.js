@@ -1,11 +1,15 @@
-function a() {
-    var d = 69;
-    console.log(b);
-    c();
-    function c() {
-        console.log(d);
+function outer() {
+    c = 3;
+    function out(b) {
+        function inner() {
+            console.log(a, b, c);
+        }
+        var a = 2;
+        return inner();
     }
+    return out;
 }
 
-var b = 100;
-a(); 
+var a = 100;
+
+var abc = outer()("rajkumar");

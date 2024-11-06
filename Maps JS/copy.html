@@ -1,0 +1,1568 @@
+<!-- Mapbox CSS -->
+<link href="https://api.mapbox.com/mapbox-gl-js/v2.13.0/mapbox-gl.css" rel="stylesheet" />
+
+<!-- Mapbox Geocoder CSS -->
+<link href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.css"
+    rel="stylesheet" />
+
+<!-- Custom CSS -->
+<style>
+    /* Base Styles */
+    body {
+        background-color: #e8e1d6 !important;
+    }
+
+    html {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        font-family: 'Roboto', sans-serif;
+    }
+
+    /* Container */
+    .main-container {
+        display: flex;
+        height: 100%;
+        flex-direction: column;
+    }
+
+    /* Search Container */
+    .search-container {
+        position: fixed;
+        top: 80px;
+        left: 0;
+        right: 0;
+        background: #1f363e;
+        padding: 10px 15px;
+        z-index: 1000;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        justify-content: center;
+        height: 115px;
+    }
+
+
+    .search-right {
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: center;
+        margin-left: 10px;
+    }
+
+    .search-right>* {
+        margin-right: 10px;
+        /* margin-bottom: 10px; */
+    }
+
+    #geocoder {
+        width: 100%;
+    }
+
+    .search-container select {
+        padding: 8px;
+        border: none;
+        border-radius: 0px;
+        background-color: #ffffff;
+        color: #222222;
+        margin-bottom: 15px;
+    }
+
+    .search-container input[type="number"] {
+        padding: 8px;
+        border: none;
+        border-radius: 0px;
+        background-color: #ffffff;
+        color: #000000;
+    }
+
+    select:focus-visible {
+        outline: none;
+    }
+
+    .search-container button {
+        background-color: transparent;
+        color: white;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 9.6px 16px 6.4px;
+    }
+
+    .mapboxgl-ctrl-geocoder {
+        width: 100%;
+        position: relative;
+    }
+
+    .mapboxgl-ctrl-geocoder--icon {
+        width: 24px;
+        height: 24px;
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    .mapboxgl-ctrl-geocoder--input {
+        padding-left: 40px;
+    }
+
+    /* More Filters */
+    .more-filters {
+        position: relative;
+    }
+
+    .more-filters-content {
+        display: none;
+        position: absolute;
+        top: 40px;
+        right: 0;
+        background: #f1f1f1;
+        /* padding: 15px; */
+        border: 1px solid #ccc;
+        /* border-radius: 4px; */
+        z-index: 1000;
+        min-width: 250px;
+    }
+
+
+    .more-filters-filter {
+        padding: 20px;
+        margin-bottom: 35px;
+    }
+
+    .more-filters-content.show {
+        display: block;
+    }
+
+    .more-filters-content input[type="number"] {
+        display: block;
+        margin-bottom: 10px;
+        width: 115px;
+        height: 30px;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="email"],
+    input[type="url"],
+    input[type="password"],
+    input[type="search"],
+    input[type=reset],
+    input[type=tel],
+    input[type=date],
+    select,
+    textarea {
+        font-size: 16px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 24px;
+        width: 100%;
+        padding: 12px 38px;
+        border-radius: 4px;
+        box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
+        color: var(--ast-form-input-text, #475569);
+    }
+
+    option {
+        color: black;
+    }
+
+    .square-feet,
+    .lot-size {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+
+    h4.more-filters-title {
+        color: #222222;
+        font-size: 14px;
+        font-family: 'Albert Sans', sans-serif;
+        margin-bottom: 10px;
+    }
+
+    label.more-filters-label {
+        display: flex;
+        gap: 10px;
+        width: 185px;
+        align-items: center;
+        background-color: #ffffff;
+        padding: 10px;
+        margin-bottom: 15px;
+    }
+
+
+    /* Map and Listing */
+    .map-and-listing {
+        display: flex;
+        flex: 1;
+        margin-top: 60px;
+        overflow: hidden;
+    }
+
+    .map-container {
+        width: 50%;
+        position: relative;
+    }
+
+    .listing-container {
+        width: 50%;
+        padding: 15px;
+        background-color: #e8e1d6;
+        box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+        height: calc(100vh - 195px);
+        overflow-y: auto;
+    }
+
+    /* location title */
+    h1.location-title {
+        margin-bottom: 0px;
+    }
+
+    /* property count */
+    h4.property-count {
+        margin-bottom: 0px;
+        font-family: 'Albert Sans', sans-serif;
+        font-size: 16px;
+        font-weight: 400;
+    }
+
+    h4.view-toggle-title {
+        font-size: 16px;
+        color: #222222;
+        margin-bottom: 0px;
+        font-family: 'Albert Sans', sans-serif;
+    }
+
+    .sorrting-div {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    /* sort div*/
+    select#sort-by {
+        padding: 0px 10px;
+        width: 160px;
+        height: 30px;
+        background: transparent;
+        border: none;
+    }
+
+    /* Property Item */
+    .property-item {
+        margin-bottom: 0px;
+        border: 1px solid #ddd;
+        /* background-color: #fff; */
+        box-shadow: rgba(0, 0, 0, 0.3) 0px 2px 4px 0px;
+        cursor: pointer;
+        position: relative;
+    }
+
+    .property-image-container {
+        position: relative;
+        width: 100%;
+        height: 212px;
+        /* margin-bottom: -12px; */
+        margin-top: -26px;
+        overflow: hidden;
+        /* Ensures overlay and image stay within bounds */
+    }
+
+    .property-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        position: relative;
+        /* top: -26px; */
+    }
+
+    /* image layour */
+    .property-image-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.75) 100%);
+        opacity: 1;
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    /* hover effect for images */
+    .property-image-container:hover::before {
+        background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.1) 50%, rgba(10, 0, 0, 10) 100%);
+    }
+
+    .details {
+        padding: 10px 10px 10px 10px;
+    }
+
+    .list-view .property-item {
+        display: flex;
+        align-items: center;
+    }
+
+    .list-view .property-image {
+        width: 120px;
+        height: 80px;
+        margin-right: 15px;
+        object-fit: cover;
+    }
+
+    .list-view .details {
+        flex: 1;
+        padding-left: 15px;
+    }
+
+    .price {
+        position: absolute;
+        font-weight: bold;
+        color: #fff;
+        margin-top: -45px;
+        left: 20px;
+        z-index: 2;
+    }
+
+    /* Property Details */
+    .details p {
+        margin: 0px 0;
+    }
+
+    p.property-name {
+        font-weight: 600;
+        font-size: 16px;
+    }
+
+    p.property-address {
+        margin-bottom: 10px;
+        color: #636363;
+        font-weight: 600;
+        font-size: 13px;
+        -o-text-overflow: ellipsis;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+    }
+
+    p.property-amenities {
+        color: #222222;
+        font-weight: 600;
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
+
+    p.property-type {
+        font-size: 12px;
+        font-weight: 600;
+        color: #1a1a1a;
+    }
+
+    /* Grid and List Views */
+    .grid-view {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
+    }
+
+    .list-view {
+        display: block;
+    }
+
+    /* Mapbox Popup */
+    .mapboxgl-popup {
+        max-width: 300px;
+    }
+
+    .mapboxgl-popup-content {
+        border-radius: 10px;
+    }
+
+    /* View Toggle Buttons */
+    .view-toggle {
+        margin: 10px 0;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .view-toggle button {
+        padding: 8px;
+        margin-left: 10px;
+        cursor: pointer;
+    }
+
+    .view-toggle button:active {
+        background: #121d21;
+    }
+
+    /* Hide Mobile Toggle Buttons on Desktop */
+    .mobile-toggle-buttons {
+        display: none;
+    }
+
+    /* Highlight on hover */
+    .property-item:hover {
+        box-shadow: 0px 0px 15px rgba(30, 30, 30, 0.5);
+    }
+
+    .location-title,
+    .property-count {
+        color: #000000 !important;
+
+    }
+
+    .more-filters-fixed-buttons {
+        display: flex;
+
+    }
+
+
+    button.apply-filters-btn-mobile {
+        display: none;
+    }
+
+    button#apply-filters-btn {
+        width: 100%;
+        background-color: #000000;
+        display: block;
+    }
+
+    .more-filters-mobile-only {
+        display: none;
+    }
+
+    @media screen and (min-width: 1577px) {
+        .listing-container {
+            width: 35%;
+            height: calc(100vh - 195px);
+        }
+
+        .map-container {
+            width: 65%;
+            position: relative;
+            height: 79.5vh;
+        }
+    }
+
+    @media screen and (min-width: 1363px) {
+        .search-left {
+            /* flex: 1; */
+            min-width: 500px;
+        }
+
+        /* .property-item {
+            width: 283px;
+        }
+
+        .property-item img {
+            width: 283px;
+            height: 212px;
+        } */
+    }
+
+
+    @media screen and (min-width: 640px) {
+        .mapboxgl-ctrl-geocoder {
+            width: 100%;
+            font-size: 15px;
+            line-height: 20px;
+            max-width: none;
+        }
+    }
+
+    /* Responsive Styles */
+    @media (max-width: 767px) {
+
+        #filter-bedrooms-wrapper,
+        #filter-bathrooms-wrapper {
+            display: none;
+        }
+
+        .more-filters-mobile-only {
+            display: block;
+        }
+
+        .close-filters {
+            display: flex !important;
+            border-bottom: 1px solid #d1d1d5;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+            padding: 15px;
+            position: sticky;
+            top: 0;
+            background: white;
+        }
+
+        .more-filters-fixed-buttons {
+            display: flex;
+            justify-content: space-evenly;
+            background: white;
+            width: 100vw;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            padding: 10px;
+        }
+
+        button.apply-filters-btn-desktop {
+            display: none;
+        }
+
+        button.apply-filters-btn-mobile {
+            display: block;
+            width: 40%;
+            background: #000000;
+        }
+
+        button#apply-filters-btn {
+            color: #f5f5f5;
+            background: #000000;
+            width: 40%;
+            display: block;
+        }
+
+        /* Adjust Container */
+        .container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Hide View Toggle */
+        .view-toggle {
+            display: none;
+        }
+
+        /* Map and Listing Stack */
+        .map-and-listing {
+            /* flex-direction: column; */
+            flex: 1;
+            margin-top: 0px;
+            overflow: hidden;
+        }
+
+        .map-container,
+        .listing-container {
+            width: 100%;
+            flex: 1;
+            display: none;
+            overflow-y: auto;
+        }
+
+        /* Show Listing by Default */
+        .map-container {
+            display: block;
+        }
+
+        /* Adjust Heights */
+        .map-container {
+            height: calc(100vh - 202px);
+        }
+
+        .listing-container {
+            height: calc(100vh - 140px);
+        }
+
+        /* Mobile Toggle Buttons */
+        .mobile-toggle-buttons {
+            display: flex;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #1f363e;
+            border-top: 1px solid #ccc;
+            z-index: 10;
+        }
+
+        .mobile-toggle-buttons button {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .mobile-toggle-buttons button.active {
+            background-color: #121d21;
+        }
+
+        .mobile-toggle-buttons i {
+            display: block;
+            font-size: 20px;
+            margin-bottom: 3px;
+        }
+
+        /* .map-and-listing {
+            /* margin-bottom: 60px; */
+        /* } */
+
+        /* Search Container */
+        .search-container {
+            flex-wrap: wrap;
+            position: sticky;
+            top: 0;
+            padding: 10px;
+            height: 90px;
+        }
+
+        .search-left,
+        .search-right {
+            flex: 1 1 100%;
+        }
+
+        .search-right {
+            margin-left: 0;
+            flex-wrap: nowrap;
+        }
+
+        .search-right>* {
+            flex: 1 1 calc(50% - 10px);
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        /* Property Item */
+        .property-item {
+            padding: 10px;
+            margin-bottom: 0px;
+        }
+
+        .list-view .property-image {
+            width: 80px;
+            height: 60px;
+        }
+
+        .details p {
+            margin: 3px 0;
+            font-size: 14px;
+        }
+
+        .price {
+            font-size: 16px;
+        }
+
+        /* Grid View Adjustments */
+        .grid-view {
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .grid-view .property-item {
+            padding: 0px;
+        }
+
+        .grid-view .property-image {
+            height: 177px;
+            object-fit: cover;
+        }
+
+        /* More Filters Position */
+        .more-filters-content {
+            position: fixed;
+            width: 100vw;
+            height: 100vh;
+            top: 0px;
+            overflow: auto;
+        }
+
+        /* wordpress styles */
+        .ast-container {
+            padding: 0 !important;
+        }
+    }
+
+    /* wordpress styles ends here*/
+
+
+    /* featured property */
+    .featured-label {
+        background-color: #3d3c3661;
+        position: relative;
+        font-size: 12px;
+        color: #fff9f9;
+        padding: 0px 5px;
+        top: 0px;
+        margin-left: 6px;
+        font-weight: 500;
+        z-index: 99;
+    }
+
+    .nofeatured {
+        visibility: hidden;
+    }
+
+    .toggle-icon {
+        width: 20px;
+        height: 20px;
+        transition: transform 0.3s;
+    }
+
+    /* Rotate icon when popup is visible */
+    .rotate-icon {
+        transform: rotate(180deg);
+    }
+
+    /* Style for the popup */
+    .popup {
+        position: absolute;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border-radius: 0px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        margin-top: 5px;
+        z-index: 10;
+        min-width: 126px;
+    }
+
+    /* Hide popup initially */
+    .hidden {
+        display: none;
+    }
+
+    /* Style for each option inside popup */
+    .popup div {
+        padding: 10px 15px;
+        cursor: pointer;
+        /* width: fit-content; */
+    }
+
+    .popup div:hover {
+        background-color: #f0f0f0;
+    }
+
+    .close-filters {
+        display: none;
+    }
+
+    svg#close-icon {
+        color: black;
+    }
+</style>
+
+<body>
+    <div class="main-container">
+        <!-- Search Container -->
+        <div class="search-container">
+            <div class="search-left">
+                <div id="geocoder" style="display: inline-block;"></div>
+            </div>
+            <div class="search-right">
+                <!-- Types Dropdown -->
+                <div class="filter-type-wrapper">
+                    <button id="filter-type-btn" onclick="togglePopup('filter-type-popup', 'toggle-icon-type')">
+                        Types
+                        <svg id="toggle-icon-type" class="toggle-icon" width="20" height="20" viewBox="0 0 24 24"
+                            fill="currentColor">
+                            <path d="M7 10l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                        </svg>
+                    </button>
+                    <div id="filter-type-popup" class="popup hidden">
+                        <div onclick="selectOption('filter-type', '')">Types</div>
+                        <div onclick="selectOption('filter-type', 'Single Family Residential')">Single Family
+                            Residential</div>
+                        <div onclick="selectOption('filter-type', 'Apartment')">Apartment</div>
+                        <div onclick="selectOption('filter-type', 'Condo')">Condo</div>
+                        <div onclick="selectOption('filter-type', 'Townhouse')">Townhouse</div>
+                    </div>
+                </div>
+
+                <!-- Beds Dropdown -->
+                <div class="filter-type-wrapper" id="filter-bedrooms-wrapper">
+                    <button id="filter-bedrooms-btn"
+                        onclick="togglePopup('filter-bedrooms-popup', 'toggle-icon-bedrooms')">
+                        Beds
+                        <svg id="toggle-icon-bedrooms" class="toggle-icon" width="20" height="20" viewBox="0 0 24 24"
+                            fill="currentColor">
+                            <path d="M7 10l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                        </svg>
+                    </button>
+                    <div id="filter-bedrooms-popup" class="popup hidden">
+                        <div onclick="selectOption('filter-bedrooms', '')">Beds</div>
+                        <div onclick="selectOption('filter-bedrooms', '1')">1+</div>
+                        <div onclick="selectOption('filter-bedrooms', '2')">2+</div>
+                        <div onclick="selectOption('filter-bedrooms', '3')">3+</div>
+                        <div onclick="selectOption('filter-bedrooms', '4')">4+</div>
+                    </div>
+                </div>
+
+                <!-- Baths Dropdown -->
+                <div class="filter-type-wrapper" id="filter-bathrooms-wrapper">
+                    <button id="filter-bathrooms-btn"
+                        onclick="togglePopup('filter-bathrooms-popup', 'toggle-icon-bathrooms')">
+                        Baths
+                        <svg id="toggle-icon-bathrooms" class="toggle-icon" width="20" height="20" viewBox="0 0 24 24"
+                            fill="currentColor">
+                            <path d="M7 10l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                        </svg>
+                    </button>
+                    <div id="filter-bathrooms-popup" class="popup hidden">
+                        <div onclick="selectOption('filter-bathrooms', '')">Baths</div>
+                        <div onclick="selectOption('filter-bathrooms', '1')">1+</div>
+                        <div onclick="selectOption('filter-bathrooms', '2')">2+</div>
+                        <div onclick="selectOption('filter-bathrooms', '3')">3+</div>
+                        <div onclick="selectOption('filter-bathrooms', '4')">4+</div>
+                    </div>
+                </div>
+
+                <!-- Price Range Dropdown -->
+                <div class="filter-type-wrapper">
+                    <button id="price-range-btn" onclick="togglePopup('price-range-popup', 'toggle-icon-price')">
+                        Price
+                        <svg id="toggle-icon-price" class="toggle-icon" width="20" height="20" viewBox="0 0 24 24"
+                            fill="currentColor">
+                            <path d="M7 10l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                        </svg>
+                    </button>
+                    <div id="price-range-popup" class="popup hidden">
+                        <div onclick="selectOption('price-range-filter', '')">Price</div>
+                        <div onclick="selectOption('price-range-filter', '500000+')">$500,000+</div>
+                        <div onclick="selectOption('price-range-filter', '1000000+')">$1,000,000+</div>
+                        <div onclick="selectOption('price-range-filter', '2000000+')">$2,000,000+</div>
+                        <div onclick="selectOption('price-range-filter', '5000000+')">$5,000,000+</div>
+                    </div>
+                </div>
+
+                <!-- Hidden Select Elements -->
+                <select id="filter-type" onchange="filterProperties()" style="display: none;">
+                    <option value="">Types</option>
+                    <option value="Single Family Residential">Single Family Residential</option>
+                    <option value="Apartment">Apartment</option>
+                </select>
+                <select id="filter-bedrooms" onchange="filterProperties()" style="display: none;">
+                    <option value="">Beds</option>
+                    <option value="1">1+</option>
+                    <option value="2">2+</option>
+                    <option value="3">3+</option>
+                    <option value="4">4+</option>
+                </select>
+                <select id="filter-bathrooms" onchange="filterProperties()" style="display: none;">
+                    <option value="">Baths</option>
+                    <option value="1">1+</option>
+                    <option value="2">2+</option>
+                    <option value="3">3+</option>
+                    <option value="4">4+</option>
+                </select>
+                <select id="price-range-filter" onchange="filterProperties()" style="display: none;">
+                    <option value="">Price</option>
+                    <option value="500000+">$500,000+</option>
+                    <option value="1000000+">$1,000,000+</option>
+                    <option value="2000000+">$2,000,000+</option>
+                    <option value="5000000+">$5,000,000+</option>
+                </select>
+
+                <!-- More filters -->
+                <div class="more-filters">
+                    <button id="more-filters-btn" type="button">More</button>
+                    <div class="more-filters-content">
+                        <div class="close-filters">
+                            <span class="property-count">0 Results Found</span>
+                            <button type="button" id="close-filters-btn">
+                                <svg id="close-icon" width="14" height="14" viewBox="0 0 32 32" aria-hidden="true"
+                                    focusable="false" role="img" fill="currentColor">
+                                    <path
+                                        d="M18.83,16,29.41,5.41a2,2,0,0,0-2.82-2.82L16,13.17,5.41,2.59A2,2,0,0,0,2.59,5.41L13.17,16,2.59,26.59a2,2,0,1,0,2.82,2.82L16,18.83,26.59,29.41a2,2,0,0,0,2.82-2.82Z">
+                                    </path>
+                                </svg>
+                            </button>
+                        </div>
+
+                        <!-- More Filters Content -->
+                        <div class="more-filters-filter">
+                            <div class="more-filters-mobile-only">
+                                <select id="filter-bedrooms" onchange="filterProperties()">
+                                    <option value="">Beds</option>
+                                    <option value="1">1+</option>
+                                    <option value="2">2+</option>
+                                    <option value="3">3+</option>
+                                    <option value="4">4+</option>
+                                </select>
+                                <select id="filter-bathrooms" onchange="filterProperties()">
+                                    <option value="">Baths</option>
+                                    <option value="1">1+</option>
+                                    <option value="2">2+</option>
+                                    <option value="3">3+</option>
+                                    <option value="4">4+</option>
+                                </select>
+                            </div>
+
+                            <!-- Min and Max Square Feet Inputs -->
+                            <div>
+                                <h4 class="more-filters-title">Square Feet</h4>
+                                <div class="square-feet">
+                                    <select name="square-feet" id="min-square-feet" onchange="filterProperties()"
+                                        placeholder="Minimum">
+                                        <option value="">Any</option>
+                                        <option value="4000+">4000+</option>
+                                        <option value="4500+">4500+</option>
+                                        <option value="5000+">5000+</option>
+                                        <option value="5500+">5500+</option>
+                                        <option value="6000+">6000+</option>
+                                    </select>
+                                    <!-- <select name="square-feet" id="max-square-feet" onchange="filterProperties()"
+                                        placeholder="Maximum">
+                                        <option value="">Max</option>
+                                        <option value="4500">4500</option>
+                                        <option value="5000">5000</option>
+                                        <option value="5500">5500</option>
+                                        <option value="6000">6000</option>
+                                        <option value="6500">6500</option>
+                                    </select> -->
+                                </div>
+                            </div>
+
+                            <!-- Min and Max Lot Size Inputs -->
+                            <div>
+                                <h4 class="more-filters-title">Lot Size</h4>
+                                <div class="lot-size">
+                                    <select name="lot-size" id="min-lot-size" onchange="filterProperties()">
+                                        <option value="">Any</option>
+                                        <option value="3000+">3000+</option>
+                                        <option value="5000+">5000+</option>
+                                        <option value="7000+">7000+</option>
+                                        <option value="10000+">10000+</option>
+                                        <option value="20000+">20000+</option>
+                                    </select>
+                                    <!-- <select name="lot-size" id="max-lot-size" onchange="filterProperties()">
+                                        <option value="">Max</option>
+                                        <option value="5000">5000</option>
+                                        <option value="7000">7000</option>
+                                        <option value="10000">10000</option>
+                                        <option value="20000">20000</option>
+                                        <option value="50000">50000</option>
+                                    </select> -->
+                                </div>
+                            </div>
+
+                            <!-- HOA Filter -->
+                            <!-- <div>
+                                <h4 class="more-filters-title">HOA</h4>
+                                <select id="hoa-filter" onchange="filterProperties()">
+                                    <option value="">Any</option>
+                                    <option value="0">No HOA Fee</option>
+                                    <option value="500">$500+ / month</option>
+                                </select>
+                            </div> -->
+
+                            <!-- Floors Filter -->
+                            <div>
+                                <h4 class="more-filters-title">Floors</h4>
+                                <select id="floors-filter" onchange="filterProperties()">
+                                    <option value="">Any</option>
+                                    <option value="1">1+</option>
+                                    <option value="2">2+</option>
+                                    <option value="3">3+</option>
+                                </select>
+                            </div>
+
+                            <!-- Garage Checkbox -->
+                            <div>
+                                <label class="more-filters-label"><input type="checkbox" id="garage-filter"
+                                        onchange="filterProperties()" /> Garage</label>
+                            </div>
+
+                            <!-- Amenities Checkboxes -->
+                            <div>
+                                <h4 class="more-filters-title">Amenities</h4>
+                                <label class="more-filters-label"><input type="checkbox" name="amenities" value="pool"
+                                        onchange="filterProperties()" /> Pool</label>
+                                <label class="more-filters-label"><input type="checkbox" name="amenities" value="gym"
+                                        onchange="filterProperties()" /> Gym</label>
+                            </div>
+
+                            <!-- With Basement and 3D Tour -->
+                            <div>
+                                <label class="more-filters-label"><input type="checkbox" id="with-basement-filter"
+                                        onchange="filterProperties()" /> With Basement</label>
+                                <label class="more-filters-label"><input type="checkbox" id="threedtour-filter"
+                                        onchange="filterProperties()" /> Must have 3D Tour</label>
+                            </div>
+
+                            <div class="more-filters-fixed-buttons">
+                                <button class="apply-filters-btn-mobile" onclick="resetFilters()" type="button">Reset
+                                    Filters</button>
+                                <button type="button" id="apply-filters-btn" onclick="closeMoreFilters()">Apply</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="apply-filters-btn-desktop" onclick="resetFilters()" type="button">Reset Filters</button>
+            </div>
+        </div>
+
+        <!-- Map and Listing -->
+        <div class="map-and-listing">
+            <!-- Map Container -->
+            <div class="map-container" id="map"></div>
+
+            <!-- Listing Container -->
+            <div class="listing-container">
+                <h1 class="location-title">All Properties</h1>
+                <div class="view-toggle">
+                    <h4 class="property-count">0 Results Found</h4>
+                    <div class="sorrting-div">
+                        <h4 class="view-toggle-title">Sort By:</h4>
+                        <!-- Sort Dropdown -->
+                        <select id="sort-by" onchange="sortAndFilterProperties()">
+                            <option value="default">Default</option>
+                            <option value="price-asc">Price: Low to High</option>
+                            <option value="price-desc">Price: High to Low</option>
+                            <option value="size-asc">Size: Small to Large</option>
+                            <option value="size-desc">Size: Large to Small</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="property-list" class="grid-view"></div>
+            </div>
+        </div>
+
+        <!-- Mobile Toggle Buttons (only visible on mobile devices) -->
+        <div class="mobile-toggle-buttons">
+            <button id="mobile-map-btn" class="active">
+                <i class="fas fa-map"></i>
+                <span>Map</span>
+            </button>
+            <button id="mobile-listing-btn">
+                <i class="fas fa-list"></i>
+                <span>Listings</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Mapbox JS -->
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.13.0/mapbox-gl.js"></script>
+
+    <!-- Mapbox Geocoder JS -->
+    <script
+        src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.min.js"></script>
+
+    <!-- Custom JS -->
+    <script>
+        mapboxgl.accessToken = 'pk.eyJ1Ijoid2Vid2l0aHJhaiIsImEiOiJjbTBhbGZmMHgxZXFuMm1vcWt4YmNwZGZhIn0.IpNziQwncy2U-Xms017ojA';
+
+
+        fetch('https://rosybrown-goose-111113.hostingersite.com/wp-json/wp/v2/property') // API for the GET request
+            .then(response => response.json())
+            .then(data => {
+                // console.log("properties", data);
+                const propertie = data;
+
+                console.log("Properties:", propertie); // This will log the properties
+                const propertData = {
+                    "Name": propertie[2].title.rendered,
+                    "Image": propertie[2].featured_image,
+                    "Bathrooms": propertie[2].bathrooms,
+                    "Bedrooms": propertie[2].bedrooms,
+                    "coordinates": propertie[2].coordinates,
+                    "Area Size": propertie[2].area_size,
+                    "Property Link": propertie[2].link,
+                    "Lot Size": propertie[2].lot_size,
+                    "Price": propertie[2].price,
+                    "Address": propertie[2].address,
+                    "Types": propertie[2].types,
+                    "Basement": propertie[2].basement,
+                    "3D Tour": propertie[2].must_have_3d_tour,
+                    "Featured": propertie[2].featured_check,
+                    "floors": propertie[2].floors,
+                    "hoa": propertie[2].hoa,
+
+                }
+                // console.log("Properties:", properties); // This will log the old properties
+                console.table(propertData) // This will log the new properties
+            })
+            .catch(error => console.error('Error:', error)); // Add error handling
+
+        // Replace the properties list here
+        const properties = [
+            {
+                name: "Queen",
+                address: "3224 Amherst Avenue, Dallas, Texas, 75225",
+                description: "Single family house with modern design",
+                price: 3889000,
+                type: "Single Family Residential",
+                bed: 5,
+                bath: 4.5,
+                area_size: 5161.1, // in Sq.ft
+                lot_size: 7015, // in Sq.ft
+                position: [-96.7897, 32.8647], // Dallas coordinates
+                image: "https://aqua-stingray-548056.hostingersite.com/wp-content/uploads/2024/10/Gallery-Hero-Slide-1.webp",
+                garage: true,
+                amenities: ["pool", "gym"],
+                hoa: '', // in $
+                threedtour: false,
+                featured: false,
+                floors: 3,
+                basement: false,
+                link: "https://www.realtor.com/realestateandhomes-detail/3224-Amherst-Ave-Dallas-TX-75225"
+            },
+
+            // Add more property objects here if needed
+        ];
+
+        let markers = [];
+        let map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/streets-v11',
+            center: [-96.7897, 32.8647], // Center on Dallas
+            zoom: 10
+        });
+
+        // Initialize Geocoder
+        let geocoder = new MapboxGeocoder({
+            accessToken: mapboxgl.accessToken,
+            mapboxgl: mapboxgl,
+            placeholder: 'Search by address',
+            proximity: {
+                longitude: -96.7897,
+                latitude: 32.8647
+            },
+            marker: false
+        });
+        document.getElementById('geocoder').appendChild(geocoder.onAdd(map));
+
+        // Variables to hold current filters and searched location
+        let currentFilters = {
+            type: '',
+            bedrooms: '',
+            bathrooms: '',
+            priceRange: '',
+            garage: false,
+            basement: false,
+            threedtour: false,
+            amenities: [],
+            minSize: '',
+            maxSize: '',
+            minLotSize: '',
+            maxLotSize: '',
+            hoa: '',
+            floors: '',
+            searchLocation: '',
+            lat: '',
+            lng: ''
+        };
+
+        // Function to update URL parameters
+        function updateURLParameters() {
+            const params = new URLSearchParams();
+
+            // Search location
+            if (currentFilters.searchLocation) params.set('search_location', currentFilters.searchLocation);
+            if (currentFilters.lat) params.set('lat', currentFilters.lat);
+            if (currentFilters.lng) params.set('lng', currentFilters.lng);
+
+            // Filters
+            if (currentFilters.type) params.set('type', currentFilters.type);
+            if (currentFilters.bedrooms) params.set('bedrooms', currentFilters.bedrooms);
+            if (currentFilters.bathrooms) params.set('bathrooms', currentFilters.bathrooms);
+            if (currentFilters.priceRange) params.set('price_range', currentFilters.priceRange);
+            if (currentFilters.garage) params.set('garage', currentFilters.garage);
+            if (currentFilters.basement) params.set('basement', currentFilters.basement);
+            if (currentFilters.threedtour) params.set('threedtour', currentFilters.threedtour);
+            if (currentFilters.amenities.length > 0) params.set('amenities', currentFilters.amenities.join(','));
+            if (currentFilters.minSize) params.set('min_size', currentFilters.minSize);
+            if (currentFilters.maxSize) params.set('max_size', currentFilters.maxSize);
+            if (currentFilters.minLotSize) params.set('min_lot_size', currentFilters.minLotSize);
+            if (currentFilters.maxLotSize) params.set('max_lot_size', currentFilters.maxLotSize);
+            if (currentFilters.hoa) params.set('hoa', currentFilters.hoa);
+            if (currentFilters.floors) params.set('floors', currentFilters.floors);
+
+            // Update the URL without reloading the page
+            const newURL = window.location.pathname + '?' + params.toString();
+            history.replaceState(null, '', newURL);
+        }
+
+        // Function to get URL parameters on page load
+        function getURLParameters() {
+            const params = new URLSearchParams(window.location.search);
+
+            // Search location
+            const lat = parseFloat(params.get('lat'));
+            const lng = parseFloat(params.get('lng'));
+            const searchLocation = params.get('search_location') || '';
+
+            if (!isNaN(lat) && !isNaN(lng)) {
+                currentFilters.lat = lat;
+                currentFilters.lng = lng;
+                currentFilters.searchLocation = searchLocation;
+                map.setCenter([lng, lat]);
+                map.setZoom(10);
+                document.querySelector('.location-title').textContent = searchLocation || 'Search Location';
+            }
+
+            // Filters
+            currentFilters.type = params.get('type') || '';
+            currentFilters.bedrooms = params.get('bedrooms') || '';
+            currentFilters.bathrooms = params.get('bathrooms') || '';
+            currentFilters.priceRange = params.get('price_range') || '';
+            currentFilters.garage = params.get('garage') === 'true';
+            currentFilters.basement = params.get('basement') === 'true';
+            currentFilters.threedtour = params.get('threedtour') === 'true';
+            currentFilters.amenities = params.get('amenities') ? params.get('amenities').split(',') : [];
+            currentFilters.minSize = params.get('min_size') || '';
+            currentFilters.maxSize = params.get('max_size') || '';
+            currentFilters.minLotSize = params.get('min_lot_size') || '';
+            currentFilters.maxLotSize = params.get('max_lot_size') || '';
+            // currentFilters.hoa = params.get('hoa') || '';
+            currentFilters.floors = params.get('floors') || '';
+
+            // Set the filter inputs
+            document.getElementById('filter-type').value = currentFilters.type;
+            document.getElementById('filter-bedrooms').value = currentFilters.bedrooms;
+            document.getElementById('filter-bathrooms').value = currentFilters.bathrooms;
+            document.getElementById('price-range-filter').value = currentFilters.priceRange;
+            document.getElementById('garage-filter').checked = currentFilters.garage;
+            document.getElementById('with-basement-filter').checked = currentFilters.basement;
+            document.getElementById('threedtour-filter').checked = currentFilters.threedtour;
+            document.getElementById('min-square-feet').value = currentFilters.minSize;
+            // document.getElementById('max-square-feet').value = currentFilters.maxSize;
+            document.getElementById('min-lot-size').value = currentFilters.minLotSize;
+            // document.getElementById('max-lot-size').value = currentFilters.maxLotSize;
+            // document.getElementById('hoa-filter').value = currentFilters.hoa;
+            document.getElementById('floors-filter').value = currentFilters.floors;
+
+            // Set amenities checkboxes
+            currentFilters.amenities.forEach(amenity => {
+                const checkbox = document.querySelector(`input[name="amenities"][value="${amenity}"]`);
+                if (checkbox) checkbox.checked = true;
+            });
+
+            // Apply filters
+            filterProperties();
+
+            // Clear URL parameters after applying filters
+            // window.history.replaceState({}, document.title, window.location.pathname);
+        }
+
+        // Geocoder result event
+        geocoder.on('result', function (e) {
+            map.flyTo({ center: e.result.center, zoom: 12 });
+            document.querySelector('.location-title').textContent = e.result.place_name;
+            currentFilters.searchLocation = e.result.place_name;
+            currentFilters.lat = e.result.center[1];
+            currentFilters.lng = e.result.center[0];
+            updateURLParameters();
+            filterProperties();
+        });
+
+        // Function to filter properties
+        function filterProperties() {
+            // Update current filters
+            currentFilters.type = document.getElementById('filter-type').value;
+            currentFilters.bedrooms = document.getElementById('filter-bedrooms').value;
+            currentFilters.bathrooms = document.getElementById('filter-bathrooms').value;
+            currentFilters.priceRange = document.getElementById('price-range-filter').value;
+            currentFilters.garage = document.getElementById('garage-filter').checked;
+            currentFilters.basement = document.getElementById('with-basement-filter').checked;
+            currentFilters.threedtour = document.getElementById('threedtour-filter').checked;
+            currentFilters.amenities = Array.from(document.querySelectorAll('input[name="amenities"]:checked')).map(el => el.value);
+            currentFilters.minSize = document.getElementById('min-square-feet').value;
+            // currentFilters.maxSize = document.getElementById('max-square-feet').value;
+            currentFilters.minLotSize = document.getElementById('min-lot-size').value;
+            // currentFilters.maxLotSize = document.getElementById('max-lot-size').value;
+            // currentFilters.hoa = document.getElementById('hoa-filter').value;
+            currentFilters.floors = document.getElementById('floors-filter').value;
+
+            updateURLParameters();
+
+            // Apply filters based on current map bounds
+            filterPropertiesByMapBounds();
+        }
+
+        // Function to filter properties based on current filters and map bounds
+        function filterPropertiesByMapBounds() {
+            const bounds = map.getBounds();
+
+            let minPrice = 0;
+            let maxPrice = Infinity;
+            if (currentFilters.priceRange) {
+                const priceParts = currentFilters.priceRange.split('-');
+                minPrice = parseInt(priceParts[0]) || 0;
+                maxPrice = priceParts[1] ? parseInt(priceParts[1]) : Infinity;
+            }
+
+            let minSize = parseInt(currentFilters.minSize) || 0;
+            let maxSize = parseInt(currentFilters.maxSize) || Infinity;
+
+            let minLotSize = parseInt(currentFilters.minLotSize) || 0;
+            let maxLotSize = parseInt(currentFilters.maxLotSize) || Infinity;
+
+            const filteredProperties = properties.filter((property) => {
+                // Check if property is within map bounds
+                const isWithinBounds = bounds.contains([property.position[0], property.position[1]]);
+
+                const matchesFilters =
+                    (!currentFilters.type || property.type === currentFilters.type) &&
+                    (!currentFilters.bedrooms || property.bed >= parseInt(currentFilters.bedrooms)) &&
+                    (!currentFilters.bathrooms || property.bath >= parseFloat(currentFilters.bathrooms)) &&
+                    (!currentFilters.garage || property.garage) &&
+                    (!currentFilters.basement || property.basement) &&
+                    (!currentFilters.threedtour || property.threedtour) &&
+                    (property.price >= minPrice) &&
+                    (property.area_size >= minSize) &&
+                    (property.lot_size >= minLotSize) &&
+                    (!currentFilters.hoa || (currentFilters.hoa === '0' && property.hoa === 0) ||
+                        (parseInt(currentFilters.hoa) && property.hoa >= parseInt(currentFilters.hoa))) &&
+                    (!currentFilters.floors || property.floors >= parseInt(currentFilters.floors)) &&
+                    currentFilters.amenities.every(amenity => property.amenities.includes(amenity));
+
+
+                return isWithinBounds && matchesFilters;
+            });
+
+            updatePropertyList(filteredProperties);
+            document.querySelectorAll('.property-count').forEach(element => {
+                element.textContent = `${filteredProperties.length} Results Found`;
+            });
+        }
+
+        // Debounce function to limit how often a function can fire
+        function debounce(func, wait) {
+            let timeout;
+            return function (...args) {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(this, args), wait);
+            };
+        }
+
+        // Added event listener to map to update properties when map moves
+        map.on('moveend', debounce(filterPropertiesByMapBounds, 200));
+
+        // Update property list and markers based on filtered properties
+        function updatePropertyList(propertiesToShow) {
+            const propertyList = document.getElementById('property-list');
+            propertyList.innerHTML = '';
+
+            markers.forEach(marker => marker.remove());
+            markers = [];
+
+            if (propertiesToShow.length === 0) {
+                propertyList.innerHTML = '<p>No properties found based on the selected criteria.</p>';
+                return;
+            }
+
+            propertiesToShow.forEach(property => {
+                const propertyItem = document.createElement('div');
+                propertyItem.classList.add('property-item');
+                propertyItem.innerHTML = `
+                    ${property.featured ? '<span class="featured-label">Featured</span>' : ''}
+                    <div class="property-image-container">
+                        <img src="${property.image}" alt="Property at ${property.address}" class="property-image" />
+                    </div>
+                    <p class="price">$${property.price.toLocaleString()}</p>
+                    <div class="details">
+                        <p class="property-name">${property.name}</p>
+                        <p class="property-address">${property.address}</p>
+                        <p class="property-amenities">${property.bed} Beds | ${property.bath} Baths | ${property.area_size} Sq.ft | Lot Size: ${property.lot_size} Sq.ft</p>
+                        <p class="property-type">${property.type}</p>
+                    </div>
+                `;
+                propertyList.appendChild(propertyItem);
+
+                // Redirect to property link when card is clicked
+                propertyItem.addEventListener('click', () => {
+                    window.open(property.link, '_blank');
+                });
+
+                // Add marker for each property
+                const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(`
+                    <h3>${property.address}</h3>
+                    <p>${property.bed} Beds, ${property.bath} Baths, ${property.area_size} Sq.ft</p>
+                    <p class="price">$${property.price.toLocaleString()}</p>
+                `);
+
+                const marker = new mapboxgl.Marker()
+                    .setLngLat(property.position)
+                    .setPopup(popup)
+                    .addTo(map);
+
+                markers.push(marker);
+
+                // Add hover event listeners to the property item
+                propertyItem.addEventListener('mouseover', () => {
+                    marker.getPopup().addTo(map);
+                });
+
+                propertyItem.addEventListener('mouseout', () => {
+                    marker.getPopup().remove();
+                });
+            });
+        }
+
+        function resetFilters() {
+            document.getElementById('filter-type').value = '';
+            document.getElementById('filter-bedrooms').value = '';
+            document.getElementById('filter-bathrooms').value = '';
+            document.getElementById('price-range-filter').value = '';
+            document.getElementById('garage-filter').checked = false;
+            document.getElementById('with-basement-filter').checked = false;
+            document.getElementById('threedtour-filter').checked = false;
+            document.getElementById('min-square-feet').value = '';
+            // document.getElementById('max-square-feet').value = '';
+            document.getElementById('min-lot-size').value = '';
+            // document.getElementById('max-lot-size').value = '';
+            // document.getElementById('hoa-filter').value = '';
+            document.getElementById('floors-filter').value = '';
+            document.querySelectorAll('input[name="amenities"]').forEach(el => el.checked = false);
+            filterProperties();
+        }
+
+        // Sort properties
+        function sortAndFilterProperties() {
+            filterProperties();
+            sortProperties();
+        }
+
+        function sortProperties() {
+            const sortBy = document.getElementById('sort-by').value;
+
+            properties.sort((a, b) => {
+                if (sortBy === 'default') {
+                    if (a.featured && !b.featured) return -1;
+                    if (!a.featured && b.featured) return 1;
+                    return 0;
+                }
+
+                switch (sortBy) {
+                    case 'price-asc':
+                        return a.price - b.price;
+                    case 'price-desc':
+                        return b.price - a.price;
+                    case 'size-asc':
+                        return a.area_size - b.area_size;
+                    case 'size-desc':
+                        return b.area_size - a.area_size;
+                    default:
+                        return 0;
+                }
+            });
+
+            updatePropertyList(properties);
+            document.querySelectorAll('.property-count').forEach(element => {
+                element.textContent = `${properties.length} Results Found`;
+            });
+        }
+
+        // Popup functionality
+        function togglePopup(popupId, iconId) {
+            const popup = document.getElementById(popupId);
+            const icon = document.getElementById(iconId);
+            popup.classList.toggle('hidden');
+            icon.classList.toggle('rotate-icon');
+        }
+
+        function selectOption(selectId, value) {
+            const selectElement = document.getElementById(selectId);
+            const buttonElement = document.querySelector(`#${selectId}-btn`);
+
+            if (buttonElement) {
+                const buttonText = buttonElement.firstChild;
+                buttonText.textContent = value ? value : selectElement.options[0].textContent;
+            }
+
+            selectElement.value = value;
+            selectElement.dispatchEvent(new Event('change'));
+
+            // Check if popup exists before manipulating it
+            const popupElement = document.getElementById(`${selectId}-popup`);
+            if (popupElement) {
+                popupElement.classList.add('hidden');
+            }
+
+            const toggleIcon = document.getElementById(`toggle-icon-${selectId.split('-')[1]}`);
+            if (toggleIcon) {
+                toggleIcon.classList.remove('rotate-icon');
+            }
+        }
+
+
+
+        document.addEventListener('click', (event) => {
+            const wrappers = document.querySelectorAll('.filter-type-wrapper');
+            wrappers.forEach(wrapper => {
+                if (!wrapper.contains(event.target)) {
+                    wrapper.querySelector('.popup').classList.add('hidden');
+                    wrapper.querySelector('.toggle-icon').classList.remove('rotate-icon');
+                }
+            });
+        });
+
+        // Mobile toggle buttons functionality
+        document.getElementById('mobile-map-btn').addEventListener('click', function () {
+            document.querySelector('.map-container').style.display = 'block';
+            document.querySelector('.listing-container').style.display = 'none';
+            this.classList.add('active');
+            document.getElementById('mobile-listing-btn').classList.remove('active');
+            map.resize();
+        });
+
+        document.getElementById('mobile-listing-btn').addEventListener('click', function () {
+            document.querySelector('.map-container').style.display = 'none';
+            document.querySelector('.listing-container').style.display = 'block';
+            this.classList.add('active');
+            document.getElementById('mobile-map-btn').classList.remove('active');
+        });
+
+        // More Filters toggle functionality
+        document.getElementById('more-filters-btn').addEventListener('click', function () {
+            document.querySelector('.more-filters-content').classList.toggle('show');
+        });
+
+        // More Filters close button functionality
+        document.getElementById('close-filters-btn').addEventListener('click', function () {
+            document.querySelector('.more-filters-content').classList.remove('show');
+        });
+
+        function closeMoreFilters() {
+            document.querySelector('.more-filters-content').classList.remove('show');
+        }
+
+        // Call getURLParameters on page load
+        // window.onload = function () {
+        //     getURLParameters();
+        //     resetFilters();
+        //     filterProperties();
+        // };
+
+        // // Check if it's the first load by looking for a session flag
+        // window.onload = function () {
+        //     if (!sessionStorage.getItem('firstLoadDone')) {
+        //         // First load: get URL parameters and set the flag
+        //         getURLParameters();
+        //         filterProperties();
+        //         sessionStorage.setItem('firstLoadDone', 'true');
+        //     } else {
+        //         // Subsequent reloads: reset filters
+        //         resetFilters();
+        //         filterProperties();
+        //     }
+        // };
+
+        window.onload = function () {
+            const currentUrl = window.location.href;
+            const lastUrl = sessionStorage.getItem('lastUrl');
+
+            if (lastUrl !== currentUrl) {
+                // First load or URL has changed: process URL parameters
+                getURLParameters();
+                filterProperties();
+                sessionStorage.setItem('lastUrl', currentUrl);
+            } else {
+                // Same URL as before: reset filters
+                resetFilters();
+                filterProperties();
+            }
+        };
+
+    </script>
+</body>
