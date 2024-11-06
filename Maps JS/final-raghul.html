@@ -266,7 +266,7 @@
         width: 100%;
         height: 212px;
         /* margin-bottom: -12px; */
-        /* margin-top: -26px; */
+        margin-top: -26px;
         overflow: hidden;
         /* Ensures overlay and image stay within bounds */
     }
@@ -560,7 +560,6 @@
 
         .listing-container {
             height: calc(100vh - 140px);
-            padding-bottom: 55px;
         }
 
         /* Mobile Toggle Buttons */
@@ -678,11 +677,11 @@
     /* featured property */
     .featured-label {
         background-color: #3d3c3661;
-        position: absolute;
+        position: relative;
         font-size: 12px;
         color: #fff9f9;
         padding: 0px 5px;
-        top: 10px;
+        top: 0px;
         margin-left: 6px;
         font-weight: 500;
         z-index: 99;
@@ -1065,15 +1064,15 @@
                 area_size: 5161.1, // in Sq.ft
                 lot_size: 7015, // in Sq.ft
                 position: [-96.7897, 32.8647], // Dallas coordinates
-                image: "/wp-content/uploads/2024/10/featuredImage1.webp",
+                image: "https://aqua-stingray-548056.hostingersite.com/wp-content/uploads/2024/10/Gallery-Hero-Slide-1.webp",
                 garage: true,
                 amenities: ["pool", "gym"],
                 hoa: 500, // in $
                 threedtour: true,
-                featured: false,
+                featured: true,
                 floors: 3,
                 basement: true,
-                link: "/property/3224-amherst-avenue/"
+                link: "https://novelsignaturehomes.com/property/3224-amherst-avenue-dallas-tx-75225/"
             },
             {
                 name: "1001 E 7th 1/2 Street",
@@ -1086,15 +1085,15 @@
                 area_size: 4594, // in Sq.ft
                 lot_size: 7623, // in Sq.ft
                 position: [-95.3698, 29.7604], // Houston coordinates
-                image: "/wp-content/uploads/2024/10/featuredImage2.webp",
+                image: "https://aqua-stingray-548056.hostingersite.com/wp-content/uploads/2024/10/Gallery-Hero-Slide-1.webp",
                 garage: true,
                 amenities: ["pool", "gym"],
                 hoa: 500, // in $
                 threedtour: true,
-                featured: false,
+                featured: true,
                 floors: 3,
                 basement: true,
-                link: "/property/1001-e-7th-1-2-street/"
+                link: "https://novelsignaturehomes.com/property/1001-e-7th-1-2st-houston/"
             },
             {
                 name: "4927 Heatherglen Drive",
@@ -1107,15 +1106,15 @@
                 area_size: 4900, // in Sq.ft
                 lot_size: 10123, // in Sq.ft
                 position: [-95.3620, 29.7500], // Houston coordinates
-                image: "/wp-content/uploads/2024/10/featuredImage3.webp",
+                image: "https://aqua-stingray-548056.hostingersite.com/wp-content/uploads/2024/10/Gallery-Hero-Slide-1.webp",
                 garage: true,
                 amenities: ["pool", "gym"],
                 hoa: 500, // in $
                 threedtour: true,
-                featured: false,
+                featured: true,
                 floors: 3,
                 basement: true,
-                link: "/property/4927-heatherglen-drive/"
+                link: "https://novelsignaturehomes.com/property/4927-heatherglen-dr-houston/"
             },
             {
                 name: "1311 Pine Chase Drive",
@@ -1128,28 +1127,7 @@
                 area_size: 6300, // in Sq.ft
                 lot_size: 17424, // in Sq.ft
                 position: [-95.3500, 29.7550], // Houston coordinates
-                image: "/wp-content/uploads/2024/10/featuredImage4.webp",
-                garage: true,
-                amenities: ["pool", "gym"],
-                hoa: 500, // in $
-                threedtour: true,
-                featured: false,
-                floors: 3,
-                basement: true,
-                link: "/property/1311-pine-chase-dr-houston/"
-            },
-            {
-                name: "The Potomac Dr, Houston",
-                address: "The Potomac Dr, Houston, TX, 77057",
-                description: "Single family house with modern design",
-                price: "",
-                type: "TownHouse",
-                bed: "",
-                bath: "",
-                area_size: "", // in Sq.ft
-                lot_size: "", // in Sq.ft
-                position: [-95.3500, 29.7550], // Houston coordinates
-                image: "/wp-content/uploads/2024/11/Frame-1000003249.jpg",
+                image: "https://aqua-stingray-548056.hostingersite.com/wp-content/uploads/2024/10/Gallery-Hero-Slide-1.webp",
                 garage: true,
                 amenities: ["pool", "gym"],
                 hoa: 500, // in $
@@ -1157,7 +1135,28 @@
                 featured: true,
                 floors: 3,
                 basement: true,
-                link: "/property/the-potomac/"
+                link: "https://novelsignaturehomes.com/property/1311-pine-chase-dr-houston/"
+            },
+            {
+                name: "The Potomac Dr, Houston",
+                address: "The Potomac Dr, Houston, TX, 77057",
+                description: "Single family house with modern design",
+                price: 3889000,
+                type: "",
+                bed: "",
+                bath: "",
+                area_size: "", // in Sq.ft
+                lot_size: "", // in Sq.ft
+                position: [-95.3500, 29.7550], // Houston coordinates
+                image: "https://aqua-stingray-548056.hostingersite.com/wp-content/uploads/2024/10/Gallery-Hero-Slide-1.webp",
+                garage: true,
+                amenities: ["pool", "gym"],
+                hoa: 500, // in $
+                threedtour: true,
+                featured: true,
+                floors: 3,
+                basement: true,
+                link: "https://novelsignaturehomes.com/property/1311-pine-chase-dr-houston/"
             },
 
             // Add more property objects here if needed
@@ -1459,11 +1458,11 @@
                         <div class="property-image-container">
                             <img src="${property.image}" alt="Property at ${property.address}" class="property-image" />
                         </div>
-                        <p class="price">$${property.price ? property.price.toLocaleString() : '1900000 - 3200000'}</p>
+                        <p class="price">$${property.price.toLocaleString()}</p>
                         <div class="details">
                             <p class="property-name">${property.name}</p>
                             <p class="property-address">${property.address}</p>
-                            <p class="property-amenities">${property.bed ? property.bed + ` Beds |` : ''}   ${property.bath ? property.bath + ` Baths | ` : ''}   ${property.area_size ? property.area_size + ` Sq.ft | ` : ''}   ${property.lot_size ? ` Lot Size: ` + property.lot_size + ` Sq.ft` : ''} </p>
+                            <p class="property-amenities">${property.bed} Beds | ${property.bath} Baths | ${property.area_size} Sq.ft | Lot Size: ${property.lot_size} Sq.ft</p>
                             <p class="property-type">${property.type}</p>
                         </div>
                     `;
