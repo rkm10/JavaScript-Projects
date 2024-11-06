@@ -34,7 +34,7 @@
         right: 0;
         background: #1f363e;
         padding: 10px 15px;
-        z-index: 1000;
+        z-index: 10;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         display: flex;
         align-items: center;
@@ -1251,7 +1251,7 @@
                 currentFilters.lng = lng;
                 currentFilters.searchLocation = searchLocation;
                 map.setCenter([lng, lat]);
-                map.setZoom(12);
+                map.setZoom(4);
                 document.querySelector('.location-title').textContent = searchLocation || 'Search Location';
             }
 
@@ -1342,7 +1342,7 @@
 
         // Geocoder result event
         geocoder.on('result', function (e) {
-            map.flyTo({ center: e.result.center, zoom: 12 });
+            map.flyTo({ center: e.result.center, zoom: 4 });
             document.querySelector('.location-title').textContent = e.result.place_name;
             currentFilters.searchLocation = e.result.place_name;
             currentFilters.lat = e.result.center[1];
