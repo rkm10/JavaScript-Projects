@@ -34,7 +34,7 @@
         right: 0;
         background: #1f363e;
         padding: 10px 15px;
-        z-index: 1000;
+        z-index: 10;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         display: flex;
         align-items: center;
@@ -130,7 +130,8 @@
 
     .more-filters-filter {
         padding: 20px;
-        margin-bottom: 35px;
+        max-height: 60vh;
+        overflow: auto;
     }
 
     .more-filters-content.show {
@@ -246,7 +247,7 @@
     /* sort div*/
     select#sort-by {
         padding: 0px 10px;
-        width: 160px;
+        width: 200px;
         height: 30px;
         background: transparent;
         border: none;
@@ -267,7 +268,7 @@
         width: 100%;
         height: 212px;
         /* margin-bottom: -12px; */
-        margin-top: -26px;
+        /* margin-top: -26px; */
         overflow: hidden;
         /* Ensures overlay and image stay within bounds */
     }
@@ -376,12 +377,70 @@
 
     /* Mapbox Popup */
     .mapboxgl-popup {
-        max-width: 300px;
+        max-width: 300px !important;
+        min-width: 290px !important;
     }
 
     .mapboxgl-popup-content {
-        border-radius: 10px;
+        border-radius: 0px;
+        padding: 7px;
     }
+
+    .property-map-card {
+        display: flex;
+        gap: 10px;
+    }
+
+    .property-map-image-container {
+        width: 40%;
+    }
+
+    .property-map-details {
+        display: flex;
+        flex-direction: column;
+        width: 60%;
+    }
+
+    img.property-map-image {
+        height: 85px;
+        border-radius: 5px;
+        object-fit: cover;
+    }
+
+    h3.property-map-title {
+        font-size: 12px;
+        font-weight: 600;
+        margin-bottom: 0px;
+        font-family: 'Albert Sans', sans-serif;
+    }
+
+    p.property-map-price {
+        font-size: 12px;
+        font-weight: 500;
+        margin-bottom: 0px;
+        font-family: 'Albert Sans', sans-serif;
+    }
+
+    p.property-map-type {
+        font-size: 12px;
+        font-weight: 600;
+        margin-bottom: 0px;
+        text-transform: uppercase;
+        font-family: 'Albert Sans', sans-serif;
+    }
+
+    .mapboxgl-popup-close-button {
+        width: 20px;
+        padding: 0px;
+        top: 1px;
+        right: -20px;
+        background: white;
+        font-size: 20px;
+        color: black;
+    }
+
+
+    /* .mapboxgl-popup */
 
     /* View Toggle Buttons */
     .view-toggle {
@@ -494,20 +553,14 @@
             align-items: center;
             margin-bottom: 14px;
             padding: 15px;
-            position: sticky;
-            top: 0;
-            background: white;
         }
 
         .more-filters-fixed-buttons {
             display: flex;
             justify-content: space-evenly;
-            background: white;
-            width: 100vw;
             position: fixed;
-            bottom: 0;
-            left: 0;
-            padding: 10px;
+            bottom: 10px;
+            width: 100vw;
         }
 
         button.apply-filters-btn-desktop {
@@ -567,6 +620,7 @@
 
         .listing-container {
             height: calc(100vh - 140px);
+            padding-bottom: 55px;
         }
 
         /* Mobile Toggle Buttons */
@@ -578,7 +632,7 @@
             right: 0;
             background: #1f363e;
             border-top: 1px solid #ccc;
-            z-index: 10;
+            z-index: 1000;
         }
 
         .mobile-toggle-buttons button {
@@ -670,7 +724,6 @@
             width: 100vw;
             height: 100vh;
             top: 0px;
-            overflow: auto;
         }
 
         /* wordpress styles */
@@ -685,11 +738,11 @@
     /* featured property */
     .featured-label {
         background-color: #3d3c3661;
-        position: relative;
+        position: absolute;
         font-size: 12px;
         color: #fff9f9;
         padding: 0px 5px;
-        top: 0px;
+        top: 10px;
         margin-left: 6px;
         font-weight: 500;
         z-index: 99;
@@ -769,9 +822,8 @@
                         <div onclick="selectOption('filter-type', '')">Types</div>
                         <div onclick="selectOption('filter-type', 'Single Family Residential')">Single Family
                             Residential</div>
-                        <div onclick="selectOption('filter-type', 'Apartment')">Apartment</div>
-                        <div onclick="selectOption('filter-type', 'Condo')">Condo</div>
-                        <div onclick="selectOption('filter-type', 'Townhouse')">Townhouse</div>
+                        <div onclick="selectOption('filter-type', 'Single family Detached')">Single family Detached
+                        </div>
                     </div>
                 </div>
 
@@ -817,7 +869,7 @@
 
                 <!-- Price Range Dropdown -->
                 <div class="filter-type-wrapper">
-                    <button id="price-range-btn" onclick="togglePopup('price-range-popup', 'toggle-icon-price')">
+                    <button id="price-range-filter-btn" onclick="togglePopup('price-range-popup', 'toggle-icon-price')">
                         Price
                         <svg id="toggle-icon-price" class="toggle-icon" width="20" height="20" viewBox="0 0 24 24"
                             fill="currentColor">
@@ -825,6 +877,7 @@
                                 stroke-linejoin="round" />
                         </svg>
                     </button>
+
                     <div id="price-range-popup" class="popup hidden">
                         <div onclick="selectOption('price-range-filter', '')">Price</div>
                         <div onclick="selectOption('price-range-filter', '500000+')">$500,000+</div>
@@ -838,7 +891,7 @@
                 <select id="filter-type" onchange="filterProperties()" style="display: none;">
                     <option value="">Types</option>
                     <option value="Single Family Residential">Single Family Residential</option>
-                    <option value="Apartment">Apartment</option>
+                    <option value="Single Family Detached">Single Family Detached</option>
                 </select>
                 <select id="filter-bedrooms" onchange="filterProperties()" style="display: none;">
                     <option value="">Beds</option>
@@ -1018,8 +1071,10 @@
                             <option value="default">Default</option>
                             <option value="price-asc">Price: Low to High</option>
                             <option value="price-desc">Price: High to Low</option>
-                            <option value="size-asc">Size: Small to Large</option>
-                            <option value="size-desc">Size: Large to Small</option>
+                            <option value="size-asc">Area: Small to Large</option>
+                            <option value="size-desc">Area: Large to Small</option>
+                            <option value="lot-asc">Lot: Small to Large</option>
+                            <option value="lot-desc">Lot: Large to Small</option>
                         </select>
                     </div>
                 </div>
@@ -1051,71 +1106,40 @@
     <script>
         mapboxgl.accessToken = 'pk.eyJ1Ijoid2Vid2l0aHJhaiIsImEiOiJjbTBhbGZmMHgxZXFuMm1vcWt4YmNwZGZhIn0.IpNziQwncy2U-Xms017ojA';
 
+        // Define properties globally
+        let properties = [];
 
-        fetch('https://rosybrown-goose-111113.hostingersite.com/wp-json/wp/v2/property') // API for the GET request
+        fetch('/wp-json/wp/v2/property')
             .then(response => response.json())
             .then(data => {
-                // console.log("properties", data);
-                const propertie = data;
+                properties = data;
+                console.log("Fetched Properties:", properties);
 
-                console.log("Properties:", propertie); // This will log the properties
-                const propertData = {
-                    "Name": propertie[2].title.rendered,
-                    "Image": propertie[2].featured_image,
-                    "Bathrooms": propertie[2].bathrooms,
-                    "Bedrooms": propertie[2].bedrooms,
-                    "coordinates": propertie[2].position,
-                    "Area Size": propertie[2].area_size,
-                    "Property Link": propertie[2].link,
-                    "Lot Size": propertie[2].lot_size,
-                    "Price": propertie[2].price,
-                    "Address": propertie[2].address,
-                    "Types": propertie[2].types,
-                    "Basement": propertie[2].basement,
-                    "3D Tour": propertie[2].must_have_3d_tour,
-                    "Featured": propertie[2].featured_check,
-                    "floors": propertie[2].floors,
-                    "hoa": propertie[2].hoa,
+                // Sort properties by default to have featured properties at the top
+                properties.sort((a, b) => {
+                    if (a.featured_check && !b.featured_check) return -1;
+                    if (!a.featured_check && b.featured_check) return 1;
+                    return 0;
+                });
 
-                }
-                // console.log("Properties:", properties); // This will log the old properties
-                console.table(propertData) // This will log the new properties
+                // Update the property list on initial load
+                updatePropertyList(properties);
+                document.querySelectorAll('.property-count').forEach(element => {
+                    element.textContent = `${properties.length} Results Found`;
+                });
+
+                // Optionally fit the map to show all properties
+                // fitMapToMarkers(properties);
             })
-            .catch(error => console.error('Error:', error)); // Add error handling
+            .catch(error => console.error('Error fetching properties:', error));
 
-        // Replace the properties list here
-        const properties = [
-            {
-                name: "Queen",
-                address: "3224 Amherst Avenue, Dallas, Texas, 75225",
-                description: "Single family house with modern design",
-                price: 3889000,
-                type: "Single Family Residential",
-                bed: 5,
-                bath: 4.5,
-                area_size: 5161.1, // in Sq.ft
-                lot_size: 7015, // in Sq.ft
-                position: [-96.7897, 32.8647], // Dallas coordinates
-                image: "https://aqua-stingray-548056.hostingersite.com/wp-content/uploads/2024/10/Gallery-Hero-Slide-1.webp",
-                garage: true,
-                amenities: ["pool", "gym"],
-                hoa: '', // in $
-                threedtour: false,
-                featured: false,
-                floors: 3,
-                basement: false,
-                link: "https://www.realtor.com/realestateandhomes-detail/3224-Amherst-Ave-Dallas-TX-75225"
-            },
-
-            // Add more property objects here if needed
-        ];
 
         let markers = [];
         let map = new mapboxgl.Map({
             container: 'map',
             style: 'mapbox://styles/mapbox/streets-v11',
-            center: [-96.7897, 32.8647], // Center on Dallas
-            zoom: 10
+            center: [-98.583333, 39.833333], // Center on USA
+            zoom: 3.5 // Adjusted zoom level for USA-wide view
         });
 
         // Initialize Geocoder
@@ -1124,8 +1148,8 @@
             mapboxgl: mapboxgl,
             placeholder: 'Search by address',
             proximity: {
-                longitude: -96.7897,
-                latitude: 32.8647
+                longitude: -98.583333,
+                latitude: 39.833333
             },
             marker: false
         });
@@ -1246,7 +1270,7 @@
 
         // Geocoder result event
         geocoder.on('result', function (e) {
-            map.flyTo({ center: e.result.center, zoom: 12 });
+            map.flyTo({ center: e.result.center, zoom: 6, speed: 0.5, curve: 1.5 });
             document.querySelector('.location-title').textContent = e.result.place_name;
             currentFilters.searchLocation = e.result.place_name;
             currentFilters.lat = e.result.center[1];
@@ -1287,35 +1311,46 @@
             let maxPrice = Infinity;
             if (currentFilters.priceRange) {
                 const priceParts = currentFilters.priceRange.split('-');
-                minPrice = parseInt(priceParts[0]) || 0;
-                maxPrice = priceParts[1] ? parseInt(priceParts[1]) : Infinity;
+                minPrice = parseInt(priceParts[0].replace(/[^0-9]/g, '')) || 0;
+                maxPrice = priceParts[1] ? parseInt(priceParts[1].replace(/[^0-9]/g, '')) : Infinity;
             }
 
-            let minSize = parseInt(currentFilters.minSize) || 0;
-            let maxSize = parseInt(currentFilters.maxSize) || Infinity;
+            let minSize = parseInt(currentFilters.minSize.replace(/[^0-9]/g, '')) || 0;
+            let maxSize = parseInt(currentFilters.maxSize.replace(/[^0-9]/g, '')) || Infinity;
+            let minLotSize = parseInt(currentFilters.minLotSize.replace(/[^0-9]/g, '')) || 0;
+            let maxLotSize = parseInt(currentFilters.maxLotSize.replace(/[^0-9]/g, '')) || Infinity;
 
-            let minLotSize = parseInt(currentFilters.minLotSize) || 0;
-            let maxLotSize = parseInt(currentFilters.maxLotSize) || Infinity;
-
+            // Inside the function to filter properties:
             const filteredProperties = properties.filter((property) => {
-                // Check if property is within map bounds
-                const isWithinBounds = bounds.contains([property.position[0], property.position[1]]);
+                let parsedPosition;
+                try {
+                    parsedPosition = JSON.parse(property.position);
+                } catch (error) {
+                    return false; // Skip if parsing fails
+                }
+
+                if (!Array.isArray(parsedPosition) || parsedPosition.length !== 2) {
+                    return false;
+                }
+
+                const [longitude, latitude] = parsedPosition;
+                const coordinates = [longitude, latitude];
+                const isWithinBounds = bounds.contains(coordinates);
+
+                // enable price as string
+                const price = isNaN(parseFloat(property.price)) ? 0 : parseFloat(property.price);
 
                 const matchesFilters =
-                    (!currentFilters.type || property.type === currentFilters.type) &&
-                    (!currentFilters.bedrooms || property.bed >= parseInt(currentFilters.bedrooms)) &&
-                    (!currentFilters.bathrooms || property.bath >= parseFloat(currentFilters.bathrooms)) &&
+                    (!currentFilters.type || property.types === currentFilters.type) &&
+                    (!currentFilters.bedrooms || property.bedrooms >= parseInt(currentFilters.bedrooms)) &&
+                    (!currentFilters.bathrooms || property.bathrooms >= parseFloat(currentFilters.bathrooms)) &&
                     (!currentFilters.garage || property.garage) &&
                     (!currentFilters.basement || property.basement) &&
-                    (!currentFilters.threedtour || property.threedtour) &&
-                    (property.price >= minPrice) &&
+                    (!currentFilters.threedtour || property.must_have_3d_tour) &&
+                    (price >= minPrice) &&
                     (property.area_size >= minSize) &&
                     (property.lot_size >= minLotSize) &&
-                    (!currentFilters.hoa || (currentFilters.hoa === '0' && property.hoa === 0) ||
-                        (parseInt(currentFilters.hoa) && property.hoa >= parseInt(currentFilters.hoa))) &&
-                    (!currentFilters.floors || property.floors >= parseInt(currentFilters.floors)) &&
                     currentFilters.amenities.every(amenity => property.amenities.includes(amenity));
-
 
                 return isWithinBounds && matchesFilters;
             });
@@ -1338,11 +1373,35 @@
         // Added event listener to map to update properties when map moves
         map.on('moveend', debounce(filterPropertiesByMapBounds, 200));
 
+        // Function to fit map to markers (Enhancement)
+        function fitMapToMarkers(propertiesToShow) {
+            const bounds = new mapboxgl.LngLatBounds();
+
+            propertiesToShow.forEach(property => {
+                let parsedPosition;
+                try {
+                    parsedPosition = JSON.parse(property.position);
+                } catch (error) {
+                    // console.error("Failed to parse position string:", property.position, "Error:", error);
+                    return;
+                }
+
+                if (Array.isArray(parsedPosition) && parsedPosition.length === 2) {
+                    bounds.extend(parsedPosition);
+                }
+            });
+
+            if (!bounds.isEmpty()) {
+                map.fitBounds(bounds, { padding: 50 });
+            }
+        }
+
         // Update property list and markers based on filtered properties
         function updatePropertyList(propertiesToShow) {
             const propertyList = document.getElementById('property-list');
             propertyList.innerHTML = '';
 
+            // Remove existing markers from the map
             markers.forEach(marker => marker.remove());
             markers = [];
 
@@ -1351,42 +1410,96 @@
                 return;
             }
 
-            propertiesToShow.forEach(property => {
+            propertiesToShow.forEach((property, index) => {
+                // Directly parse the position string
+                let parsedPosition;
+                try {
+                    parsedPosition = JSON.parse(property.position);
+                    // console.log(`Property ${index + 1} - Parsed Position:`, parsedPosition);
+                } catch (error) {
+                    console.error(`Property ${index + 1} - Failed to parse position string "${property.position}":`, error);
+                    return; // Skip if parsing fails
+                }
+
+                // Ensure parsedPosition is an array with two elements
+                if (!Array.isArray(parsedPosition) || parsedPosition.length !== 2) {
+                    console.error(`Property ${index + 1} - Invalid position format:`, parsedPosition);
+                    return;
+                }
+
+                const [longitude, latitude] = parsedPosition; // Mapbox expects [lng, lat]
+                const coordinates = [longitude, latitude];
+
+
+                if (property.bathrooms = "") {
+                    console.warn(`Property ${index + 1} - Missing 'bathrooms' field.`);
+                } else {
+                    console.log(`Property ${index + 1} - Bathrooms:`, property.bathrooms);
+                }
+
+                // Create the property listing item
                 const propertyItem = document.createElement('div');
                 propertyItem.classList.add('property-item');
                 propertyItem.innerHTML = `
-                    ${property.featured ? '<span class="featured-label">Featured</span>' : ''}
-                    <div class="property-image-container">
-                        <img src="${property.image}" alt="Property at ${property.address}" class="property-image" />
-                    </div>
-                    <p class="price">$${property.price.toLocaleString()}</p>
-                    <div class="details">
-                        <p class="property-name">${property.name}</p>
-                        <p class="property-address">${property.address}</p>
-                        <p class="property-amenities">${property.bed} Beds | ${property.bath} Baths | ${property.area_size} Sq.ft | Lot Size: ${property.lot_size} Sq.ft</p>
-                        <p class="property-type">${property.type}</p>
-                    </div>
-                `;
+            ${property.featured_check ? '<span class="featured-label">Featured</span>' : ''}
+            <div class="property-image-container">
+                <img src="${property.featured_image || 'https://via.placeholder.com/400'}" alt="Property at ${property.address}" class="property-image" />
+            </div>
+            <p class="price">$ ${property.price.toLocaleString()}</p>
+            <div class="details">
+                <p class="property-name">${property.title.rendered}</p>
+                <p class="property-address">${property.address}</p>
+                <p class="property-amenities">${property.bedrooms ? property.bedrooms + ` Beds |` : ''}   ${property.bathrooms ? property.bathrooms + ` Baths | ` : ''}   ${property.area_size ? property.area_size + ` Sq.ft | ` : ''}   ${property.lot_size ? ` Lot Size: ` + property.lot_size + ` Sq.ft` : ''} </p>
+                <p class="property-type">${property.types}</p>
+            </div>
+        `;
                 propertyList.appendChild(propertyItem);
 
                 // Redirect to property link when card is clicked
                 propertyItem.addEventListener('click', () => {
-                    window.open(property.link, '_blank');
+                    if (property.link) {
+                        window.open(property.link, '_self');
+                    } else {
+                        console.error(`Property ${index + 1} - 'link' is undefined:`, property);
+                    }
                 });
 
-                // Add marker for each property
-                const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(`
-                    <h3>${property.address}</h3>
-                    <p>${property.bed} Beds, ${property.bath} Baths, ${property.area_size} Sq.ft</p>
-                    <p class="price">$${property.price.toLocaleString()}</p>
-                `);
+                // Create the popup content wrapped in an <a> tag
+                const popupHTML = property.link ? `
+            <a href="${property.link}" style="text-decoration: none; color: inherit;">
+                <div class="property-map-card">
+                    <div class="property-map-image-container">
+                        <img src="${property.featured_image}" alt="Property at ${property.address}" class="property-map-image" />
+                    </div>
+                    <div class="property-map-details">
+                    <h3 class="property-map-title">${property.title.rendered}</h3>
+                    <p class="property-map-price">$${property.price.toLocaleString()}</p>
+                    <p class="property-map-type">${property.types}</p>
+                    </div>
+                </div>
+            </a>
+        ` : `
+            <div class="property-map-card">
+                <div class="property-map-image-container">
+                    <img src="${property.featured_image || 'https://via.placeholder.com/400'}" alt="Property at ${property.address}" class="property-map-image" />
+                </div>
+                <h3 class="property-map-title">${property.title.rendered}</h3>
+                <p class="property-map-price">$ ${property.price.toLocaleString()}</p>
+                <p class="property-map-type">${property.types}</p>
+            </div>
+        `;
 
+                const popup = new mapboxgl.Popup({ offset: 25 }).setHTML(popupHTML);
+
+                // Add the marker to the map using parsedPosition
                 const marker = new mapboxgl.Marker()
-                    .setLngLat(property.position)
+                    .setLngLat(coordinates) // Use parsedPosition directly
                     .setPopup(popup)
                     .addTo(map);
 
                 markers.push(marker);
+
+                // No need for separate event listener since the popup's content is an anchor tag
 
                 // Add hover event listeners to the property item
                 propertyItem.addEventListener('mouseover', () => {
@@ -1397,6 +1510,9 @@
                     marker.getPopup().remove();
                 });
             });
+
+            // Optionally fit the map to the markers
+            // fitMapToMarkers(propertiesToShow);
         }
 
         function resetFilters() {
@@ -1414,8 +1530,19 @@
             // document.getElementById('hoa-filter').value = '';
             document.getElementById('floors-filter').value = '';
             document.querySelectorAll('input[name="amenities"]').forEach(el => el.checked = false);
+
+            // Update the button text to show the placeholder text
+            document.querySelectorAll('.filter-type-wrapper button').forEach(button => {
+                const selectId = button.id.replace('-btn', '');
+                const selectElement = document.getElementById(selectId);
+                if (selectElement) {
+                    button.firstChild.textContent = selectElement.options[0].textContent;
+                }
+            });
+
             filterProperties();
         }
+
 
         // Sort properties
         function sortAndFilterProperties() {
@@ -1426,10 +1553,12 @@
         function sortProperties() {
             const sortBy = document.getElementById('sort-by').value;
 
-            properties.sort((a, b) => {
+            const sortedProperties = [...properties]; // Clone the array to avoid mutating the original
+
+            sortedProperties.sort((a, b) => {
                 if (sortBy === 'default') {
-                    if (a.featured && !b.featured) return -1;
-                    if (!a.featured && b.featured) return 1;
+                    if (a.featured_check && !b.featured_check) return -1;
+                    if (!a.featured_check && b.featured_check) return 1;
                     return 0;
                 }
 
@@ -1442,14 +1571,18 @@
                         return a.area_size - b.area_size;
                     case 'size-desc':
                         return b.area_size - a.area_size;
+                    case 'lot-asc':
+                        return a.lot_size - b.lot_size;
+                    case 'lot-desc':
+                        return b.lot_size - a.lot_size;
                     default:
                         return 0;
                 }
             });
 
-            updatePropertyList(properties);
+            updatePropertyList(sortedProperties);
             document.querySelectorAll('.property-count').forEach(element => {
-                element.textContent = `${properties.length} Results Found`;
+                element.textContent = `${sortedProperties.length} Results Found`;
             });
         }
 
@@ -1466,19 +1599,25 @@
             const buttonElement = document.querySelector(`#${selectId}-btn`);
 
             if (buttonElement) {
+                // Set button text based on the selected value
                 const buttonText = buttonElement.firstChild;
-                buttonText.textContent = value ? value : selectElement.options[0].textContent;
+                if (value) {
+                    buttonText.textContent = value.includes('+') ? `$${parseInt(value).toLocaleString()}+` : value;
+                } else {
+                    buttonText.textContent = selectElement.options[0].textContent; // Default text
+                }
             }
 
             selectElement.value = value;
             selectElement.dispatchEvent(new Event('change'));
 
-            // Check if popup exists before manipulating it
+            // Close the popup after selection
             const popupElement = document.getElementById(`${selectId}-popup`);
             if (popupElement) {
                 popupElement.classList.add('hidden');
             }
 
+            // Reset the toggle icon rotation
             const toggleIcon = document.getElementById(`toggle-icon-${selectId.split('-')[1]}`);
             if (toggleIcon) {
                 toggleIcon.classList.remove('rotate-icon');
@@ -1491,8 +1630,14 @@
             const wrappers = document.querySelectorAll('.filter-type-wrapper');
             wrappers.forEach(wrapper => {
                 if (!wrapper.contains(event.target)) {
-                    wrapper.querySelector('.popup').classList.add('hidden');
-                    wrapper.querySelector('.toggle-icon').classList.remove('rotate-icon');
+                    const popup = wrapper.querySelector('.popup');
+                    if (popup) {
+                        popup.classList.add('hidden');
+                    }
+                    const icon = wrapper.querySelector('.toggle-icon');
+                    if (icon) {
+                        icon.classList.remove('rotate-icon');
+                    }
                 }
             });
         });
@@ -1528,26 +1673,6 @@
         }
 
         // Call getURLParameters on page load
-        // window.onload = function () {
-        //     getURLParameters();
-        //     resetFilters();
-        //     filterProperties();
-        // };
-
-        // // Check if it's the first load by looking for a session flag
-        // window.onload = function () {
-        //     if (!sessionStorage.getItem('firstLoadDone')) {
-        //         // First load: get URL parameters and set the flag
-        //         getURLParameters();
-        //         filterProperties();
-        //         sessionStorage.setItem('firstLoadDone', 'true');
-        //     } else {
-        //         // Subsequent reloads: reset filters
-        //         resetFilters();
-        //         filterProperties();
-        //     }
-        // };
-
         window.onload = function () {
             const currentUrl = window.location.href;
             const lastUrl = sessionStorage.getItem('lastUrl');
@@ -1563,6 +1688,6 @@
                 filterProperties();
             }
         };
-
     </script>
+
 </body>
