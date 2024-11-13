@@ -1,0 +1,105 @@
+<!-- Link to Mapbox GL CSS -->
+<link href="https://api.mapbox.com/mapbox-gl-js/v2.11.0/mapbox-gl.css" rel="stylesheet">
+
+<!-- Link to Mapbox Geocoder CSS -->
+<link href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.css"
+    rel="stylesheet">
+
+<style>
+    #geocoder {
+        width: 60vw;
+        /* Adjust width of search box */
+        /* margin: 20px; */
+    }
+
+    .search-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .mapboxgl-ctrl-geocoder--icon-search {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        width: 23px;
+        height: 23px;
+    }
+
+    #search-button {
+        background-color: #1a1a1a;
+        border-radius: 0px;
+    }
+
+    input.mapboxgl-ctrl-geocoder--input {
+        padding-left: 40px;
+    }
+
+    .mapboxgl-ctrl-geocoder {
+        min-width: 200px;
+    }
+
+    @media screen and (min-width: 640px) {
+        .mapboxgl-ctrl-geocoder {
+            width: 54vw;
+            font-size: 15px;
+            line-height: 20px;
+            max-width: 54vw;
+            border-radius: 0px;
+        }
+    }
+</style>
+
+<body>
+
+    <!-- Geocoder Container -->
+
+    <div class="search-container">
+        <div id="geocoder"></div>
+        <button id="search-button">Search</button>
+    </div>
+
+    <!-- Mapbox GL JS (required for mapboxgl object) -->
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.11.0/mapbox-gl.js"></script>
+
+    <!-- Mapbox Geocoder JS (plugin for geocoding) -->
+    <script
+        src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.min.js"></script>
+
+    <script>
+        // Initialize the Mapbox Geocoder after both Mapbox GL JS and Mapbox Geocoder are loaded
+        mapboxgl.accessToken = 'pk.eyJ1Ijoid2Vid2l0aHJhaiIsImEiOiJjbTBhbGZmMHgxZXFuMm1vcWt4YmNwZGZhIn0.IpNziQwncy2U-Xms017ojA'; // Replace with your Mapbox token
+
+        var geocoder = new MapboxGeocoder({
+            accessToken: mapboxgl.accessToken,
+            mapboxgl: mapboxgl,
+            placeholder: 'Search for a location',  // Customize placeholder text
+            countries: 'us', // Optionally limit the search to a specific country (e.g., 'us')
+            zoom: 12, // Optional: Zoom level to focus on the search result
+            types: 'place', // Optional: Limit to only places (cities, regions, etc.)
+        });
+
+        // Add the geocoder control to the #geocoder div
+        document.getElementById('geocoder').appendChild(geocoder.onAdd());
+
+        // Add event listener for when a result is selected from the dropdown
+        geocoder.on('result', function (e) {
+            var selectedResult = e.result;  // The selected search result
+            var placeName = selectedResult.place_name;  // The full place name
+            var latitude = selectedResult.center[1];  // Latitude of the location
+            var longitude = selectedResult.center[0];  // Longitude of the location
+
+            // Create the query parameters
+            var queryParams = new URLSearchParams({
+                search_location: placeName,  // Location name
+                lat: latitude,  // Latitude
+                lng: longitude  // Longitude
+            });
+
+            // Redirect to the new URL with the query parameters
+            window.location.href = '/active-listings/?' + queryParams.toString();
+        });
+    </script>
+
+</body>
